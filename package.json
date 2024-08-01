@@ -1,0 +1,47 @@
+{
+  "name": "electron-app",
+  "productName": "Gadgets Market",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "package": "electron-packager . GadgetsMarket --platform=all --icon=assets/icon --overwrite",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "build": {
+    "appId": "com.example.gadgetsmarket",
+    "productName": "Gadgets Market",
+    "icon": "assets/icon",
+    "files": [
+      "index.js",
+      "assets/**/*",
+      "package.json"
+    ],
+    "win": {
+      "icon": "assets/icon.ico"
+    },
+    "mac": {
+      "icon": "assets/icon.icns"
+    },
+    "linux": {
+      "icon": "assets/icon.png"
+    }
+  },
+  "keywords": [
+    "electron",
+    "gadgets",
+    "market"
+  ],
+  "author": "DoneSol Technologies",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^31.2.1",
+    "electron-builder": "^24.13.3",
+    "electron-packager": "^17.1.2"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  },
+  "description": "POS application for Gadgets Market"
+}
