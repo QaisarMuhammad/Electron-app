@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Printer Configuration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        #printer-form {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: left;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        input[type="text"], input[type="password"], select {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus, select:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+        }
+
+        button {
+            background-color: #3498db;
+            color: #ffffff;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    
+    <form id="printer-form">
+        <h1>Configure Printer</h1>
+        
+        <!-- Printer Brand Dropdown -->
+        <label for="printerBrand">Printer Brand:</label>
+        <select id="printerBrand" name="printerBrand" required>
+            <option value="" disabled selected>Select Brand</option>
+            <option value="Epson">Epson</option>
+            <option value="Star">Star</option>
+        </select>
+
+        <label for="printerName">Printer Name:</label>
+        <input type="text" id="printerName" name="printerName" required>
+
+        <label for="printerPort">Printer Port:</label>
+        <input type="text" id="printerPort" name="printerPort" required>
+
+        <label for="password">Password (to open cash drawer):</label>
+        <input type="password" id="password" required>
+
+        <button type="submit">Save Configuration</button>
+    </form>
+
+    <script>
+        // Check that ipcRenderer is available in the window context
+        if (window.ipcRenderer) {
+            document.getElementById('printer-form').addEventListener('submit', function (event) {
+                event.preventDefault();
+                const printerBrand = document.getElementById('printerBrand').value;
+                const printerName = document.getElementById('printerName').value;
+                const printerPort = document.getElementById('printerPort').value;
+                const password = document.getElementById('password').value;
+                // Send the printer configuration to the main process
+                window.ipcRenderer.send('save-printer-config', { printerBrand, printerName, printerPort, password });
+            });
+        } else {
+            console.error('ipcRenderer is not available');
+        }
+
+        window.onload = function() {
+            document.getElementById('printerBrand').focus();
+        };
+    </script>
+</body>
+</html>
