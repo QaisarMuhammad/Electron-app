@@ -13,9 +13,14 @@ let store; // Electron store for persisting configuration
 const receiptFilePath = path.join(__dirname, 'receipt_new.txt');
 
 function stripHtml(htmlString) {
-    return htmlString
+    if(htmlString){
+        return htmlString
         .replace(/<\/p>/g, "\n") // Replace closing </p> tags with a newline
         .replace(/<\/?[^>]+(>|$)/g, ""); // Remove all other HTML tags
+    }else {
+        return "";
+    }
+   
 }
 
 function generateAndPrintReceipt(receiptData) {
@@ -27,7 +32,7 @@ function generateAndPrintReceipt(receiptData) {
 
         return amount.toFixed(2);
     };
-    const isDuplicate =  false;
+    const isDuplicate =  receiptData.isDuplicate || false;
     const status = receiptData.order?.cart_status === 3 ? "Pending" : receiptData.order?.cart_status === 4 ? "In-Progress" : '';
     // Extract business, customer, and user details from receiptData
     const business = receiptData.order.Business || receiptData.order.business;
@@ -40,11 +45,15 @@ function generateAndPrintReceipt(receiptData) {
 
     const salesOrderItems = orderItems?.length > 0 ? orderItems?.filter(item => item?.is_replacement === false) : [];
     const replacementOrderItems = orderItems?.length > 0 ? orderItems?.filter(item => item?.is_replacement === true) : [];
-console.log(salesOrderItems, "=====salesOrderItems");
+
     const updatedOrderType = salesOrderItems?.filter(i => i.is_active_for === 3)?.length ? "Repair" : "Sale";
 
     // Initialize the receipt buffer
     const receiptBuffer = [];
+    if (!isDuplicate) {
+        // OPEN CASH DRAWER
+        receiptBuffer.push(Buffer.from([0x1B, 0x70, 0x00, 0x19, 0xFF]));
+    }
     receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Initialize printer
 
     receiptBuffer.push(Buffer.from([0x1B, 0x74, 0x19])); // Select Code Page 858 (CP858)
@@ -56,8 +65,8 @@ console.log(salesOrderItems, "=====salesOrderItems");
 
     receiptBuffer.push(Buffer.from([0x1D, 0x21, 0x00]));
     receiptBuffer.push(Buffer.from([0x1B, 0x45, 0x00])); // Bold ON
-    if (!isDuplicate) {
-        receiptBuffer.push(Buffer.from('********* DUPLICATE RECEIPT *********\n'));
+    if (isDuplicate) {
+        receiptBuffer.push(Buffer.from('\n********* DUPLICATE RECEIPT *********'));
     }
     receiptBuffer.push(Buffer.from(`\n\n${business.business_address}\n`));
     receiptBuffer.push(Buffer.from(`${business.post_code}\n`));
@@ -93,21 +102,26 @@ console.log(salesOrderItems, "=====salesOrderItems");
     // Process Sales Items
     if (salesOrderItems?.length > 0) {
         salesOrderItems.forEach((item) => {
-
             // Product Details: Align product number and name
             receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Initialize printer
             receiptBuffer.push(Buffer.from([0x1B, 0x61]));  // Left align
-            receiptBuffer.push(Buffer.from(` ${item.Product?.product_no ? item.Product?.product_no : item?.product_no}-${item?.Product?.name ? item.Product.name : item?.product_name} `));
-                if(item?.current_price > 0){
+
+            if(item?.current_price > 0){
+                receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Initialize printer
+                receiptBuffer.push(Buffer.from([0x1B, 0x61]));  // Left align
                     receiptBuffer.push(
                         Buffer.concat([
-                            Buffer.from(`-(${item.quantity}x`),
+                            Buffer.from(` ${item.Product?.product_no ? item.Product?.product_no : item?.product_no}-${item?.Product?.name ? item.Product.name : item?.product_name} - (${item.quantity}x`),
                             Buffer.from([0x1B, 0x74, 0x19, 0x9C]),
                             Buffer.from(`${formatCurrency(item.current_price)}=`),
                             Buffer.from([0x1B, 0x74, 0x19, 0x9C]),
                             Buffer.from(`${formatCurrency((item.current_price) * item.quantity)})\n`)
                         ]));
-                }
+            }else{
+                receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Initialize printer
+                receiptBuffer.push(Buffer.from([0x1B, 0x61]));  // Left align
+                receiptBuffer.push(Buffer.from(` ${item.Product?.product_no ? item.Product?.product_no : item?.product_no}-${item?.Product?.name ? item.Product.name : item?.product_name}\n`));
+            }
 
             if (item?.item_discount && item.item_discount > 0) {
                 receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Initialize printer
@@ -162,17 +176,19 @@ console.log(salesOrderItems, "=====salesOrderItems");
                     receiptBuffer.push(Buffer.from(`${questionTitle}: ${options.join(", ")}`))
                 });
             }
-
-            receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Initialize printer
-            receiptBuffer.push(Buffer.from([0x1B, 0x61, 0x02]));  // right align
-            // Pricing and Quantity: Format price and quantity
-            const priceLine = `${formatCurrency((item.current_price - item.item_discount) * item.quantity)}`;
-            receiptBuffer.push(
-                Buffer.concat([
-                    Buffer.from([0x1B, 0x74, 0x19, 0x9C]),
-                    Buffer.from(`${priceLine}\n`)
-                ])
-            );
+            if(item.current_price > 0){
+                receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Initialize printer
+                receiptBuffer.push(Buffer.from([0x1B, 0x61, 0x02]));  // right align
+                // Pricing and Quantity: Format price and quantity
+                const priceLine = `${formatCurrency((item.current_price - item.item_discount) * item.quantity)}`;
+                receiptBuffer.push(
+                    Buffer.concat([
+                        Buffer.from([0x1B, 0x74, 0x19, 0x9C]),
+                        Buffer.from(`${priceLine}\n`)
+                    ])
+                );
+            }
+           
             // receiptBuffer.push(Buffer.from(`${priceLine}\n`));
             receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Initialize printer
             receiptBuffer.push(Buffer.from([0x1B, 0x61]));  // left align
@@ -223,7 +239,7 @@ console.log(salesOrderItems, "=====salesOrderItems");
   
     // Add totals and final amounts
     receiptBuffer.push(Buffer.from('----------------------------------------\n\n'));
-    if(receiptData.order.sub_total > 0) {
+    if(receiptData?.order?.sub_total > 0) {
         receiptBuffer.push(
             Buffer.concat([
                 Buffer.from('Subtotal:           '),
@@ -233,7 +249,7 @@ console.log(salesOrderItems, "=====salesOrderItems");
         );
        }
 
-    if (receiptData.order.total_discount > 0) {
+    if (receiptData?.order?.total_discount > 0) {
         receiptBuffer.push(
             Buffer.concat([
                 Buffer.from('Discount:           '),
@@ -250,7 +266,7 @@ console.log(salesOrderItems, "=====salesOrderItems");
         );
     }
 
-    if (receiptData.order.tax_total > 0) {
+    if (receiptData?.order?.tax_total > 0) {
         receiptBuffer.push(
             Buffer.concat([
                 Buffer.from(`${business.tax_title} (${business.vat}%):          `),
@@ -260,7 +276,7 @@ console.log(salesOrderItems, "=====salesOrderItems");
         );
 
     }
-    if(receiptData.order.grand_total){
+    if(receiptData?.order?.grand_total){
         // Make 'Grand Total' bold and bigger size
         receiptBuffer.push(Buffer.from([0x1B, 0x45, 0x01])); // Bold ON
         receiptBuffer.push(Buffer.from([0x1D, 0x21, 0x01]));
@@ -293,7 +309,7 @@ console.log(salesOrderItems, "=====salesOrderItems");
  
     receiptBuffer.push(
         Buffer.concat([
-            Buffer.from(`Status:              `),
+            Buffer.from(`Status:             `),
             Buffer.from(`${status === "" ? "Complete" : status}\n\n`)
         ])
     );
@@ -317,9 +333,8 @@ console.log(salesOrderItems, "=====salesOrderItems");
         receiptBuffer.push(Buffer.from(`\n`));
     }
 
-    if (customer_note === "") {
+    if (customer_note && customer_note === "") {
         const status = receiptData.order?.cart_status === 3 ? "Pending" : receiptData.order?.cart_status === 4 ? "In-Progress" : 30;
-
         if (updatedOrderType === "Repair") {
             if (receiptData?.order?.cart_status === 3) {
                 customer_note = repair_print_data.pending_note.note;
@@ -344,7 +359,10 @@ console.log(salesOrderItems, "=====salesOrderItems");
         }
     }
 
-    // receiptBuffer.push(Buffer.from(stripHtml(customer_note)));
+    if(customer_note && customer_note !== ""){
+        receiptBuffer.push(Buffer.from(stripHtml(customer_note)));
+    }
+  
     receiptBuffer.push(Buffer.from([0x1B, 0x61, 0x01]));
     receiptBuffer.push(Buffer.from(`\nThank You for Your order!\n`))
     receiptBuffer.push(Buffer.from(`See you again soon!\n\n`))
@@ -371,25 +389,19 @@ console.log(salesOrderItems, "=====salesOrderItems");
     const receiptFilePath = path.join(__dirname, 'receipt.txt');
     fs.writeFileSync(receiptFilePath, finalBuffer);
 
-    console.log('Receipt generated and written to:', receiptFilePath);
+
     const { printerBrand, printerPort } = loadPrinterPortConfig();
     // In a real application, send finalBuffer to the printer.
     // Sending the print command using the Windows command line to the specific printer.
     // const printerCommand = `print /D:"\\\\DESKTOP-1CBF04U\\EPSO TM-T88V Receipt" ${receiptFilePath}`;
-    const printerCommand = `print /D:"${printerPort}" "${receiptFilePath}"`;
-   
+    const printerCommand = `print /D:"${printerPort}" "${receiptFilePath}"`;  
+
     exec(printerCommand, (error, stdout, stderr) => {
         if (error) {
             console.error('Error printing the receipt:', error);
         } else {
             console.log('Print command executed successfully:', stdout);
             // Open the cash drawer if password matches
-            if (!isDuplicate) {
-                openCashDrawerForInstalledPrinter().catch((err) => {
-                    console.error('Failed to open cash drawer:', err);
-                });
-            }
-
         }
     });
 }
@@ -632,7 +644,7 @@ function createMenu() {
 
 // Handle the event from the renderer (frontend)
 ipcMain.on('send-receipt-data', (event, receiptData) => {
-    console.log('Received receipt data:', receiptData);
+    // console.log('Received receipt data:', receiptData);
     generateAndPrintReceipt(receiptData); // Custom function to handle receipt printing
 });
 
