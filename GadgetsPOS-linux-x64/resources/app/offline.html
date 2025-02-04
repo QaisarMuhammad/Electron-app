@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline | Gadgets Market - POS</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+        .container {
+            text-align: center;
+        }
+        h1 {
+            font-size: 2em;
+            margin-bottom: 0.5em;
+        }
+        p {
+            font-size: 1.2em;
+        }
+        img {
+            margin-top: 20px;
+        }
+        .reload-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #c7132e;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .reload-button:hover {
+            background-color: darkred;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img height="65" width="140" src="assets/no-internet.svg" alt="Offline">
+        <h1>No Internet Connection</h1>
+        <p>It seems you are not connected to the internet. Please check your connection and try again.</p>
+        <div><button class="reload-button" onclick="reloadApp()">Reload</button></div>
+        <img height="65" width="140" src="assets/logo.jpg" alt="Gadgets Market">
+        
+    </div>
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        function reloadApp() {
+            ipcRenderer.send('reload-main-window');
+        }
+    </script>
+</body>
+</html>
