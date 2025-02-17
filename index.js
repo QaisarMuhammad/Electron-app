@@ -220,12 +220,14 @@ async function generateA4Receipt(receiptData) {
         let customer_note = receiptData?.order?.customer_note;
         const user = receiptData.order.User || receiptData.order.user;
         const { sell_print_data, repair_print_data } = receiptData.businessData;
-        const orderItems = receiptData.order?.Cart_items?.length > 0 ? receiptData?.order?.Cart_items : receiptData?.order?.Sub_orders[0].Order_items?.length > 0 ? receiptData?.order.Sub_orders[0].Order_items : [];
-
-        const salesOrderItems = orderItems?.length > 0 ? orderItems?.filter(item => item?.is_replacement === false && item?.is_return === false) : [];
-        const replacementOrderItems = orderItems?.length > 0 ? orderItems?.filter(item => item?.is_replacement === true) : [];
-        const returnOrderItems = orderItems?.length > 0 ? orderItems?.filter(item => item?.is_return === true) : [];
-
+       
+        const orderItems = receiptData?.order?.Sub_orders[0].Order_items  ? receiptData?.order?.Sub_orders[0].Order_items : receiptData?.order?.Sub_orders[0].Order_items?.length > 0 ? receiptData?.order.Sub_orders[0].Order_items : [];
+    
+        const salesOrderItems =  status != "" && orderItems?.sale_items ? orderItems?.sale_items : orderItems?.length > 0 ? orderItems?.filter(item => item?.is_replacement === false && item?.is_return === false && item?.is_trade_in === false) : [];
+        const replacementOrderItems = status != "" &&  orderItems?.replacement_items ? orderItems?.replacement_items : orderItems?.length > 0 ? orderItems?.filter(item => item?.is_replacement === true) : [];
+        const returnOrderItems = status != "" &&  orderItems?.return_items ? orderItems?.return_items :orderItems?.length > 0 ? orderItems?.filter(item => item?.is_return === true) : [];
+        const tradeinOrderItems = status != "" && orderItems?.trade_items ? orderItems?.trade_items : orderItems?.length > 0 ? orderItems?.filter(item => item?.is_trade_in === true) : [];   
+ 
         const updatedOrderType = salesOrderItems?.filter(i => i.is_active_for === 3)?.length ? "Repair" : "Sale";
 
         // From and To Information
@@ -255,6 +257,7 @@ async function generateA4Receipt(receiptData) {
 
         if (customer) {
             doc.moveDown(1);
+            
             doc.font('Helvetica-Bold').text(`Bill To:`, 40, doc.y + 50, { underline: true });
             doc.font('Helvetica').text(`${customer.full_name}`, 40);
             if (customer.address !== "") { doc.text(`Address: ${customer.address}`, 40); }
@@ -611,13 +614,8 @@ function generateAndPrintReceipt(receiptData) {
         const replacementOrderItems = status != "" &&  orderItems?.replacement_items ? orderItems?.replacement_items : orderItems?.length > 0 ? orderItems?.filter(item => item?.is_replacement === true) : [];
         const returnOrderItems = status != "" &&  orderItems?.return_items ? orderItems?.return_items :orderItems?.length > 0 ? orderItems?.filter(item => item?.is_return === true) : [];
         const tradeinOrderItems = status != "" && orderItems?.trade_items ? orderItems?.trade_items : orderItems?.length > 0 ? orderItems?.filter(item => item?.is_trade_in === true) : [];   
-       console.log("salesOrderItems", salesOrderItems)
-       console.log("replacementOrderItems", replacementOrderItems)
-       console.log("returnOrderItems", returnOrderItems)
-       console.log("tradeinOrderItems", tradeinOrderItems)
-      
+ 
 
-  
     const updatedOrderType = salesOrderItems?.filter(i => i.is_active_for === 3)?.length ? "Repair" : "Sale";
 
     // Initialize the receipt buffer
