@@ -281,7 +281,7 @@ async function generateA4Receipt(receiptData) {
                 rows: salesOrderItems.map((item, i) => {
                     const row = [];
                     row.push(i + 1);
-                    let productLine = `${item.Product?.product_no ? item.Product?.product_no : item?.product_no}-${item?.Product?.name ? item.Product.name : item?.product_name}`;
+                    let productLine = `${item?.Product?.name ? item.Product.name : item?.product_name}`;
 
                     const imeiType = item.product_sn_imei_type === 1 ? " IMEI" : " Serial No";
                     const imei = item?.product_sn_imei_no && item?.product_sn_imei_no !== "" ? `\n${imeiType}: ${item.product_sn_imei_no}` : "";
@@ -341,7 +341,7 @@ async function generateA4Receipt(receiptData) {
                 rows: returnOrderItems.map((item, i) => {
                     const row = [];
                     row.push(i + 1);
-                    let productLine = `${item.Product?.product_no ? item.Product?.product_no : item?.product_no}-${item?.Product?.name ? item.Product.name : item?.product_name}`;
+                    let productLine = `${item?.Product?.name ? item.Product.name : item?.product_name}`;
 
                     const imeiType = item.product_sn_imei_type === 1 ? " IMEI" : " Serial No";
                     const imei = item?.product_sn_imei_no && item?.product_sn_imei_no !== "" ? `\n${imeiType}: ${item.product_sn_imei_no}` : "";
@@ -402,7 +402,7 @@ async function generateA4Receipt(receiptData) {
                 rows: replacementOrderItems.map((item, i) => {
                     const row = [];
                     row.push(i + 1);
-                    let productLine = `${item.Product?.product_no ? item.Product?.product_no : item?.product_no}-${item?.Product?.name ? item.Product.name : item?.product_name}`;
+                    let productLine = `${item?.Product?.name ? item.Product.name : item?.product_name}`;
 
                     const imeiType = item.product_sn_imei_type === 1 ? " IMEI" : " Serial No";
                     const imei = item?.product_sn_imei_no && item?.product_sn_imei_no !== "" ? `\n${imeiType}: ${item.product_sn_imei_no}` : "";
@@ -582,24 +582,42 @@ function generateAndPrintReceipt(receiptData) {
 
     const formatCurrency = (amount) => {
 
-        return amount.toFixed(2);
+        return amount?.toFixed(2);
     };
+
+    console.log(receiptData, "=====");
     const isDuplicate = receiptData.isDuplicate || false;
     const status = receiptData.order?.cart_status === 3 ? "Pending" : receiptData.order?.cart_status === 4 ? "In-Progress" : '';
     // Extract business, customer, and user details from receiptData
     const business = receiptData.order.Business || receiptData.order.business;
     const customer = receiptData.order.Customer || receiptData.order.customer;
 
+    const userAssignment = receiptData?.order?.User_customer_assignment;
+    const assignedUser = userAssignment?.User || userAssignment;
+    
+    const servedBy = assignedUser !== null
+    ? `${assignedUser.first_name || ""} ${assignedUser.last_name || ""}`.trim() 
+    : "";
+    
+
     let customer_note = receiptData?.order?.customer_note;
     const user = receiptData.order.User || receiptData.order.user;
     const { sell_print_data, repair_print_data } = receiptData.businessData;
-    const orderItems = receiptData.order?.Cart_items?.length > 0 ? receiptData?.order?.Cart_items : receiptData?.order?.Sub_orders[0].Order_items?.length > 0 ? receiptData?.order.Sub_orders[0].Order_items : [];
+    const orderItems = receiptData?.order?.Sub_orders[0].Order_items  ? receiptData?.order?.Sub_orders[0].Order_items : receiptData?.order?.Sub_orders[0].Order_items?.length > 0 ? receiptData?.order.Sub_orders[0].Order_items : [];
+    
+   
+   
+        const salesOrderItems =  status != "" && orderItems?.sale_items ? orderItems?.sale_items : orderItems?.length > 0 ? orderItems?.filter(item => item?.is_replacement === false && item?.is_return === false && item?.is_trade_in === false) : [];
+        const replacementOrderItems = status != "" &&  orderItems?.replacement_items ? orderItems?.replacement_items : orderItems?.length > 0 ? orderItems?.filter(item => item?.is_replacement === true) : [];
+        const returnOrderItems = status != "" &&  orderItems?.return_items ? orderItems?.return_items :orderItems?.length > 0 ? orderItems?.filter(item => item?.is_return === true) : [];
+        const tradeinOrderItems = status != "" && orderItems?.trade_items ? orderItems?.trade_items : orderItems?.length > 0 ? orderItems?.filter(item => item?.is_trade_in === true) : [];   
+       console.log("salesOrderItems", salesOrderItems)
+       console.log("replacementOrderItems", replacementOrderItems)
+       console.log("returnOrderItems", returnOrderItems)
+       console.log("tradeinOrderItems", tradeinOrderItems)
+      
 
-    const salesOrderItems = orderItems?.length > 0 ? orderItems?.filter(item => item?.is_replacement === false && item?.is_return === false && item?.is_trade_in === false) : [];
-    const replacementOrderItems = orderItems?.length > 0 ? orderItems?.filter(item => item?.is_replacement === true) : [];
-    const returnOrderItems = orderItems?.length > 0 ? orderItems?.filter(item => item?.is_return === true) : [];
-    const tradeinOrderItems = orderItems?.length > 0 ? orderItems?.filter(item => item?.is_trade_in === true) : [];
-
+  
     const updatedOrderType = salesOrderItems?.filter(i => i.is_active_for === 3)?.length ? "Repair" : "Sale";
 
     // Initialize the receipt buffer
@@ -612,43 +630,53 @@ function generateAndPrintReceipt(receiptData) {
 
     receiptBuffer.push(Buffer.from([0x1B, 0x74, 0x19])); // Select Code Page 858 (CP858)
 
+    if(!sell_print_data?.show_business_info){
     receiptBuffer.push(Buffer.from([0x1B, 0x61, 0x01]));  // Center align
     receiptBuffer.push(Buffer.from([0x1B, 0x45, 0x01])); // Bold ON
     receiptBuffer.push(Buffer.from([0x1D, 0x21, 0x01]));
-
     receiptBuffer.push(Buffer.from(`${business.business_name}`));
     receiptBuffer.push(Buffer.from([0x1D, 0x21, 0x00]));
     receiptBuffer.push(Buffer.from([0x1B, 0x45, 0x00])); // Bold ON
-
+    }
+    receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Re-initialize printer
+    receiptBuffer.push(Buffer.from([0x1B, 0x61]));  // Left align
     if (isDuplicate) {
         receiptBuffer.push(Buffer.from('\n\n********* DUPLICATE RECEIPT *********'));
     }
+    
     if(!sell_print_data?.show_business_info){
         receiptBuffer.push(Buffer.from(`\n\n${business.business_address}\n`));
-        receiptBuffer.push(Buffer.from(`${business.post_code}\n`));
-        receiptBuffer.push(Buffer.from(`Tel: ${business.business_phone_no}\n`));
-        receiptBuffer.push(Buffer.from(`WhatsApp: ${business.business_whatsapp_no}\n\n`));
+        receiptBuffer.push(Buffer.from(` ${business?.post_code}\n`));
+        const sanitizedPhone = business?.business_phone_no
+            .replace(/[^0-9]/g, '') // Keep only numbers
+            .replace(/^44/, '0');    // Replace '+44' or '44' with '0'
+
+            const sanitizedWhatsapp = business?.business_whatsapp_no
+            .replace(/[^0-9]/g, '')  // Keep only numbers
+            .replace(/^44/, '0');     // Replace '+44' or '44' with '0'
+
+        receiptBuffer.push(Buffer.from(`Tel: ${sanitizedPhone}\n`));
+        receiptBuffer.push(Buffer.from(`WhatsApp: ${sanitizedWhatsapp}\n\n`));
     }
-    // Add receipt information
-    receiptBuffer.push(Buffer.from('----------------------------------------\n'));
-    receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Re-initialize printer
-    receiptBuffer.push(Buffer.from([0x1B, 0x61]));  // Left align
-    receiptBuffer.push(Buffer.from(` Date: ${new Date(receiptData.order.created_at).toLocaleString()}\n`));
+    
+  
+    receiptBuffer.push(Buffer.from(`Date: ${new Date(receiptData.order.created_at).toLocaleString()}\n`));
     receiptBuffer.push(Buffer.from(`Terminal: ${user.first_name} ${user.last_name}\n`));
     receiptBuffer.push(Buffer.from(`Order Type: ${updatedOrderType}\n`));
     receiptBuffer.push(Buffer.from(`Receipt #: ${receiptData.order.cart_no}\n\n`));
 
 
     if (customer) {
-        receiptBuffer.push(Buffer.from('----------------------------------------\n'));
+        receiptBuffer.push(Buffer.from('\n'));
         receiptBuffer.push(Buffer.from(`Name: ${customer.full_name}\n`));
         if (customer.cell_no) { receiptBuffer.push(Buffer.from(`Mobile: ${customer.cell_no}\n`)); }
         if (customer.email !== "") { receiptBuffer.push(Buffer.from(`Email: ${customer.email}\n`)); }
         if (customer.address !== "") { receiptBuffer.push(Buffer.from(`Address: ${customer.address}\n`)); }
-        receiptBuffer.push(Buffer.from('----------------------------------------\n'));
+        if(servedBy !== "") {  receiptBuffer.push(Buffer.from(`Served By: ${servedBy}\n`));  }
     }
     // // // Add Header for Sales Items
     if (salesOrderItems?.length > 0) {
+        receiptBuffer.push(Buffer.from('\n'));
         receiptBuffer.push(Buffer.from([0x1B, 0x45, 0x01])); // Bold ON
         receiptBuffer.push(Buffer.from(`Sale (${salesOrderItems?.length || 0})`));
         receiptBuffer.push(Buffer.from([0x1B, 0x45, 0x00])); // Bold ON
@@ -657,105 +685,72 @@ function generateAndPrintReceipt(receiptData) {
 
     // Process Sales Items
     if (salesOrderItems?.length > 0) {
-        receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Initialize printer
-        receiptBuffer.push(Buffer.from([0x1B, 0x61]));  // Left align
+        receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Initialize printer once
+    
         salesOrderItems.forEach((item, i) => {
-            // Product Details: Align product number and name
-
+            receiptBuffer.push(Buffer.from([0x1B, 0x61, 0x00]));  // Reset to left align for product names
+            let productName = item?.Product?.name || item?.product_name || "Unknown Product";
+            
             if (item?.current_price > 0) {
-
-                receiptBuffer.push(
-                    Buffer.concat([
-                        Buffer.from(` ${item.Product?.product_no ? item.Product?.product_no : item?.product_no}-${item?.Product?.name ? item.Product.name : item?.product_name} - (${item.quantity}x`),
-                        Buffer.from([0x1B, 0x74, 0x19, 0x9C]),
-                        Buffer.from(`${formatCurrency(item.current_price)}=`),
-                        Buffer.from([0x1B, 0x74, 0x19, 0x9C]),
-                        Buffer.from(`${formatCurrency((item.current_price) * item.quantity)})\n`)
-                    ]));
+                receiptBuffer.push(Buffer.from(` ${productName} - (${item.quantity}x`));
+                receiptBuffer.push(Buffer.from([0x1B, 0x74, 0x19, 0x9C])); // Currency symbol
+                receiptBuffer.push(Buffer.from(`${formatCurrency(item.current_price)}=`));
+                receiptBuffer.push(Buffer.from(`${formatCurrency(item.current_price * item.quantity)})\n`));
             } else {
-                receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Initialize printer
-                receiptBuffer.push(Buffer.from([0x1B, 0x61]));  // Left align
-                receiptBuffer.push(Buffer.from(` ${item.Product?.product_no ? item.Product?.product_no : item?.product_no}-${item?.Product?.name ? item.Product.name : item?.product_name}\n`));
+                receiptBuffer.push(Buffer.from(` ${productName}\n`));
             }
-
-            if (item?.item_discount && item.item_discount > 0) {
-                receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Initialize printer
-                receiptBuffer.push(Buffer.from([0x1B, 0x61]));  // Left align
-                receiptBuffer.push(
-                    Buffer.concat([
-                        Buffer.from(` Discount: `),
-                        Buffer.from([0x1B, 0x74, 0x19, 0x9C]),
-                        Buffer.from(`${formatCurrency(item.item_discount)}\n`)
-                    ])
-                );
+    
+            if (item.item_discount != null && item.item_discount > 0) {
+                receiptBuffer.push(Buffer.from(` Discount: ${formatCurrency(item.item_discount)}\n`));
             }
-
-            // IMEI or Serial No: Add IMEI/Serial No if available
-            if (item?.product_sn_imei_no) {
+    
+            if (item.product_sn_imei_no && item.product_sn_imei_no.trim()) {
                 const imeiType = item.product_sn_imei_type === 1 ? " IMEI" : " Serial No";
-                receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Initialize printer
-                receiptBuffer.push(Buffer.from([0x1B, 0x61]));  // Left align
                 receiptBuffer.push(Buffer.from(`${imeiType}: ${item.product_sn_imei_no}\n`));
             }
-
-            // notes or Serial No: Add IMEI/Serial No if available
-            if (item?.product_sn_imei_description) {
-                receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Initialize printer
-                receiptBuffer.push(Buffer.from([0x1B, 0x61]));  // Left align
+    
+            if (item.product_sn_imei_description) {
                 receiptBuffer.push(Buffer.from(` ${item.product_sn_imei_description}\n`));
             }
-
-            // Additional Custom Fields: For repair or other custom data
-            if (item?.repair_work_data?.customer_field_data?.length > 0) {
-                item?.repair_work_data?.customer_field_data.forEach((field) => {
+    
+            if (item.repair_work_data?.customer_field_data?.length > 0) {
+                item.repair_work_data.customer_field_data.forEach(field => {
                     if (field.value) {
-                        receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Initialize printer
-                        receiptBuffer.push(Buffer.from([0x1B, 0x61]));  // Left align
                         receiptBuffer.push(Buffer.from(`${field.field_label}: ${field.value}\n`));
                     }
                 });
             }
-
+    
             if (item.Order_question_options?.length > 0) {
                 const groupedOptions = item.Order_question_options.reduce((acc, option) => {
                     const { question_title, option_label } = option;
-                    if (!acc[question_title]) {
-                        acc[question_title] = [];
+                    if (question_title && option_label) {
+                        acc[question_title] = acc[question_title] || [];
+                        acc[question_title].push(option_label);
                     }
-                    acc[question_title].push(option_label);
                     return acc;
                 }, {});
-
+    
                 Object.entries(groupedOptions).forEach(([questionTitle, options]) => {
-
-                    receiptBuffer.push(Buffer.from(`${questionTitle}: ${options.join(", ")}`))
+                    receiptBuffer.push(Buffer.from(`${questionTitle}: ${options.join(", ")}\n`));
                 });
             }
+    
             if (item.current_price > 0) {
-                receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Initialize printer
-                receiptBuffer.push(Buffer.from([0x1B, 0x61, 0x02]));  // right align
-                // Pricing and Quantity: Format price and quantity
-                const priceLine = `${formatCurrency((item.current_price - item.item_discount) * item.quantity)}`;
-                receiptBuffer.push(
-                    Buffer.concat([
-                        Buffer.from([0x1B, 0x74, 0x19, 0x9C]),
-                        Buffer.from(`${priceLine}\n`)
-                    ])
-                );
-            }
-            if (i < salesOrderItems?.length - 1) {
-                // receiptBuffer.push(Buffer.from(`${priceLine}\n`));
-                receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Initialize printer
-                receiptBuffer.push(Buffer.from([0x1B, 0x61]));  // left align
-                // Add separator line after each item
+                receiptBuffer.push(Buffer.from([0x1B, 0x61, 0x02]));  // Right align for price only
+                const priceLine = formatCurrency(item?.after_discount_price || item?.after_discount_item_total_price);
+                receiptBuffer.push(Buffer.from(`${priceLine}\n`));
+                receiptBuffer.push(Buffer.from([0x1B, 0x61, 0x00]));  // Reset to left align after price
             }
         });
-    }
+    } 
+    
+
 
     // // Add Header for Sales Items
     if (returnOrderItems?.length > 0) {
         receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Initialize printer
-        receiptBuffer.push(Buffer.from('\n----------------------------------------\n'));
+        receiptBuffer.push(Buffer.from('\n'));
         receiptBuffer.push(Buffer.from([0x1B, 0x45, 0x01])); // Bold ON
         receiptBuffer.push(Buffer.from([0x1B, 0x61]));  // left align
         receiptBuffer.push(Buffer.from(` RETURNS (${returnOrderItems?.length || 0})`));
@@ -764,104 +759,69 @@ function generateAndPrintReceipt(receiptData) {
     }
      // Process Return Items
      if (returnOrderItems?.length > 0) {
-        receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Initialize printer
-        receiptBuffer.push(Buffer.from([0x1B, 0x61]));  // Left align
+        receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Initialize printer once
+    
         returnOrderItems.forEach((item, i) => {
-            // Product Details: Align product number and name
-
+            receiptBuffer.push(Buffer.from([0x1B, 0x61, 0x00]));  // Reset to left align for product names
+            let productName = item?.Product?.name || item?.product_name || "Unknown Product";
+            
             if (item?.current_price !== 0) {
-
-                receiptBuffer.push(
-                    Buffer.concat([
-                        Buffer.from(` ${item.Product?.product_no ? item.Product?.product_no : item?.product_no}-${item?.Product?.name ? item.Product.name : item?.product_name} - (${item.quantity}x`),
-                        Buffer.from([0x1B, 0x74, 0x19, 0x9C]),
-                        Buffer.from(`${formatCurrency(item.current_price)}=`),
-                        Buffer.from([0x1B, 0x74, 0x19, 0x9C]),
-                        Buffer.from(`${formatCurrency((item.current_price) * item.quantity)})\n`)
-                    ]));
+                receiptBuffer.push(Buffer.from(` ${productName} - (${item.quantity}x`));
+                receiptBuffer.push(Buffer.from([0x1B, 0x74, 0x19, 0x9C])); // Currency symbol
+                receiptBuffer.push(Buffer.from(`${formatCurrency(item.current_price)}=`));
+                receiptBuffer.push(Buffer.from(`${formatCurrency(item.current_price * item.quantity)})\n`));
             } else {
-                receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Initialize printer
-                receiptBuffer.push(Buffer.from([0x1B, 0x61]));  // Left align
-                receiptBuffer.push(Buffer.from(` ${item.Product?.product_no ? item.Product?.product_no : item?.product_no}-${item?.Product?.name ? item.Product.name : item?.product_name}\n`));
+                receiptBuffer.push(Buffer.from(` ${item.quantity} x ${productName}\n`));
             }
-
-            if (item?.item_discount && item.item_discount > 0) {
-                receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Initialize printer
-                receiptBuffer.push(Buffer.from([0x1B, 0x61]));  // Left align
-                receiptBuffer.push(
-                    Buffer.concat([
-                        Buffer.from(` Discount: `),
-                        Buffer.from([0x1B, 0x74, 0x19, 0x9C]),
-                        Buffer.from(`${formatCurrency(item.item_discount)}\n`)
-                    ])
-                );
+    
+            if (item.item_discount != null && item.item_discount > 0) {
+                receiptBuffer.push(Buffer.from(` Discount: ${formatCurrency(item.item_discount)}\n`));
             }
-
-            // IMEI or Serial No: Add IMEI/Serial No if available
-            if (item?.product_sn_imei_no) {
+    
+            if (item.product_sn_imei_no && item.product_sn_imei_no.trim()) {
                 const imeiType = item.product_sn_imei_type === 1 ? " IMEI" : " Serial No";
-                receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Initialize printer
-                receiptBuffer.push(Buffer.from([0x1B, 0x61]));  // Left align
                 receiptBuffer.push(Buffer.from(`${imeiType}: ${item.product_sn_imei_no}\n`));
             }
-
-            // notes or Serial No: Add IMEI/Serial No if available
-            if (item?.product_sn_imei_description) {
-                receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Initialize printer
-                receiptBuffer.push(Buffer.from([0x1B, 0x61]));  // Left align
+    
+            if (item.product_sn_imei_description) {
                 receiptBuffer.push(Buffer.from(` ${item.product_sn_imei_description}\n`));
             }
-
-            // Additional Custom Fields: For repair or other custom data
-            if (item?.repair_work_data?.customer_field_data?.length > 0) {
-                item?.repair_work_data?.customer_field_data.forEach((field) => {
+    
+            if (item.repair_work_data?.customer_field_data?.length > 0) {
+                item.repair_work_data.customer_field_data.forEach(field => {
                     if (field.value) {
-                        receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Initialize printer
-                        receiptBuffer.push(Buffer.from([0x1B, 0x61]));  // Left align
                         receiptBuffer.push(Buffer.from(`${field.field_label}: ${field.value}\n`));
                     }
                 });
             }
-
+    
             if (item.Order_question_options?.length > 0) {
                 const groupedOptions = item.Order_question_options.reduce((acc, option) => {
                     const { question_title, option_label } = option;
-                    if (!acc[question_title]) {
-                        acc[question_title] = [];
+                    if (question_title && option_label) {
+                        acc[question_title] = acc[question_title] || [];
+                        acc[question_title].push(option_label);
                     }
-                    acc[question_title].push(option_label);
                     return acc;
                 }, {});
-
+    
                 Object.entries(groupedOptions).forEach(([questionTitle, options]) => {
-
-                    receiptBuffer.push(Buffer.from(`${questionTitle}: ${options.join(", ")}`))
+                    receiptBuffer.push(Buffer.from(`${questionTitle}: ${options.join(", ")}\n`));
                 });
             }
-            if (item.current_price > 0) {
-                receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Initialize printer
-                receiptBuffer.push(Buffer.from([0x1B, 0x61, 0x02]));  // right align
-                // Pricing and Quantity: Format price and quantity
-                const priceLine = `${formatCurrency((item.current_price - item.item_discount) * item.quantity)}`;
-                receiptBuffer.push(
-                    Buffer.concat([
-                        Buffer.from([0x1B, 0x74, 0x19, 0x9C]),
-                        Buffer.from(`${priceLine}\n`)
-                    ])
-                );
-            }
-            if (i < salesOrderItems?.length - 1) {
-                // receiptBuffer.push(Buffer.from(`${priceLine}\n`));
-                receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Initialize printer
-                receiptBuffer.push(Buffer.from([0x1B, 0x61]));  // left align
-                // Add separator line after each item
+    
+            if (item.current_price !== 0) {
+                receiptBuffer.push(Buffer.from([0x1B, 0x61, 0x02]));  // Right align for price only
+                const priceLine = formatCurrency(item?.after_discount_price || item?.after_discount_item_total_price);
+                receiptBuffer.push(Buffer.from(`${priceLine}\n`));
+                receiptBuffer.push(Buffer.from([0x1B, 0x61, 0x00]));  // Reset to left align after price
             }
         });
     }
 
     // Add Header for Replacement Items if applicable
     if (replacementOrderItems?.length > 0) {
-        receiptBuffer.push(Buffer.from('\n----------------------------------------\n'));
+        receiptBuffer.push(Buffer.from('\n'));
         receiptBuffer.push(Buffer.from([0x1B, 0x45, 0x01])); // Bold ON
         receiptBuffer.push(Buffer.from([0x1B, 0x61]));  // left align
         receiptBuffer.push(Buffer.from(` REPLACEMENT (${replacementOrderItems?.length || 0})`));
@@ -871,31 +831,47 @@ function generateAndPrintReceipt(receiptData) {
 
     // Process Replacement Items
     if (replacementOrderItems?.length > 0) {
-        replacementOrderItems.forEach((item) => {
-            // Product Details: Format quantity, product number, and name for replacements
-            const productLine = `${padRight(`${item.quantity} x ${item?.Product?.product_no || item.product_no}`, 3)} - ${padRight(item?.Product?.name || item.product_name, 3)}`;
-            receiptBuffer.push(Buffer.from([0x1B, 0x61]));  // Left align
-            receiptBuffer.push(Buffer.from(` ${productLine}\n`));
-
-            // Additional Details for Replacement Items
-            if (item.product_sn_imei_no) {
-                receiptBuffer.push(Buffer.from([0x1B, 0x61]));  // Left align
-                const imeiType = item.product_sn_imei_type === 1 ? "IMEI" : "Serial No";
+        replacementOrderItems.forEach((item, i) => {
+            receiptBuffer.push(Buffer.from([0x1B, 0x61, 0x00]));  // Reset to left align for product names
+            let productName = item?.Product?.name || item?.product_name || "Unknown Product";
+            
+            if (item?.current_price > 0) {
+                receiptBuffer.push(Buffer.from(` ${item.quantity} x ${productName} \n`));
+            } else {
+                receiptBuffer.push(Buffer.from(` ${item.quantity} x ${productName}\n`));
+            }
+    
+        
+    
+            if (item.product_sn_imei_no && item.product_sn_imei_no.trim()) {
+                const imeiType = item.product_sn_imei_type === 1 ? " IMEI" : " Serial No";
                 receiptBuffer.push(Buffer.from(`${imeiType}: ${item.product_sn_imei_no}\n`));
             }
-
-            // notes or Serial No: Add IMEI/Serial No if available
+    
             if (item.product_sn_imei_description) {
-                receiptBuffer.push(Buffer.from([0x1B, 0x61]));  // Left align
                 receiptBuffer.push(Buffer.from(` ${item.product_sn_imei_description}\n`));
             }
-
+    
             if (item.repair_work_data?.customer_field_data?.length > 0) {
-                item.repair_work_data.customer_field_data.forEach((field) => {
+                item.repair_work_data.customer_field_data.forEach(field => {
                     if (field.value) {
-                        receiptBuffer.push(Buffer.from([0x1B, 0x61]));  // Left align
                         receiptBuffer.push(Buffer.from(`${field.field_label}: ${field.value}\n`));
                     }
+                });
+            }
+    
+            if (item.Order_question_options?.length > 0) {
+                const groupedOptions = item.Order_question_options.reduce((acc, option) => {
+                    const { question_title, option_label } = option;
+                    if (question_title && option_label) {
+                        acc[question_title] = acc[question_title] || [];
+                        acc[question_title].push(option_label);
+                    }
+                    return acc;
+                }, {});
+    
+                Object.entries(groupedOptions).forEach(([questionTitle, options]) => {
+                    receiptBuffer.push(Buffer.from(`${questionTitle}: ${options.join(", ")}\n`));
                 });
             }
         });
@@ -904,7 +880,7 @@ function generateAndPrintReceipt(receiptData) {
     // Trade in 
      // Add Header for Replacement Items if applicable
      if (tradeinOrderItems?.length > 0) {
-        receiptBuffer.push(Buffer.from('\n----------------------------------------\n'));
+        receiptBuffer.push(Buffer.from('\n'));
         receiptBuffer.push(Buffer.from([0x1B, 0x45, 0x01])); // Bold ON
         receiptBuffer.push(Buffer.from([0x1B, 0x61]));  // left align
         receiptBuffer.push(Buffer.from(` Trade-in (${tradeinOrderItems?.length || 0})`));
@@ -915,94 +891,59 @@ function generateAndPrintReceipt(receiptData) {
     // Process Replacement Items
     if (tradeinOrderItems?.length > 0) {
         tradeinOrderItems.forEach((item, i) => {
-            // Product Details: Align product number and name
-
-            if (item?.current_price !== 0) {
-
-                receiptBuffer.push(
-                    Buffer.concat([
-                        Buffer.from(` ${item.Product?.product_no ? item.Product?.product_no : item?.product_no}-${item?.Product?.name ? item.Product.name : item?.product_name} - (${item.quantity}x`),
-                        Buffer.from([0x1B, 0x74, 0x19, 0x9C]),
-                        Buffer.from(`${formatCurrency(item.current_price)}=`),
-                        Buffer.from([0x1B, 0x74, 0x19, 0x9C]),
-                        Buffer.from(`${formatCurrency((item.current_price) * item.quantity)})\n`)
-                    ]));
+            receiptBuffer.push(Buffer.from([0x1B, 0x61, 0x00]));  // Reset to left align for product names
+            let productName = item?.Product?.name || item?.product_name || "Unknown Product";
+            
+            if (item?.current_price != 0) {
+                receiptBuffer.push(Buffer.from(` ${productName} - (${item.quantity}x`));
+                receiptBuffer.push(Buffer.from([0x1B, 0x74, 0x19, 0x9C])); // Currency symbol
+                receiptBuffer.push(Buffer.from(`${formatCurrency(item.current_price)}=`));
+                receiptBuffer.push(Buffer.from(`${formatCurrency(item.current_price * item.quantity)})\n`));
             } else {
-                receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Initialize printer
-                receiptBuffer.push(Buffer.from([0x1B, 0x61]));  // Left align
-                receiptBuffer.push(Buffer.from(` ${item.Product?.product_no ? item.Product?.product_no : item?.product_no}-${item?.Product?.name ? item.Product.name : item?.product_name}\n`));
+                receiptBuffer.push(Buffer.from(` ${productName}\n`));
             }
-
-            if (item?.item_discount && item.item_discount > 0) {
-                receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Initialize printer
-                receiptBuffer.push(Buffer.from([0x1B, 0x61]));  // Left align
-                receiptBuffer.push(
-                    Buffer.concat([
-                        Buffer.from(` Discount: `),
-                        Buffer.from([0x1B, 0x74, 0x19, 0x9C]),
-                        Buffer.from(`${formatCurrency(item.item_discount)}\n`)
-                    ])
-                );
+    
+            if (item.item_discount != null && item.item_discount > 0) {
+                receiptBuffer.push(Buffer.from(` Discount: ${formatCurrency(item.item_discount)}\n`));
             }
-
-            // IMEI or Serial No: Add IMEI/Serial No if available
-            if (item?.product_sn_imei_no) {
+    
+            if (item.product_sn_imei_no && item.product_sn_imei_no.trim()) {
                 const imeiType = item.product_sn_imei_type === 1 ? " IMEI" : " Serial No";
-                receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Initialize printer
-                receiptBuffer.push(Buffer.from([0x1B, 0x61]));  // Left align
                 receiptBuffer.push(Buffer.from(`${imeiType}: ${item.product_sn_imei_no}\n`));
             }
-
-            // notes or Serial No: Add IMEI/Serial No if available
-            if (item?.product_sn_imei_description) {
-                receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Initialize printer
-                receiptBuffer.push(Buffer.from([0x1B, 0x61]));  // Left align
+    
+            if (item.product_sn_imei_description) {
                 receiptBuffer.push(Buffer.from(` ${item.product_sn_imei_description}\n`));
             }
-
-            // Additional Custom Fields: For repair or other custom data
-            if (item?.repair_work_data?.customer_field_data?.length > 0) {
-                item?.repair_work_data?.customer_field_data.forEach((field) => {
+    
+            if (item.repair_work_data?.customer_field_data?.length > 0) {
+                item.repair_work_data.customer_field_data.forEach(field => {
                     if (field.value) {
-                        receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Initialize printer
-                        receiptBuffer.push(Buffer.from([0x1B, 0x61]));  // Left align
                         receiptBuffer.push(Buffer.from(`${field.field_label}: ${field.value}\n`));
                     }
                 });
             }
-
+    
             if (item.Order_question_options?.length > 0) {
                 const groupedOptions = item.Order_question_options.reduce((acc, option) => {
                     const { question_title, option_label } = option;
-                    if (!acc[question_title]) {
-                        acc[question_title] = [];
+                    if (question_title && option_label) {
+                        acc[question_title] = acc[question_title] || [];
+                        acc[question_title].push(option_label);
                     }
-                    acc[question_title].push(option_label);
                     return acc;
                 }, {});
-
+    
                 Object.entries(groupedOptions).forEach(([questionTitle, options]) => {
-
-                    receiptBuffer.push(Buffer.from(`${questionTitle}: ${options.join(", ")}`))
+                    receiptBuffer.push(Buffer.from(`${questionTitle}: ${options.join(", ")}\n`));
                 });
             }
-            if (item.current_price > 0) {
-                receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Initialize printer
-                receiptBuffer.push(Buffer.from([0x1B, 0x61, 0x02]));  // right align
-                // Pricing and Quantity: Format price and quantity
-                const priceLine = `${formatCurrency((item.current_price - item.item_discount) * item.quantity)}`;
-                receiptBuffer.push(
-                    Buffer.concat([
-                        Buffer.from([0x1B, 0x74, 0x19, 0x9C]),
-                        Buffer.from(`${priceLine}\n`)
-                    ])
-                );
-            }
-            if (i < salesOrderItems?.length - 1) {
-                // receiptBuffer.push(Buffer.from(`${priceLine}\n`));
-                receiptBuffer.push(Buffer.from([0x1B, 0x40]));  // Initialize printer
-                receiptBuffer.push(Buffer.from([0x1B, 0x61]));  // left align
-                // Add separator line after each item
+    
+            if (item.current_price !== 0) {
+                receiptBuffer.push(Buffer.from([0x1B, 0x61, 0x02]));  // Right align for price only
+                const priceLine = formatCurrency(item?.after_discount_price || item?.after_discount_item_total_price);
+                receiptBuffer.push(Buffer.from(`${priceLine}\n`));
+                receiptBuffer.push(Buffer.from([0x1B, 0x61, 0x00]));  // Reset to left align after price
             }
         });
     }
@@ -1179,7 +1120,8 @@ function generateAndPrintReceipt(receiptData) {
     if (customer_note && customer_note !== "") {
         receiptBuffer.push(Buffer.from(stripHtml(customer_note)));
     }
-
+    // Initialize Printer
+    receiptBuffer.push(Buffer.from([0x1B, 0x40])); // Reset printer
     receiptBuffer.push(Buffer.from([0x1B, 0x61, 0x01]));
     receiptBuffer.push(Buffer.from(`\nThank you for your visit!\n`))
     receiptBuffer.push(Buffer.from(`See you soon!\n\n`))
