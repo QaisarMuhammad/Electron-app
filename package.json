@@ -1,42 +1,61 @@
 {
   "name": "electron-app",
   "productName": "Gadgets POS",
-  "version": "1.0.0",
+  "version": "1.1.0",
+  "description": "POS application for Gadgets POS",
   "main": "index.js",
   "scripts": {
     "start": "electron .",
     "build": "webpack --mode production",
+    "dist": "electron-builder",
     "package": "electron-packager . GadgetsPOS --platform=all --icon=assets/icon --overwrite",
+    "postinstall": "electron-builder install-app-deps",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "build": {
     "appId": "com.example.gadgetspos",
     "productName": "Gadgets POS",
-    "icon": "assets/icon",
+    "icon": "assets/icon.ico",
+    "directories": {
+      "output": "dist"
+    },
     "files": [
       "index.js",
+      "preload.js",
+      "printer-config.html",
+      "printer-a4-config.html",
+      "printer-label-config.html",
+      "reset-password.html",
+      "password-prompt.html",
+      "dymo-loader.html",
+      "dymo-preload.js",
+      "dymo.connect.framework.js",
+      "Labeldesign1_1.dymo",
+      "Labeldesign2.dymo",
+      "LabeldesignRepair.dymo",
+      "mukltipleBarcode.dymo",
+      "multipleQRCODE.dymo",
       "assets/**/*",
       "package.json"
     ],
     "win": {
-      "icon": "assets/icon.ico"
+      "icon": "assets/icon.ico",
+      "target": "nsis"
     },
     "mac": {
-      "icon": "assets/icon.icns"
+      "icon": "assets/icon.icns",
+      "identity": null
+
     },
     "linux": {
       "icon": "assets/icon.png"
     }
   },
-  "keywords": [
-    "electron",
-    "gadgets",
-    "POS"
-  ],
-  "author": "DoneSol Technologies",
-  "license": "ISC",
   "devDependencies": {
+    "@babel/core": "^7.28.4",
+    "@babel/preset-env": "^7.28.3",
     "@electron/rebuild": "^3.6.0",
+    "babel-loader": "^10.0.0",
     "electron": "^32.1.2",
     "electron-builder": "^24.13.3",
     "electron-packager": "^17.1.2",
@@ -46,29 +65,26 @@
     "webpack-node-externals": "^3.0.0"
   },
   "dependencies": {
-    "@electron/remote": "^2.1.2",
-    "bwip-js": "^4.5.1",
+    "@types/dymo-label-framework": "^1.2.37",
+    "bwip-js": "^4.5.2",
     "child_process": "^1.0.2",
     "dotenv": "^16.4.5",
     "electron-log": "^5.2.0",
-    "electron-pos-printer": "^1.3.7",
-    "electron-printer": "0.0.5",
     "electron-store": "^10.0.0",
-    "escpos": "^3.0.0-alpha.6",
-    "escpos-network": "^3.0.0-alpha.5",
-    "escpos-usb": "^3.0.0-alpha.4",
     "iconv-lite": "^0.6.3",
-    "node-printer": "^1.0.4",
-    "node-thermal-printer": "^4.4.3",
-    "node-thermal-printer-driver": "0.0.2",
     "pdfkit": "^0.15.2",
-    "pdfkit-table": "^0.1.99",
-    "pdfmake": "^0.3.0-beta.14",
-    "printer": "^0.4.0",
     "puppeteer": "^23.11.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "serialport": "^12.0.0",
     "usb": "^1.9.2",
     "winston": "^3.14.2"
   },
-  "description": "POS application for Gadgets POS"
+  "author": "DoneSol Technologies",
+  "license": "ISC",
+  "keywords": [
+    "electron",
+    "gadgets",
+    "POS"
+  ]
 }

@@ -23,7 +23,7 @@
             color: #2c3e50;
         }
 
-        #printer-form {
+        #a4-printer-form {
             background-color: #ffffff;
             padding: 20px;
             border-radius: 8px;
@@ -72,7 +72,7 @@
 </head>
 <body>
     
-    <form id="printer-form">
+    <form id="a4-printer-form">
         <h1>Configure A4 Size Printer</h1>
         
         <!-- Printer Brand Dropdown -->
@@ -88,7 +88,7 @@
     <script>
         // Check that ipcRenderer is available in the window context
         if (window.ipcRenderer) {
-            document.getElementById('printer-form').addEventListener('submit', function (event) {
+            document.getElementById('a4-printer-form').addEventListener('submit', function (event) {
                 event.preventDefault();
                 const printerName = document.getElementById('printerName').value;
                 const printerPort = document.getElementById('printerPort').value;
