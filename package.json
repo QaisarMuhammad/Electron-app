@@ -1,7 +1,7 @@
 {
   "name": "electron-app",
   "productName": "Gadgets POS",
-  "version": "1.1.0",
+  "version": "1.6.1",
   "description": "POS application for Gadgets POS",
   "main": "index.js",
   "scripts": {
@@ -35,6 +35,21 @@
       "LabeldesignRepair.dymo",
       "mukltipleBarcode.dymo",
       "multipleQRCODE.dymo",
+      "Labeldesign_sale.dymo",
+      "Labeldesignqr2.dymo",
+      "Labeldesign3.dymo",
+      "Labeldesign1_2_22.dymo",
+      "25_25_barcode.dymo",
+      "25_25_qrcode.dymo",
+      "70_54_Labeldesign_sale.dymo",
+      "70_54_Labeldesign1_2_22.dymo",
+      "70_54_Labeldesign3.dymo",
+      "70_54_Labeldesign2.dymo",
+      "70_54_mukltipleBarcode.dymo",
+      "70_54_multipleQRCODE.dymo",
+      "70_54_LabeldesignRepair.dymo",
+      "70_54_LabeldesignRepair_2.dymo",
+      "labitemdesign.dymo",
       "assets/**/*",
       "package.json"
     ],
@@ -45,7 +60,6 @@
     "mac": {
       "icon": "assets/icon.icns",
       "identity": null
-
     },
     "linux": {
       "icon": "assets/icon.png"
@@ -71,6 +85,8 @@
     "dotenv": "^16.4.5",
     "electron-log": "^5.2.0",
     "electron-store": "^10.0.0",
+    "escpos": "^3.0.0-alpha.6",
+    "escpos-usb": "^3.0.0-alpha.4",
     "iconv-lite": "^0.6.3",
     "pdfkit": "^0.15.2",
     "puppeteer": "^23.11.1",

@@ -5,7 +5,7 @@ const fs = require('fs');
 const os = require('os');
 // Attach the virtual font system
 const { exec } = require('child_process');
-const { app, BrowserWindow, ipcMain, Menu, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu, dialog, session } = require('electron');
 
 let configWindow; // Declare a global variable to store the reference to the configuration window
 let configLabelWindow;
@@ -13,7 +13,7 @@ let configA4Window;
 let passwordWindow;
 let resetPasswordWindow;
 // Initialize default URL for app window
-const defaultURL = 'https://gadgetspos.com/vendor/point-of-sale?active=buy';
+const defaultURL = 'https://vendor.societyfiles.com/vendor/point-of-sale?active=buy';
 let store; // Electron store for persisting configuration
 
 
@@ -38,7 +38,7 @@ async function loadDymoFramework() {
         dymoWindow.loadFile(path.join(__dirname, 'dymo-loader.html'));
 
         dymoWindow.webContents.on('did-finish-load', () => {
-            console.log('✅ DYMO framework loaded in hidden window');
+            console.log('DYMO framework loaded in hidden window');
             resolve(dymoWindow);
         });
 
@@ -58,7 +58,7 @@ async function loadStore() {
 // Function to create the main application window
 function createWindow(url = defaultURL) {
     const newWindow = new BrowserWindow({
-        width: 1400,
+        width: 1600,
         height: 900,
         icon: path.join(__dirname, 'assets', 'icon.png'),
         webPreferences: {
@@ -951,7 +951,7 @@ function printDirectReceipt(finalBuffer) {
 
     // write into the OS temp directory
     const tmpDir = app.getPath('temp');
-    const receiptFilePath = path.join(tmpDir, 'receipt.txt');
+    const receiptFilePath = path.join(tmpDir, 'receipt.bin');
     fs.writeFileSync(receiptFilePath, finalBuffer);
 
     const { printerPort } = loadPrinterPortConfig();
@@ -977,12 +977,6 @@ ipcMain.on('send-receipt-data', async (event, receiptData) => {
     }
 });
 
-// Handle the event from the renderer (frontend)
-// ipcMain.on('send-barcode-data', async (event, barcodeData) => {
-//     printBarcodes(barcodeData?.barcodefinal);
-
-// });
-
 
 async function loadDymoFramework() {
     return new Promise((resolve, reject) => {
@@ -1000,7 +994,7 @@ async function loadDymoFramework() {
         dymoWindow.loadFile(path.join(__dirname, './dymo-loader.html'));
 
         dymoWindow.webContents.on('did-finish-load', () => {
-            console.log('✅ DYMO framework loaded in hidden window');
+            console.log('DYMO framework loaded in hidden window');
             resolve(dymoWindow);
         });
 
@@ -1020,43 +1014,125 @@ function escapeLabelXml(xml) {
 }
 
 ipcMain.on('send-barcode-data', async (event, barcodeData) => {
-    
+console.log(barcodeData, "=====barcodeData");
     if (barcodeData.barcodefinal.printer === "dymo") {
         try {
+
+            const obj = barcodeData.barcodefinal;
+            const barcodeSize = barcodeData?.size || '32x57';
+            const title = obj?.title ?? "";
+            const storage = obj?.storage ?? "";
+            const condition = obj?.conditionObject?.grade ?? "";
+            let network = obj?.network ?? "";
+            let color = obj?.misc_color ?? "";
+            const processor = obj?.Processor ?? "";
+            let ram = obj?.ram ?? "";
+            let warranty = obj?.warranty?.length > 3 ? `${obj?.warranty} WARRANTY`.toUpperCase() : "";
+
+
+
+            const price = obj?.price !== "" && obj?.price > 0 ? `£${obj?.price}` : "";
+            const salePrice = obj?.salePrice;
+            const regular_price = obj?.regular_price;
+            const isSale = obj?.isSale;
+            const off = isSale === true && (regular_price - salePrice) > 0 ? parseFloat(regular_price - salePrice).toFixed(2) : 0;
+            const barcode = obj?.barcode ?? "";
+            
+            const specs = [condition === "New" ? "NEW" : condition === "A+" ? "Like New" : "GRADE " + condition, storage, network, ram, processor, color]
+                .filter(v => v && v !== "").map(v => v.toUpperCase()); // removes empty, null, undefined, false
+
             const NumberOfPrints = parseInt(barcodeData?.prints) || 1;
-          
-            const printDesign = barcodeData?.barcodefinal?.design === "repair" ? "repair" : parseInt(barcodeData?.design);
+
+            let printDesign = barcodeData?.barcodefinal?.design === "repair" ? "repair" : parseInt(barcodeData?.design);
 
             const win = await loadDymoFramework(); // ensure hidden window is loaded
             const tmpDir = app.getPath('temp');
-            let currentDesign = path.join(__dirname, 'Labeldesign1_1.dymo');
-            if (printDesign === 1) {
-                currentDesign = path.join(__dirname, 'Labeldesign1_1.dymo');
-            }
-            if (printDesign === 2) {
-                currentDesign = path.join(__dirname, 'Labeldesign2.dymo');
-            }
-            if (printDesign === 3) {
-                currentDesign = path.join(__dirname, 'mukltipleBarcode.dymo');
-            }
-            if (printDesign === 4) {
-                currentDesign = path.join(__dirname, 'multipleQRCODE.dymo');
-            }
-            if (printDesign === 'repair') {
-                currentDesign = path.join(__dirname, 'LabeldesignRepair.dymo');
+            let currentDesign = path.join(__dirname, `Labeldesign1_1.dymo`);
+       
+            if (barcodeData.type == "lab") {
+                 currentDesign = path.join(__dirname, `labitemdesign.dymo`);
+            }else if (barcodeSize === "25x25") {
+                if (printDesign === 1 || printDesign === 3) {
+                    currentDesign = path.join(__dirname, `25_25_barcode.dymo`);
+                } else {
+                    currentDesign = path.join(__dirname, `25_25_qrcode.dymo`);
+                }
+            } else if (barcodeSize === "70x54") {
+                if (printDesign === 1) {
+                    if (isSale === true && off > 0) {
+                        currentDesign = path.join(__dirname, `70_54_Labeldesign_sale.dymo`);
+                    } else {
+                        currentDesign = path.join(__dirname, `70_54_Labeldesign1_2_22.dymo`);
+                    }
+                }
+                if (printDesign === 2) {
+                    if (isSale === true && off > 0) {
+                        printDesign = 7;
+                        currentDesign = path.join(__dirname, `70_54_Labeldesign3.dymo`);
+
+                    } else {
+                        currentDesign = path.join(__dirname, `70_54_Labeldesign2.dymo`);
+                    }
+
+                }
+                if (printDesign === 3) {
+                    currentDesign = path.join(__dirname, `70_54_mukltipleBarcode.dymo`);
+                }
+                if (printDesign === 4) {
+                    currentDesign = path.join(__dirname, `70_54_multipleQRCODE.dymo`);
+                }
+
+                if (printDesign === 'repair') {
+                    currentDesign = path.join(__dirname, `LabeldesignRepair.dymo`);
+                    //    currentDesign = path.join(__dirname, `70_54_LabeldesignRepair_2.dymo`);
+                }
+            } else {
+                if (printDesign === 1) {
+                    if (isSale === true && off > 0) {
+                        currentDesign = path.join(__dirname, `Labeldesign_sale.dymo`);
+                    } else {
+                        // currentDesign = path.join(__dirname, `Labeldesign1_2_22.dymo`);
+                        currentDesign = path.join(__dirname, `Labeldesign1_1.dymo`);
+
+                    }
+                }
+                if (printDesign === 2) {
+                    if (isSale === true && off > 0) {
+                        printDesign = 7;
+                        currentDesign = path.join(__dirname, `Labeldesign3.dymo`);
+
+                    } else {
+                        currentDesign = path.join(__dirname, `Labeldesign2.dymo`);
+                    }
+
+                }
+                if (printDesign === 3) {
+                    currentDesign = path.join(__dirname, `mukltipleBarcode.dymo`);
+                }
+                if (printDesign === 4) {
+                    currentDesign = path.join(__dirname, `multipleQRCODE.dymo`);
+                }
+
+                if (printDesign === 'repair') {
+                    currentDesign = path.join(__dirname, `LabeldesignRepair.dymo`);
+                    // currentDesign = path.join(__dirname, `70_54_LabeldesignRepair_2.dymo`);
+                }
+
+
             }
 
-            // const LabelTemp = path.join(__dirname, 'LabelTemp.dymo'); // ensure correct temp path
 
             if (!fs.existsSync(currentDesign)) {
-                console.error('❌ DYMO label file not found:', currentDesign);
+                console.error('DYMO label file not found:', currentDesign);
                 return;
             }
 
+
             function maskBarcodeText(barcode) {
-            if (barcode.length <= 6) return barcode;
-            return "*".repeat(barcode.length - 6) + barcode.slice(-6);
+                if (barcode.length <= 6) return barcode;
+                return "*".repeat(barcode.length - 6) + barcode.slice(-6);
             }
+            console.log(currentDesign, "====")
             const labelXmlRaw = fs.readFileSync(currentDesign, 'utf-8');
             const labelXml = escapeLabelXml(labelXmlRaw);
 
@@ -1066,137 +1142,72 @@ ipcMain.on('send-barcode-data', async (event, barcodeData) => {
             );
 
             if (!printers || printers.length === 0) {
-                console.error('❌ No DYMO printers detected.');
+                console.error('No DYMO printers detected.');
                 return;
             }
 
-            const printerName = printers[0].name;
-            console.log('🖨 Printing to DYMO printer:', printerName);
+            const printerName =printers?.length > 0 ?  printers[0].name: null;
+            console.log('Printing to DYMO printer:', printerName);
 
-            const obj = barcodeData.barcodefinal;
+            if (barcodeData.type === "lab") {
 
-            const title = obj?.title ?? "";
-            const storage = obj?.storage ?? "";
-            const condition = obj?.conditionObject?.grade ?? "";
-            const color = obj?.misc_color ?? "";
-            const processor = obj?.Processor ?? "";
-            const ram = obj?.ram ?? "";
-            const price = `£${obj?.price}`;
-            const barcode = obj?.barcode ?? "";
+                 const barcode1 = barcodeData.barcode;
+                const title = barcodeData.title;
 
-            
+                await win.webContents.executeJavaScript(`
+                    (function() {
+                    const label = dymo.label.framework.openLabelXml(\`${labelXml}\`);
+                    label.setObjectText("BarcodeObject1", "${barcode1}");
+                    label.setObjectText("TextObject12", "${title}");
+                    label.print("${printerName}");
+                    })();
+                `);
 
-            // Print label safely in hidden window context
-             if (printDesign === 'repair') {
-            const obj = barcodeData.barcodefinal;
-            const business = obj.business;
-            let orderDate =  barcodeData?.barcodefinal?.orderDate || "";
+            } else if (barcodeSize === "25x25") {
+                if (printDesign === 1 || printDesign === 3) {
+                    const barcode1 = barcode;
+                    const price1 = price;
 
-    // Assuming you may have multiple order items
-    const items = Array.isArray(obj.orderItems) ? obj.orderItems : [obj.orderItem];
+                    await win.webContents.executeJavaScript(`
+                    (function() {
+                    const label = dymo.label.framework.openLabelXml(\`${labelXml}\`);
+                    label.setObjectText("BarcodeObject0", "${barcode1}");
+                    label.setObjectText("TextObject1", "${price1}");
+                    label.print("${printerName}");
+                    })();
+                `);
+                } else {
+                    // --- Sanitize barcode for XML safety ---
+                    const cleanXML = (str) =>
+                        str
+                            .replace(/&/g, '&amp;')
+                            .replace(/</g, '&lt;')
+                            .replace(/>/g, '&gt;')
+                            .replace(/[`"']/g, '');
 
-   for (const orderItem of items) {
-  const productName = orderItem?.product_name ?? "";
-  const businessName = business?.business_name ?? "";
-  const branchName = business?.branch_name ?? "";
-  const postCode = business?.post_code ?? "";
-  const imeiDescription = orderItem?.product_sn_imei_description ?? "";
-  const barcode = obj?.barcode ?? "";
-  const customFields = Array.isArray(orderItem?.custom_field_value)
-    ? orderItem.custom_field_value.map(f => f?.value?.length > 0 ? f?.value ?? "" : "").join(", ")
-    : "";
+                    // --- Prepare QR values ---
+                    const qr1 = barcode;
 
-  // Clean barcode for XML safety
-  const safeBarcode = barcode
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/[`"']/g, '');
+                    const price1 = price;
 
-  await win.webContents.executeJavaScript(`
-    (function() {
-      try {
-        const label = dymo.label.framework.openLabelXml(\`${labelXml}\`);
 
-        // Set text fields
-        label.setObjectText("ItemNameVal", "${productName}");
-        label.setObjectText("TEXT", "${customFields}");
-        label.setObjectText("TEXT_5", "${businessName} ${branchName}");
-        label.setObjectText("TextObject1", "${orderDate}");
-        label.setObjectText("TEXT4", "${safeBarcode}");
+                    // --- Update XML directly ---
+                    let updatedLabelXml = labelXml;
 
-        // --- Force QR code update ---
-        if (!dymo.label.framework.Label.prototype._forceQRCodeUpdate) {
-          dymo.label.framework.Label.prototype._forceQRCodeUpdate = function(objectName, text) {
-            const objElem = this._getObjectByNameElement(objectName);
-            if (!objElem) return this;
+                    // Loop through each QR object and replace its QR content
+                    for (let i = 0; i < 3; i++) {
+                        const qrVal = [qr1][i];
+                        updatedLabelXml = updatedLabelXml.replace(
+                            new RegExp(
+                                `(<ObjectInfo[^>]*name="QRCodeObject${i}"[\\s\\S]*?<DataString>)([\\s\\S]*?)(<\\/DataString>)`,
+                                "m"
+                            ),
+                            `$1${qrVal}$3`
+                        );
+                    }
 
-            const dataElem = dymo.xml.getElement(objElem, "Data");
-            if (dataElem) {
-              const dataStringElem = dymo.xml.getElement(dataElem, "DataString");
-              if (dataStringElem) dymo.xml.setElementText(dataStringElem, text);
-            }
-
-            const textHolder = dymo.xml.getElement(objElem, "TextDataHolder");
-            if (textHolder) {
-              const valElem = dymo.xml.getElement(textHolder, "Value");
-              if (valElem) dymo.xml.setElementText(valElem, text);
-            }
-
-            const renderCache = objElem.getElementsByTagName("RenderCache");
-            if (renderCache.length > 0) objElem.removeChild(renderCache[0]);
-
-            return this;
-          };
-        }
-
-        label._forceQRCodeUpdate("QRCodeObject0", "${safeBarcode}");
-
-        // Print the label
-        label.print("${printerName}");
-        console.log("✅ Printed label for ${productName} with QR:", "${safeBarcode}");
-      } catch (err) {
-        console.error("❌ Error printing label for ${productName}:", err);
-      }
-    })();
-  `);
-}
-
-        }
-            else if (printDesign === 4) {
-      // --- Sanitize barcode for XML safety ---
-const cleanXML = (str) =>
-  str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/[`"']/g, '');
-
-// --- Prepare QR values ---
-const qr1 = cleanXML(barcode);
-const qr2 = cleanXML(barcode);
-const qr3 = cleanXML(barcode);
-const price1 = price;
-const price2 = price;
-const price3 = price;
-
-// --- Update XML directly ---
-let updatedLabelXml = labelXml;
-
-// Loop through each QR object and replace its QR content
-for (let i = 0; i < 3; i++) {
-  const qrVal = [qr1, qr2, qr3][i];
-  updatedLabelXml = updatedLabelXml.replace(
-    new RegExp(
-      `(<ObjectInfo[^>]*name="QRCodeObject${i}"[\\s\\S]*?<DataString>)([\\s\\S]*?)(<\\/DataString>)`,
-      "m"
-    ),
-    `$1${qrVal}$3`
-  );
-}
-
-// --- Force DYMO to re-render QR Code object via patch ---
-await win.webContents.executeJavaScript(`
+                    // --- Force DYMO to re-render QR Code object via patch ---
+                    await win.webContents.executeJavaScript(`
 (function() {
   console.log("🔧 Patching DYMO for QR update...");
 
@@ -1225,12 +1236,188 @@ await win.webContents.executeJavaScript(`
     };
   }
 
-  console.log("✅ QR update patch ready.");
+  console.log("QR update patch ready.");
 })();
 `);
 
-// --- Now print with forced updates ---
-await win.webContents.executeJavaScript(`
+                    // --- Now print with forced updates ---
+                    await win.webContents.executeJavaScript(`
+(function() {
+  try {
+    const label = dymo.label.framework.openLabelXml(\`${updatedLabelXml}\`);
+    console.log("📦 Label opened, applying forced QR updates...");
+
+    label._forceQRCodeUpdate("QRCodeObject2", "${qr1}");
+   
+    label.setObjectText("TextObject2", "${price1}");
+
+    label.setObjectText("TextObject3", "${qr1?.length > 6 ? `**${qr1.slice(-6)}` : qr1}");
+
+    label.print("${printerName}");
+    console.log("Printed multiple updated QR codes:", "${qr1}");
+  } catch (err) {
+    console.error("Error printing label:", err);
+  }
+})();
+`);
+                }
+            }
+
+            // Print label safely in hidden window context
+            else if (printDesign === 'repair') {
+                const obj = barcodeData.barcodefinal;
+
+                const business = obj.business;
+                const customer = obj?.customer;
+                let orderDate = barcodeData?.barcodefinal?.orderDate || "";
+
+                // Assuming you may have multiple order items
+                const items = Array.isArray(obj.orderItems) ? obj.orderItems : [obj.orderItem];
+
+                for (const orderItem of items) {
+                    const productName = orderItem?.product_name ?? "";
+                    const businessName = business?.business_name ?? "";
+                    const branchName = business?.branch_name ?? "";
+                    const postCode = business?.post_code ?? "";
+                    const imeiDescription = orderItem?.product_sn_imei_description ?? "";
+                    const barcode = obj?.barcode ?? "";
+                    const current_price = orderItem?.current_price !== "" && orderItem?.current_price > 0 ? `£${orderItem?.current_price}` : "";
+                    const customFields = Array.isArray(orderItem?.custom_field_value)
+                        ? orderItem.custom_field_value.map(f => f?.value?.length > 0 ? f?.value ?? "" : "")
+                        : "";
+
+                    // Clean barcode for XML safety
+                    const safeBarcode = barcode
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/[`"']/g, '');
+                    console.log(productName, customFields, businessName, branchName, orderDate, barcode, "====", safeBarcode)
+                    await win.webContents.executeJavaScript(`
+    (function() {
+      try {
+        const label = dymo.label.framework.openLabelXml(\`${labelXml}\`);
+
+        // Set text fields
+        label.setObjectText("ItemNameVal", "${productName}");
+        label.setObjectText("TEXT", "${customFields?.length > 0 ? customFields[0] : ""}");
+        label.setObjectText("TEXT8", "${customFields?.length > 1 ? customFields[1] : ""}");
+        label.setObjectText("TEXT9", "${customFields?.length > 2 ? customFields[2] : ""}");
+
+        label.setObjectText("TextObject7", "");
+        label.setObjectText("TextObject5", "${customer?.name || ""}");
+        label.setObjectText("TextObject6", "${customer?.cell_no || ""}");
+        
+        label.setObjectText("TEXT_5", "${businessName} ${branchName}");
+        label.setObjectText("TextObject1", "${orderDate}");
+        label.setObjectText("TEXT4", "${barcode}");
+
+        // --- Force QR code update ---
+        if (!dymo.label.framework.Label.prototype._forceQRCodeUpdate) {
+          dymo.label.framework.Label.prototype._forceQRCodeUpdate = function(objectName, text) {
+            const objElem = this._getObjectByNameElement(objectName);
+            if (!objElem) return this;
+
+            const dataElem = dymo.xml.getElement(objElem, "Data");
+            if (dataElem) {
+              const dataStringElem = dymo.xml.getElement(dataElem, "DataString");
+              if (dataStringElem) dymo.xml.setElementText(dataStringElem, text);
+            }
+
+            const textHolder = dymo.xml.getElement(objElem, "TextDataHolder");
+            if (textHolder) {
+              const valElem = dymo.xml.getElement(textHolder, "Value");
+              if (valElem) dymo.xml.setElementText(valElem, text);
+            }
+
+            const renderCache = objElem.getElementsByTagName("RenderCache");
+            if (renderCache.length > 0) objElem.removeChild(renderCache[0]);
+
+            return this;
+          };
+        }
+
+        label._forceQRCodeUpdate("QRCodeObject0", "${barcode}");
+
+        // Print the label
+        label.print("${printerName}");
+        console.log("Printed label for ${productName} with QR:", "${barcode}");
+      } catch (err) {
+        console.error("Error printing label for ${productName}:", err);
+      }
+    })();
+  `);
+                }
+
+            }
+            else if (printDesign === 4) {
+                // --- Sanitize barcode for XML safety ---
+                const cleanXML = (str) =>
+                    str
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/[`"']/g, '');
+
+                // --- Prepare QR values ---
+                const qr1 = barcode;
+                const qr2 = barcode;
+                const qr3 = barcode;
+                const price1 = price;
+                const price2 = price;
+                const price3 = price;
+
+                // --- Update XML directly ---
+                let updatedLabelXml = labelXml;
+
+                // Loop through each QR object and replace its QR content
+                for (let i = 0; i < 3; i++) {
+                    const qrVal = [qr1, qr2, qr3][i];
+                    updatedLabelXml = updatedLabelXml.replace(
+                        new RegExp(
+                            `(<ObjectInfo[^>]*name="QRCodeObject${i}"[\\s\\S]*?<DataString>)([\\s\\S]*?)(<\\/DataString>)`,
+                            "m"
+                        ),
+                        `$1${qrVal}$3`
+                    );
+                }
+
+                // --- Force DYMO to re-render QR Code object via patch ---
+                await win.webContents.executeJavaScript(`
+(function() {
+  console.log("🔧 Patching DYMO for QR update...");
+
+  if (!dymo.label.framework.Label.prototype._forceQRCodeUpdate) {
+    dymo.label.framework.Label.prototype._forceQRCodeUpdate = function(objectName, text) {
+      const objElem = this._getObjectByNameElement(objectName);
+      if (!objElem) return this;
+
+      const dataElem = dymo.xml.getElement(objElem, "Data");
+      if (dataElem) {
+        const dataStringElem = dymo.xml.getElement(dataElem, "DataString");
+        if (dataStringElem) dymo.xml.setElementText(dataStringElem, text);
+      }
+
+      const textHolder = dymo.xml.getElement(objElem, "TextDataHolder");
+      if (textHolder) {
+        const valElem = dymo.xml.getElement(textHolder, "Value");
+        if (valElem) dymo.xml.setElementText(valElem, text);
+      }
+
+      // Remove cached QR image (forces regeneration)
+      const renderCache = objElem.getElementsByTagName("RenderCache");
+      if (renderCache.length > 0) objElem.removeChild(renderCache[0]);
+
+      return this;
+    };
+  }
+
+  console.log("QR update patch ready.");
+})();
+`);
+
+                // --- Now print with forced updates ---
+                await win.webContents.executeJavaScript(`
 (function() {
   try {
     const label = dymo.label.framework.openLabelXml(\`${updatedLabelXml}\`);
@@ -1239,15 +1426,19 @@ await win.webContents.executeJavaScript(`
     label._forceQRCodeUpdate("QRCodeObject0", "${qr1}");
     label._forceQRCodeUpdate("QRCodeObject1", "${qr2}");
     label._forceQRCodeUpdate("QRCodeObject2", "${qr3}");
-
+        
     label.setObjectText("TextObject12", "${price1}");
     label.setObjectText("TextObject1", "${price2}");
     label.setObjectText("TextObject2", "${price3}");
 
+    label.setObjectText("TextObject3", "${qr1?.length > 6 ? `**${qr1.slice(-6)}` : qr1}");
+    label.setObjectText("TextObject4", "${qr2?.length > 6 ? `**${qr2.slice(-6)}` : qr2}");
+    label.setObjectText("TextObject5", "${qr3?.length > 6 ? `**${qr3.slice(-6)}` : qr3}");
+
     label.print("${printerName}");
-    console.log("✅ Printed multiple updated QR codes:", "${qr1}", "${qr2}", "${qr3}");
+    console.log("Printed multiple updated QR codes:", "${qr1}", "${qr2}", "${qr3}");
   } catch (err) {
-    console.error("❌ Error printing label:", err);
+    console.error("Error printing label:", err);
   }
 })();
 `);
@@ -1269,32 +1460,32 @@ await win.webContents.executeJavaScript(`
                     label.print("${printerName}");
                     })();
                 `);
-            } else if (printDesign === 2) {
-                console.log(barcode, "=====barcode");
+            }
+            else if (printDesign === 7) {
                 // Clean up barcode text for XML safety
                 const safeBarcode = barcode
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/[`"']/g, '');
-
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/[`"']/g, '');
+                const maskedBarcode = maskBarcodeText(barcode);
                 // Replace QR code text directly in XML (updates both <DataString> and <Value>)
                 let updatedLabelXml = labelXml
-                // Update DataString
-                .replace(
-                    /(<QRCodeObject>[\s\S]*?<Name>QRCodeObject0<\/Name>[\s\S]*?<Data>[\s\S]*?<DataString>)([\s\S]*?)(<\/DataString>)/,
-                    `$1${safeBarcode}$3`
-                )
-                // Update TextDataHolder <Value>
-                .replace(
-                    /(<QRCodeObject>[\s\S]*?<Name>QRCodeObject0<\/Name>[\s\S]*?<TextDataHolder>[\s\S]*?<Value>)([\s\S]*?)(<\/Value>)/,
-                    `$1${safeBarcode}$3`
-                );
+                    // Update DataString
+                    .replace(
+                        /(<QRCodeObject>[\s\S]*?<Name>QRCodeObject0<\/Name>[\s\S]*?<Data>[\s\S]*?<DataString>)([\s\S]*?)(<\/DataString>)/,
+                        `$1${barcode}$3`
+                    )
+                    // Update TextDataHolder <Value>
+                    .replace(
+                        /(<QRCodeObject>[\s\S]*?<Name>QRCodeObject0<\/Name>[\s\S]*?<TextDataHolder>[\s\S]*?<Value>)([\s\S]*?)(<\/Value>)/,
+                        `$1${barcode}$3`
+                    );
 
                 // Force a label refresh by giving it a unique temporary name
                 updatedLabelXml = updatedLabelXml.replace(
-                /(<Name>QRCodeObject0<\/Name>)/,
-                `<Name>QRCodeObject0_${Date.now()}</Name>`
+                    /(<Name>QRCodeObject0<\/Name>)/,
+                    `<Name>QRCodeObject0_${Date.now()}</Name>`
                 );
 
                 await win.webContents.executeJavaScript(`
@@ -1341,41 +1532,142 @@ await win.webContents.executeJavaScript(`
 
                         // Set normal text fields
                         label.setObjectText("ItemNameVal", "${title}");
-                        label.setObjectText("TEXT", "${storage}");
-                        label.setObjectText("TEXT_1", "${ram}");
-                        label.setObjectText("TEXT_4", "${condition}");
-                        label.setObjectText("TEXT_5", "${color}");
-                        label.setObjectText("TEXT__1", "${processor}");
-                        label.setObjectText("TEXT_3", "${price}");
 
+                        label.setObjectText("TEXT_4", "${specs[0] || ''}");
+                        label.setObjectText("TEXT", "${specs[1] || ''}");
+                        label.setObjectText("TEXT_1", "${specs[2] || ''}");
+                        label.setObjectText("TEXT_5", "${specs[3] || ''}");
+                        label.setObjectText("TEXT__1", "${specs[4] || ''}");
+                        label.setObjectText("TextObject11", "${warranty}");
+                        label.setObjectText("TEXT_3", "£${salePrice}");
+                        label.setObjectText("TextObject1", "£${off} OFF");
+                        label.setObjectText("TextObject9", "£${regular_price}");
+                        
+                        label.setObjectText("Text_barcode", "${maskedBarcode}");
+                        
                         // Print
                         label.print("${printerName}");
-                        console.log("✅ DYMO Label printed successfully with QR:", "${safeBarcode}");
+                        console.log("DYMO Label printed successfully with QR:", "${safeBarcode}");
                     } catch (err) {
-                        console.error("❌ Error printing DYMO label:", err);
+                        console.error("Error printing DYMO label:", err);
                     }
                 })();
                 `);
 
+
+            }
+            else if (printDesign === 2) {
+                // Clean up barcode text for XML safety
+                const safeBarcode = barcode
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/[`"']/g, '');
+                const maskedBarcode = maskBarcodeText(barcode);
+                // Replace QR code text directly in XML (updates both <DataString> and <Value>)
+                let updatedLabelXml = labelXml
+                    // Update DataString
+                    .replace(
+                        /(<QRCodeObject>[\s\S]*?<Name>QRCodeObject0<\/Name>[\s\S]*?<Data>[\s\S]*?<DataString>)([\s\S]*?)(<\/DataString>)/,
+                        `$1${barcode}$3`
+                    )
+                    // Update TextDataHolder <Value>
+                    .replace(
+                        /(<QRCodeObject>[\s\S]*?<Name>QRCodeObject0<\/Name>[\s\S]*?<TextDataHolder>[\s\S]*?<Value>)([\s\S]*?)(<\/Value>)/,
+                        `$1${barcode}$3`
+                    );
+
+                // Force a label refresh by giving it a unique temporary name
+                updatedLabelXml = updatedLabelXml.replace(
+                    /(<Name>QRCodeObject0<\/Name>)/,
+                    `<Name>QRCodeObject0_${Date.now()}</Name>`
+                );
+
+                await win.webContents.executeJavaScript(`
+                (function() {
+                    if (!dymo.label.framework.Label.prototype._setQRCodeObjectText) {
+                        console.log("Patching DYMO QRCodeObject support...");
+
+                        dymo.label.framework.Label.prototype._setQRCodeObjectText = function(objectElem, text) {
+                            var dataElem = dymo.xml.getElement(objectElem, "Data");
+                            if (dataElem) {
+                                var dataStringElem = dymo.xml.getElement(dataElem, "DataString");
+                                if (dataStringElem) dymo.xml.setElementText(dataStringElem, text);
+                            }
+
+                            var holderElem = dymo.xml.getElement(objectElem, "TextDataHolder");
+                            if (holderElem) {
+                                var valueElem = dymo.xml.getElement(holderElem, "Value");
+                                if (valueElem) dymo.xml.setElementText(valueElem, text);
+                            }
+
+                            return this;
+                        };
+
+                        const originalSetObjectText = dymo.label.framework.Label.prototype.setObjectText;
+                        dymo.label.framework.Label.prototype.setObjectText = function(name, value) {
+                            var objectElem = this._getObjectByNameElement(name);
+                            if (!objectElem) return this;
+                            if (objectElem.tagName === "QRCodeObject") {
+                                return this._setQRCodeObjectText(objectElem, value);
+                            }
+                            return originalSetObjectText.call(this, name, value);
+                        };
+
+                        console.log("DYMO QRCodeObject patch applied successfully.");
+                    }
+                })();
+                `);
+
+                await win.webContents.executeJavaScript(`
+                (function() {
+                    try {
+                        console.log("Opening updated DYMO label XML...");
+                        const label = dymo.label.framework.openLabelXml(\`${updatedLabelXml}\`);
+
+                        // Set normal text fields
+                        label.setObjectText("ItemNameVal", "${title}");
+
+                        label.setObjectText("TEXT_4", "${specs[0] || ''}");
+                        label.setObjectText("TEXT", "${specs[1] || ''}");
+                        label.setObjectText("TEXT_1", "${specs[2] || ''}");
+                        label.setObjectText("TEXT_5", "${specs[3] || ''}");
+                        label.setObjectText("TEXT__1", "${specs[4] || ''}");
+
+                        label.setObjectText("TextObject11", "${warranty}");
+
+                        label.setObjectText("TEXT_3", "${price}");
+                        label.setObjectText("Text_barcode", "${maskedBarcode}");
+                        
+                        // Print
+                        label.print("${printerName}");
+                        console.log("DYMO Label printed successfully with QR:", "${safeBarcode}");
+                    } catch (err) {
+                        console.error("Error printing DYMO label:", err);
+                    }
+                })();
+                `);
+
+
             }
             else if (printDesign === 1) {
-              const maskedBarcode =  maskBarcodeText(barcode);
-                await win.webContents.executeJavaScript(`
+                const maskedBarcode = maskBarcodeText(barcode);
+                if (isSale === true && off > 0) {
+                    await win.webContents.executeJavaScript(`
             (function() {
                 const label = dymo.label.framework.openLabelXml(\`${labelXml}\`);
                 label.setObjectText("ItemNameVal", "${title}");
 
-                label.setObjectText("TEXT", "${storage}"); 
+                label.setObjectText("TEXT_4", "${specs[0] || ''}");
+                label.setObjectText("TEXT", "${specs[1] || ''}"); 
+                label.setObjectText("TEXT_1", "${specs[2] || ''}");
+                label.setObjectText("TEXT_5", "${specs[3] || ''}");
 
-                label.setObjectText("TEXT_1", "${ram}");
+                label.setObjectText("TextObject11", "${warranty}");        
 
-                label.setObjectText("TEXT_4", "${condition}"); 
-
-                label.setObjectText("TEXT_5", "${color}");
-
-                label.setObjectText("TEXT_3", "${price}");
-
-                label.setObjectText("TEXT__1", "${processor}");
+                label.setObjectText("TEXT_3", "£${salePrice}");
+                label.setObjectText("TEXT__1", "£${off} OFF");
+                label.setObjectText("Text_was", "£${regular_price}");
                 
                 label.setObjectText("BARCODE", "${barcode}");
                 
@@ -1384,36 +1676,84 @@ await win.webContents.executeJavaScript(`
                label.print("${printerName}");
             })();
         `);
-            } else {
-                   const maskedBarcode =  maskBarcodeText(barcode);
-                await win.webContents.executeJavaScript(`
+                } else {
+                    console.log(barcode, "barcode====", currentDesign)
+
+                    await win.webContents.executeJavaScript(`
             (function() {
                 const label = dymo.label.framework.openLabelXml(\`${labelXml}\`);
                 label.setObjectText("ItemNameVal", "${title}");
 
-                label.setObjectText("TEXT", "${storage}"); 
-
-                label.setObjectText("TEXT_1", "${ram}");
-
-                label.setObjectText("TEXT_4", "${condition}"); 
-
-                label.setObjectText("TEXT_5", "${color}");
-
+                label.setObjectText("TEXT_4", "${specs[0] || ''}"); 
+                label.setObjectText("TEXT", "${specs[1] || ''}"); 
+                label.setObjectText("TEXT_1", "${specs[2] || ''}");
+                label.setObjectText("TEXT_5", "${specs[3] || ''}");
+                label.setObjectText("TEXT__1", "${specs[4] || ''}");
+                label.setObjectText("TextObject11", "${warranty}");        
                 label.setObjectText("TEXT_3", "${price}");
-
-                label.setObjectText("TEXT__1", "${processor}");
-                
                 label.setObjectText("BARCODE", "${barcode}");
+                
                 label.setObjectText("TextObject1", "${maskedBarcode}");
 
-                label.print("${printerName}");
+               label.print("${printerName}");
             })();
         `);
+                }
+
+            } else {
+                const maskedBarcode = maskBarcodeText(barcode);
+                if (isSale === true && off > 0) {
+                    await win.webContents.executeJavaScript(`
+            (function() {
+                const label = dymo.label.framework.openLabelXml(\`${labelXml}\`);
+                label.setObjectText("ItemNameVal", "${title}");
+
+                label.setObjectText("TEXT_4", "${specs[0] || ''}");
+                label.setObjectText("TEXT", "${specs[1] || ''}"); 
+                label.setObjectText("TEXT_1", "${specs[2] || ''}");
+                label.setObjectText("TEXT_5", "${specs[3] || ''}");
+                label.setObjectText("TextObject11", "${warranty}");        
+                label.setObjectText("TEXT_3", "£${salePrice}");
+                label.setObjectText("TEXT__1", "£${off} OFF");
+                label.setObjectText("Text_was", "£${regular_price}");
+                
+                label.setObjectText("BARCODE", "${barcode}");
+                
+                label.setObjectText("TextObject1", "${maskedBarcode}");
+               const printParamsXml = dymo.label.framework.createLabelWriterPrintParamsXml({
+            printQuality: dymo.label.framework.PrintQuality.BarcodeAndGraphics,
+            darkness: -1 
+        });
+               label.print("${printerName}", printParamsXml);
+            })();
+        `);
+                } else {
+                    await win.webContents.executeJavaScript(`
+            (function() {
+                const label = dymo.label.framework.openLabelXml(\`${labelXml}\`);
+                label.setObjectText("ItemNameVal", "${title}");
+
+                label.setObjectText("TEXT_4", "${specs[0] || ''}");
+                label.setObjectText("TEXT", "${specs[1] || ''}"); 
+                label.setObjectText("TEXT_1", "${specs[2] || ''}");
+                label.setObjectText("TEXT_5", "${specs[3] || ''}");
+                label.setObjectText("TextObject11", "${warranty}");
+                label.setObjectText("TEXT_3", "${price}");
+                label.setObjectText("TEXT__1", "${processor}");
+                label.setObjectText("BARCODE", "${barcode}");
+                
+                label.setObjectText("TextObject1", "${maskedBarcode}");
+
+               label.print("${printerName}");
+            })();
+        `);
+
+                }
             }
 
-            console.log('✅ DYMO label printed successfully!');
+            console.log('DYMO label printed successfully!');
         } catch (err) {
-            console.error('❌ Error printing DYMO label:', err);
+            console.error('Error printing DYMO label:', err);
         }
     } else {
         printBarcodes(barcodeData?.barcodefinal);
@@ -1528,8 +1868,11 @@ ipcMain.on('submit-reset-password', async (event, password) => {
     }
 });
 
+app.commandLine.appendSwitch('disable-brotli');
+
 // Initialize the application
 app.on('ready', () => {
+
     loadStore().then(() => {
         createWindow(); // Create the main window
         createMenu();   // Create the menu
