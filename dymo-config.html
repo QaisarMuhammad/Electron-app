@@ -1,0 +1,9 @@
+// Function to load Dymo printer configuration from the store
+function loadDymoPrinterConfig() {
+    return {
+        // You'd typically store settings like:
+        printerName: store.get('dymo.printerName', 'DYMO LabelWriter 450'),
+        labelType: store.get('dymo.labelType', 'Address'), // e.g., Address, Shipping
+        settings: store.get('dymo.settings', {})
+    };
+}

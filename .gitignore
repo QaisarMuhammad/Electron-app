@@ -4,3 +4,5 @@ GadgetsPOS-linux-x64/
 GadgetsPOS-win32-x64/
 dist
 .env
+GadgetsPOS-win32-x64/GadgetsPOS.exe
+GadgetsPOS-linux-x64/GadgetsPOS

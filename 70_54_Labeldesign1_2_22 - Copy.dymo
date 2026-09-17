@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DesktopLabel Version="1">
+  <DYMOLabel Version="4">
+    <Description>DYMO Label</Description>
+    <Orientation>Portrait</Orientation>
+    <LabelName>StorageS0722440</LabelName>
+    <InitialLength>0</InitialLength>
+    <BorderStyle>SolidLine</BorderStyle>
+
+    <DYMORect>
+      <DYMOPoint>
+        <X>0.05</X>
+        <Y>0.05</Y>
+      </DYMOPoint>
+      <Size>
+        <!-- swapped -->
+        <Width>2.03</Width>
+        <Height>2.47</Height>
+      </Size>
+    </DYMORect>
+
+    <BorderColor>
+      <SolidColorBrush>
+        <Color A="1" R="0" G="0" B="0"/>
+      </SolidColorBrush>
+    </BorderColor>
+
+    <BorderThickness>1</BorderThickness>
+    <Show_Border>False</Show_Border>
+
+    <DynamicLayoutManager>
+      <RotationBehavior>ClearObjects</RotationBehavior>
+      <LabelObjects>
+
+        <!-- TITLE -->
+        <TextObject>
+          <Name>ItemNameVal</Name>
+          <Rotation>Rotation0</Rotation>
+          <HorizontalAlignment>Center</HorizontalAlignment>
+          <VerticalAlignment>Top</VerticalAlignment>
+
+          <FormattedText>
+            <LineTextSpan>
+              <TextSpan>
+                <Text>Product_title</Text>
+                <FontInfo>
+                  <FontName>Arial</FontName>
+                  <FontSize>18</FontSize>
+                  <IsBold>True</IsBold>
+                </FontInfo>
+              </TextSpan>
+            </LineTextSpan>
+          </FormattedText>
+
+          <ObjectLayout>
+            <DYMOPoint>
+              <X>0.1</X>
+              <Y>0.1</Y>
+            </DYMOPoint>
+            <Size>
+              <Width>1.8</Width>
+              <Height>0.3</Height>
+            </Size>
+          </ObjectLayout>
+        </TextObject>
+
+        <!-- PRICE -->
+        <TextObject>
+          <Name>PRICE</Name>
+          <Rotation>Rotation0</Rotation>
+
+          <FormattedText>
+            <LineTextSpan>
+              <TextSpan>
+                <Text>price</Text>
+                <FontInfo>
+                  <FontName>Arial</FontName>
+                  <FontSize>24</FontSize>
+                  <IsBold>True</IsBold>
+                </FontInfo>
+              </TextSpan>
+            </LineTextSpan>
+          </FormattedText>
+
+          <ObjectLayout>
+            <DYMOPoint>
+              <X>0.1</X>
+              <Y>0.5</Y>
+            </DYMOPoint>
+            <Size>
+              <Width>1.8</Width>
+              <Height>0.4</Height>
+            </Size>
+          </ObjectLayout>
+        </TextObject>
+
+        <!-- BARCODE -->
+        <BarcodeObject>
+          <Name>BARCODE</Name>
+          <Rotation>Rotation0</Rotation>
+          <BarcodeFormat>Code128B</BarcodeFormat>
+
+          <Data>
+            <DataString>1234</DataString>
+          </Data>
+
+          <ObjectLayout>
+            <DYMOPoint>
+              <X>0.1</X>
+              <Y>1.8</Y>
+            </DYMOPoint>
+            <Size>
+              <Width>1.8</Width>
+              <Height>0.3</Height>
+            </Size>
+          </ObjectLayout>
+        </BarcodeObject>
+
+      </LabelObjects>
+    </DynamicLayoutManager>
+
+  </DYMOLabel>
+
+  <LabelApplication>Blank</LabelApplication>
+
+  <DataTable>
+    <Columns/>
+    <Rows/>
+  </DataTable>
+</DesktopLabel>

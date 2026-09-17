@@ -1,0 +1,27 @@
+<!-- dymo-loader.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>DYMO Hidden Loader</title>
+<script src="./assets/dymo.connect.framework.js"></script>
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    if (!window.dymo) {
+      console.error('DYMO framework not loaded');
+      return;
+    }
+    window.dymoAPI = {
+      printLabel: (labelXml, text1, text2, printerName) => {
+        const label = dymo.label.framework.openLabelXml(labelXml);
+        label.setObjectText("TEXT", text1);
+        label.setObjectText("TEXT_1", text2);
+        label.print(printerName);
+        return { success: true };
+      }
+    };
+  });
+</script>
+</head>
+<body></body>
+</html>

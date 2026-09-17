@@ -23,7 +23,7 @@
             color: #2c3e50;
         }
 
-        #printer-form {
+        #label-printer-form {
             background-color: #ffffff;
             padding: 20px;
             border-radius: 8px;
@@ -72,7 +72,7 @@
 </head>
 <body>
     
-    <form id="printer-form">
+    <form id="label-printer-form">
         <h1>Configure Label Printer</h1>
         
         <!-- Printer Brand Dropdown -->
@@ -88,13 +88,13 @@
     <script>
         // Check that ipcRenderer is available in the window context
         if (window.ipcRenderer) {
-            document.getElementById('printer-form').addEventListener('submit', function (event) {
+            document.getElementById('label-printer-form').addEventListener('submit', function (event) {
                 event.preventDefault();
                 const printerName = document.getElementById('printerName').value;
                 const printerPort = document.getElementById('printerPort').value;
-                const password = document.getElementById('password').value;
+                console.log({ printerName, printerPort }, "===P")
                 // Send the printer configuration to the main process
-                window.ipcRenderer.send('save-label-printer-config', { printerName, printerPort, password });
+                window.ipcRenderer.send('save-label-printer-config', { printerName, printerPort });
             });
         } else {
             console.error('ipcRenderer is not available');
