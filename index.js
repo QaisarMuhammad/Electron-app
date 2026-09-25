@@ -947,25 +947,50 @@ function createMenu() {
     Menu.setApplicationMenu(menu); // Set the custom menu
 }
 
-function printDirectReceipt(finalBuffer) {
+// Direct prints run one at a time, each from its own temp file. With a single fixed receipt.bin, two prints
+// sent back to back (a receipt right after a stock report, say) overwrote each other's file before the first
+// `copy` had read it, so the printer got the wrong or a mixed job.
+let directPrintQueue = Promise.resolve();
+let directPrintSeq = 0;
 
-    // write into the OS temp directory
-    const tmpDir = app.getPath('temp');
-    const receiptFilePath = path.join(tmpDir, 'receipt.bin');
-    fs.writeFileSync(receiptFilePath, finalBuffer);
+function printDirectReceipt(finalBuffer) {
+    // Raw ESC/POS goes to the port with the Windows `copy /B` command; there is no equivalent here.
+    if (process.platform !== 'win32') {
+        dialog.showErrorBox('Error', 'Direct receipt printing is only supported on Windows.');
+        return;
+    }
 
     const { printerPort } = loadPrinterPortConfig();
-    console.log('Printing to port:', printerPort);
+    if (!printerPort) {
+        dialog.showErrorBox('Error', 'Printer port is not configured.');
+        return;
+    }
 
-    // Ensure you're running under CMD shell on Windows
-    const copyCmd = `cmd /c copy /B "${receiptFilePath}" "${printerPort}"`;
-    exec(copyCmd, { shell: true }, (err, stdout, stderr) => {
-        if (err) {
-            console.error("Error printing:", err, stderr);
-        } else {
-            console.log("Printed successfully:", stdout);
-        }
-    });
+    // write into the OS temp directory, one file per job
+    const receiptFilePath = path.join(app.getPath('temp'), `receipt-${process.pid}-${Date.now()}-${directPrintSeq++}.bin`);
+    try {
+        fs.writeFileSync(receiptFilePath, finalBuffer);
+    } catch (err) {
+        console.error('Could not write receipt file:', err);
+        dialog.showErrorBox('Error', `Failed to print receipt: ${err.message}`);
+        return;
+    }
+
+    directPrintQueue = directPrintQueue.then(() => new Promise((resolve) => {
+        console.log('Printing to port:', printerPort);
+
+        // Ensure you're running under CMD shell on Windows
+        const copyCmd = `cmd /c copy /B "${receiptFilePath}" "${printerPort}"`;
+        exec(copyCmd, { shell: true }, (err, stdout, stderr) => {
+            if (err) {
+                console.error("Error printing:", err, stderr);
+            } else {
+                console.log("Printed successfully:", stdout);
+            }
+            fs.unlink(receiptFilePath, () => { });
+            resolve();
+        });
+    }));
 }
 
 // Handle the event from the renderer (frontend)
