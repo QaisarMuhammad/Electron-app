@@ -24,7 +24,7 @@
  */
 
 const { currencySymbol: defaultCurrencySymbol } = require('../currency');
-const { toText, cleanText, truncateText, readField, maskBarcodeText, maskBarcodeShort, buildSpecs } = require('../labelText');
+const { toText, cleanText, truncateText, readField, maskBarcodeText, maskBarcodeShort, buildSpecs, cleanSpecList } = require('../labelText');
 
 /** A repair message prints one label per order item; no real order has more. */
 const MAX_LABELS_PER_MESSAGE = 100;
@@ -121,7 +121,9 @@ function readProduct(bf, symbol) {
     processor,
     price: priceText(bf, symbol),
     warranty: warranty.length > 3 ? readField(`${warranty} WARRANTY`).toUpperCase() : '',
-    specs: buildSpecs({
+    // the dashboard chooses and orders the lines for the kind of device (phone, laptop, tablet, accessory) and sends them as `specs`; an older
+    // dashboard sends the separate fields and the fixed order below is used
+    specs: Array.isArray(bf.specs) ? cleanSpecList(bf.specs) : buildSpecs({
       grade: bf.conditionObject?.grade,
       storage: bf.storage,
       network: bf.network,

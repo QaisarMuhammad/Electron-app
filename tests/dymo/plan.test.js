@@ -452,3 +452,24 @@ test('repair: unread properties of the order item (even 300 KB ones) and of the 
   const result = plan(repair({ orderItem: item, business }));
   assert.equal(JSON.stringify(result).length < 5000, true);
 });
+
+/* ---------------------------------------------------------------------------------------------------------- */
+/* Specs chosen by the dashboard for the kind of device (phone, laptop, tablet, accessory)                       */
+/* ---------------------------------------------------------------------------------------------------------- */
+
+test('barcodefinal.specs (an ordered list) replaces the fixed field order: the first 5 fill the slots, the first 4 on a sale label', () => {
+  const specs = ['Grade A', 'Intel i7-1360P', '32GB', '1TB SSD', 'WiFi 6', 'Silver'];
+  const plain = plan({ size: '32x57', design: 1, barcodefinal: product({ specs, storage: 'ignored', ram: 'ignored', conditionObject: { grade: 'Z' } }) }).plans[0];
+  const slots = (labelPlan) => ['TEXT_4', 'TEXT', 'TEXT_1', 'TEXT_5', 'TEXT__1'].map((name) => labelPlan.ops.find((op) => op.name === name)?.value);
+  assert.deepEqual(slots(plain), ['GRADE A', 'INTEL I7-1360P', '32GB', '1TB SSD', 'WIFI 6']);
+  const sale = plan({ size: '32x57', design: 1, barcodefinal: product({ specs, isSale: true, regular_price: 500, salePrice: 400 }) }).plans[0];
+  assert.deepEqual(slots(sale).slice(0, 4), ['GRADE A', 'INTEL I7-1360P', '32GB', '1TB SSD'], 'the processor survives on a sale label');
+});
+
+test('an empty specs list prints no spec lines at all (an accessory), and an old dashboard without specs keeps the field order', () => {
+  const empty = plan({ size: '32x57', design: 1, barcodefinal: product({ specs: [], storage: '64GB', conditionObject: { grade: 'New' } }) }).plans[0];
+  assert.deepEqual(['TEXT_4', 'TEXT', 'TEXT_1', 'TEXT_5', 'TEXT__1'].map((name) => empty.ops.find((op) => op.name === name)?.value), ['', '', '', '', '']);
+  const old = plan({ size: '32x57', design: 1, barcodefinal: product({ storage: '64GB', conditionObject: { grade: 'New' } }) }).plans[0];
+  assert.equal(old.ops.find((op) => op.name === 'TEXT_4').value, 'NEW');
+  assert.equal(old.ops.find((op) => op.name === 'TEXT').value, '64GB');
+});

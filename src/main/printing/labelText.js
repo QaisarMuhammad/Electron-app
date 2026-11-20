@@ -140,8 +140,26 @@ function buildSpecs({ grade, storage, network, ram, processor, color } = {}) {
     .filter((entry) => entry !== '');
 }
 
+/** The most spec lines a message can carry (the templates print the first 4 or 5). */
+const MAX_SPEC_ENTRIES = 8;
+
+/**
+ * An ordered spec list sent by the dashboard (barcodefinal.specs: condition, storage, ... chosen for the kind of device, most important first):
+ * every entry is cleaned and upper-cased like buildSpecs does, entries with no text are dropped and the list is cut to MAX_SPEC_ENTRIES.
+ * @param {unknown[]} specs
+ * @returns {string[]}
+ */
+function cleanSpecList(specs) {
+  return specs
+    .map((entry) => readField(entry).toUpperCase())
+    .filter((entry) => entry !== '')
+    .slice(0, MAX_SPEC_ENTRIES);
+}
+
 module.exports = {
   MAX_TEXT_BYTES,
+  MAX_SPEC_ENTRIES,
+  cleanSpecList,
   MAX_RAW_CHARS,
   toText,
   cleanText,

@@ -197,3 +197,11 @@ test('buildSpecs: values are cleaned before they are upper-cased and cut', () =>
   assert.deepEqual(buildSpecs({ storage: ' 128  gb\n' }), ['128 GB']);
   assert.equal(buildSpecs({ storage: 'x'.repeat(5000) })[0].length, 2048);
 });
+
+test('cleanSpecList: an ordered list from the dashboard is cleaned and upper-cased, empties dropped, cut to 8 entries', () => {
+  const { cleanSpecList, MAX_SPEC_ENTRIES } = require('../../src/main/printing/labelText');
+  assert.equal(MAX_SPEC_ENTRIES, 8);
+  assert.deepEqual(cleanSpecList(['Grade A', '  256gb ', '', null, undefined, 'Intel   i7\n', 5]), ['GRADE A', '256GB', 'INTEL I7', '5']);
+  assert.deepEqual(cleanSpecList([]), []);
+  assert.equal(cleanSpecList(Array.from({ length: 20 }, (_, index) => `s${index}`)).length, 8);
+});
