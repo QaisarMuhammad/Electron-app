@@ -15,7 +15,7 @@ const files = fs.readdirSync(LABELS_DIR).filter((file) => file.endsWith('.dymo')
 /* ---------------------------------------------------------------------------------------------------------- */
 
 test('templates.json lists exactly the .dymo files in the labels folder', () => {
-  assert.equal(files.length, 25);
+  assert.equal(files.length, 26);
   assert.deepEqual(Object.keys(fixture), files);
 });
 
@@ -140,18 +140,17 @@ test('the QR objects the plans write to carry the Data and TextDataHolder struct
   }
 });
 
-test('the templates the plans can name are the 16 in use; the other 9 files in the folder are spare copies no message reaches', () => {
+test('the templates the plans can name are the 18 in use; the other 8 files in the folder are spare copies no message reaches', () => {
   const used = new Set(allPlans.map(({ plan }) => plan.templateFile));
   const declared = new Set(
-    [TEMPLATES.lab, TEMPLATES.repair, ...Object.values(TEMPLATES['25x25']), ...Object.values(TEMPLATES['32x57']), ...Object.values(TEMPLATES['70x54'])]
+    [TEMPLATES.lab, ...Object.values(TEMPLATES.repair), ...Object.values(TEMPLATES['25x25']), ...Object.values(TEMPLATES['32x57']), ...Object.values(TEMPLATES['70x54'])]
   );
   assert.deepEqual([...used].sort(), [...declared].sort(), 'the matrix reaches every declared template and nothing else');
-  assert.equal(used.size, 16);
+  assert.equal(used.size, 18);
   assert.deepEqual(
     files.filter((file) => !used.has(file)),
     [
       '70_54_Labeldesign1_2_22 - Copy.dymo',
-      '70_54_LabeldesignRepair.dymo',
       '70_54_LabeldesignRepair_2.dymo',
       '70_54_Labeldesignqr2.dymo',
       'Labeldesign1_2_22.dymo',

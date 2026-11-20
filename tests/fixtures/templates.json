@@ -23,6 +23,20 @@
       "type": "TextObject"
     }
   ],
+  "25_25_repair.dymo": [
+    {
+      "name": "QRCodeObject2",
+      "type": "QRCodeObject"
+    },
+    {
+      "name": "TextObject2",
+      "type": "TextObject"
+    },
+    {
+      "name": "TextObject3",
+      "type": "TextObject"
+    }
+  ],
   "70_54_Labeldesign1_2_22 - Copy.dymo": [
     {
       "name": "ItemNameVal",
@@ -215,6 +229,14 @@
     {
       "name": "TEXT9",
       "type": "TextObject"
+    },
+    {
+      "name": "TextObject10",
+      "type": "TextObject"
+    },
+    {
+      "name": "ShapeObject0",
+      "type": "ShapeObject"
     }
   ],
   "70_54_LabeldesignRepair_2.dymo": [

@@ -299,7 +299,7 @@ test('every design at 32x57 and 70x54 picks its template; design 2 on sale is th
   }
 });
 
-test('25x25: designs 1 and 3 print the barcode label, everything else (a repair design and NaN included) the QR label', () => {
+test('25x25: designs 1 and 3 print the barcode label, everything else (NaN included) the QR label; a repair design has its own small label', () => {
   const at = (design, extra = {}) => only(envelope(product(extra), { size: '25x25', design }));
   for (const design of [1, '1', 3, '3']) {
     const labelPlan = at(design);
@@ -318,9 +318,20 @@ test('25x25: designs 1 and 3 print the barcode label, everything else (a repair 
       { kind: 'text', name: 'TextObject3', value: '**123456' },
     ]);
   }
-  const repair = plan({ size: '25x25', barcodefinal: product({ design: 'repair', orderItems: [{}, {}] }) });
-  assert.equal(repair.plans.length, 1, 'a repair design at 25x25 is one QR label, not the repair loop');
-  assert.equal(repair.plans[0].templateFile, '25_25_qrcode.dymo');
+  // a repair at 25x25 is the small repair label (customer, QR code, job number), one per order item like at the other sizes
+  const repair = plan({ size: '25x25', barcodefinal: product({ design: 'repair', customer: { name: 'Jo Smith' }, orderItems: [{ product_name: 'A' }, { product_name: 'B' }] }) });
+  assert.equal(repair.plans.length, 2);
+  for (const labelPlan of repair.plans) {
+    assert.equal(labelPlan.templateFile, '25_25_repair.dymo');
+    assert.deepEqual(labelPlan.ops, [
+      { kind: 'text', name: 'TextObject2', value: 'Jo Smith' },
+      { kind: 'qr', name: 'QRCodeObject2', value: 'ABCDEFGH123456' },
+      { kind: 'text', name: 'TextObject3', value: '**123456' },
+    ]);
+  }
+  const noCustomer = plan({ size: '25x25', barcodefinal: product({ design: 'repair', barcode: 'R-1042', orderItem: { product_name: 'iPhone 13' } }) }).plans[0];
+  assert.equal(noCustomer.ops[0].value, 'iPhone 13', 'without a customer name the device is printed');
+  assert.equal(noCustomer.ops[2].value, 'R-1042', 'a short job number is printed in full');
 });
 
 test('designs 2 and 7 use the XML-embedded QR (op kind qr-embed); design 4 and the repair label use the patch (kind qr)', () => {
@@ -361,8 +372,9 @@ test('repair: one label per orderItems element in array order; a lone orderItem 
   assert.equal(valueOf(lone.plans[0], 'ItemNameVal'), 'iPhone 13');
 });
 
-test('repair: the template is LabeldesignRepair.dymo at 32x57 and at 70x54', () => {
-  for (const size of ['32x57', '70x54', undefined]) assert.equal(plan({ ...repair(), size }).plans[0].templateFile, 'LabeldesignRepair.dymo');
+test('repair: every label size has its own template (32x57 is the default)', () => {
+  const expected = { '32x57': 'LabeldesignRepair.dymo', '70x54': '70_54_LabeldesignRepair.dymo', '25x25': '25_25_repair.dymo', undefined: 'LabeldesignRepair.dymo' };
+  for (const size of ['32x57', '70x54', '25x25', undefined]) assert.equal(plan({ ...repair(), size }).plans[0].templateFile, expected[size], String(size));
 });
 
 test('repair: the fields and their objects', () => {

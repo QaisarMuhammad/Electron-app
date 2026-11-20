@@ -44,7 +44,8 @@ class LabelPayloadError extends Error {
 /** Template file names (in the labels folder). `mukltipleBarcode` is spelled like that in the files. */
 const TEMPLATES = Object.freeze({
   lab: 'labitemdesign.dymo',
-  repair: 'LabeldesignRepair.dymo',
+  // one repair label per label size (the 70x54 one used to print on the small 32x57 template, and 25x25 printed the product QR label)
+  repair: Object.freeze({ '25x25': '25_25_repair.dymo', '32x57': 'LabeldesignRepair.dymo', '70x54': '70_54_LabeldesignRepair.dymo' }),
   '25x25': Object.freeze({ barcode: '25_25_barcode.dymo', qr: '25_25_qrcode.dymo' }),
   '32x57': Object.freeze({
     design1: 'Labeldesign1_1.dymo',
@@ -238,7 +239,7 @@ function customFieldValues(item) {
 }
 
 /** One label per order item (v1 looped the items). v1 read, but never printed, current_price, product_sn_imei_description and post_code: nor does v2. */
-function repairLabels(ops, bf) {
+function repairLabels(ops, bf, size) {
   const items = Array.isArray(bf.orderItems) ? bf.orderItems : [bf.orderItem];
   if (items.length === 0) throw new LabelPayloadError('The repair label has no items to print.');
   if (items.length > MAX_LABELS_PER_MESSAGE) throw new LabelPayloadError(`A repair label message can print at most ${MAX_LABELS_PER_MESSAGE} labels.`);
@@ -246,10 +247,21 @@ function repairLabels(ops, bf) {
   const customer = bf.customer;
   const orderDate = bf.orderDate || '';
   const barcode = readField(bf.barcode);
+  // 25x25 has room for the customer, a QR code and the job number only
+  if (size === '25x25') {
+    return items.map((item) => ({
+      templateFile: TEMPLATES.repair['25x25'],
+      ops: [
+        ops.text('TextObject2', customer?.name || item?.product_name || ''),
+        ops.qr('QRCodeObject2', barcode),
+        ops.text('TextObject3', barcode.length > 12 ? maskBarcodeShort(barcode) : barcode),
+      ],
+    }));
+  }
   return items.map((item) => {
     const custom = customFieldValues(item);
     return {
-      templateFile: TEMPLATES.repair,
+      templateFile: TEMPLATES.repair[size],
       ops: [
         ops.text('ItemNameVal', item?.product_name),
         ops.text('TEXT', custom[0]),
@@ -304,12 +316,12 @@ function buildLabelPlan(payload, options = {}) {
     return summary([plan], false);
   }
 
-  // A repair label (not at 25x25, which checks the size first) reads only its own fields and needs no currency.
-  if (design === 'repair' && size !== '25x25') return summary(repairLabels(ops, bf), false);
+  // A repair label reads only its own fields and needs no currency; every size has its own repair template.
+  if (design === 'repair') return summary(repairLabels(ops, bf, size), false);
 
   const symbol = symbolOf(payload.currency ?? bf.currency);
 
-  // 25x25: designs 1 and 3 print the barcode label, every other value (a repair design included) the QR label.
+  // 25x25: designs 1 and 3 print the barcode label, every other value the QR label (a repair design was handled above).
   if (size === '25x25') {
     const barcode = readField(bf.barcode);
     const price = priceText(bf, symbol);

@@ -135,6 +135,10 @@ LAYOUTS = {
         },
         'lines': {'LineTitle': ('H', M32, 4.95, W32)},
     },
+    '25_25_repair.dymo': {
+        'base': '25_25_qrcode.dymo',
+        'objects': {'TextObject2': t(1.0, 0.6, 20.9, 5.4, 10, 'C', 'M'), 'QRCodeObject2': box(6.2, 6.2, 10.5, 10.5), 'TextObject3': t(1.5, 17.0, 19.9, 3.6, 8, 'C', 'M')},
+    },
     'labitemdesign.dymo': {
         'objects': {'TextObject12': t(M32, 1.0, W32, 12.6, 24, 'C', 'M'), 'BarcodeObject1': box(6.0, 15.0, 43.1, 10.8)},
     },
@@ -185,6 +189,19 @@ LAYOUTS = {
         'lines': {'LineTitle': ('H', M70, 13.2, W70)},
         'strike': {'LineObject0': ('H', M70, 42.2, 14.5)},
     },
+    '70_54_LabeldesignRepair.dymo': {
+        'page': '70_54_Labeldesign2.dymo', 'base': '70_54_LabeldesignRepair_2.dymo', 'copy': ['TextObject10', 'ShapeObject0'],
+        'objects': {
+            'ItemNameVal': t(M70, 1.5, W70, 8.0, 16, 'L', 'M'),
+            'TEXT': t(M70, 11.2, 40.0, 5.0, 12, 'L', 'M'), 'TEXT8': t(M70, 16.4, 40.0, 5.0, 12, 'L', 'M'), 'TEXT9': t(M70, 21.6, 40.0, 5.0, 12, 'L', 'M'),
+            'QRCodeObject0': box(44.5, 11.2, 16.2, 16.2), 'TEXT4': t(43.0, 27.6, 19.2, 3.6, 8, 'C', 'M'),
+            'TextObject5': t(M70, 28.4, 40.0, 5.4, 13, 'L', 'M'), 'TextObject6': t(M70, 34.0, 40.0, 5.6, 15, 'L', 'M'),
+            'TextObject7': t(44.5, 34.0, 16.2, 5.6, 12, 'R', 'M'),
+            'TEXT_5': t(M70, 41.0, 40.0, 4.6, 11, 'L', 'M'), 'TextObject1': t(M70, 45.9, 40.0, 4.0, 9, 'L', 'M'),
+            'TextObject10': t(44.5, 41.2, 12.0, 4.4, 10, 'R', 'M'), 'ShapeObject0': box(57.4, 41.4, 3.8, 3.8),
+        },
+        'lines': {'LineTitle': ('H', M70, 10.2, W70)},
+    },
     '70_54_mukltipleBarcode.dymo': {
         'page': '70_54_Labeldesign2.dymo', 'base': 'mukltipleBarcode.dymo',
         'objects': {
@@ -208,7 +225,7 @@ TITLES = {
     '25_25_barcode.dymo': '25x25 barcode', '25_25_qrcode.dymo': '25x25 QR',
     'Labeldesign1_1.dymo': '32x57 design 1', 'Labeldesign_sale.dymo': '32x57 design 1 on sale', 'Labeldesign2.dymo': '32x57 design 2 (QR)',
     'Labeldesign3.dymo': '32x57 design 2 on sale', 'mukltipleBarcode.dymo': '32x57 design 3 (2 barcodes)', 'multipleQRCODE.dymo': '32x57 design 4 (3 QR)',
-    'LabeldesignRepair.dymo': 'Repair label', 'labitemdesign.dymo': 'Lab item label',
+    'LabeldesignRepair.dymo': '32x57 repair label', 'labitemdesign.dymo': 'Lab item label', '25_25_repair.dymo': '25x25 repair label', '70_54_LabeldesignRepair.dymo': '70x54 repair label',
     '70_54_Labeldesign1_2_22.dymo': '70x54 design 1', '70_54_Labeldesign_sale.dymo': '70x54 design 1 on sale', '70_54_Labeldesign2.dymo': '70x54 design 2 (QR)',
     '70_54_Labeldesign3.dymo': '70x54 design 2 on sale', '70_54_mukltipleBarcode.dymo': '70x54 design 3 (2 barcodes)', '70_54_multipleQRCODE.dymo': '70x54 design 4 (3 QR)',
 }
@@ -225,6 +242,9 @@ SAMPLE_BY_TEMPLATE = {
     '70_54_multipleQRCODE.dymo': {'TextObject12': '£649.99', 'TextObject1': '£649.99', 'TextObject2': '£649.99', 'TextObject3': '5678', 'TextObject4': '5678', 'TextObject5': '5678'},
     '25_25_barcode.dymo': {'TextObject1': '£49.99'}, '25_25_qrcode.dymo': {'TextObject2': '£49.99', 'TextObject3': '5678'},
     'labitemdesign.dymo': {'TextObject12': 'LAB-2231 Samsung S23 board'},
+    '25_25_repair.dymo': {'TextObject2': 'Muhammad Q', 'TextObject3': 'R-1042'},
+    '70_54_LabeldesignRepair.dymo': {'ItemNameVal': 'iPhone 13 Screen repair', 'TEXT': 'IMEI 356938035643809', 'TEXT8': 'Passcode 4821', 'TEXT9': 'Cracked back glass too', 'TextObject5': 'Muhammad Qaisar', 'TextObject6': '07911 123456',
+                               'TEXT_5': 'Gadgets Shop Leeds', 'TextObject1': '20/11/2026', 'TEXT4': '1002345678', 'TextObject7': '', 'TextObject10': 'Tested'},
     'LabeldesignRepair.dymo': {'ItemNameVal': 'iPhone 13 Screen repair', 'TEXT': 'IMEI 356938035643809', 'TEXT8': 'Passcode 4821', 'TEXT9': 'Cracked back glass too', 'TextObject5': 'Muhammad Qaisar', 'TextObject6': '07911 123456',
                                'TEXT_5': 'Gadgets Shop Leeds', 'TextObject1': '20/11/2026', 'TEXT4': '1002345678', 'TextObject7': '', 'TextObject10': 'Tested'},
 }
@@ -292,6 +312,10 @@ def build(target):
     for m in OBJ_RE.finditer(read(os.path.join(ORIG, 'mukltipleBarcode.dymo'))):
         if m.group(1) == 'LineObject':
             line_source = m.group(0)
+    if spec.get('copy'):
+        donor = read(os.path.join(ORIG, 'LabeldesignRepair.dymo'))
+        blocks = [m.group(0) for m in OBJ_RE.finditer(donor) if name_of(m.group(0)) in spec['copy']]
+        xml = xml.replace('</LabelObjects>', ''.join(blocks) + '</LabelObjects>', 1)
     objects, seen = spec['objects'], set()
     strike = {**spec.get('strike', {}), **spec.get('cut', {})}
 

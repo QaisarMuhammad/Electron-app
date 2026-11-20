@@ -131,6 +131,18 @@ for (const size of SIZES) {
             assert.equal(v2.printed, true, `v2 must print (${label}): ${v2.error}`);
             assert.equal(v1.printParams, undefined);
 
+            // repair labels have a template per size since 2026-11-20 (v1 printed the 32x57 repair template at 70x54 and the product QR label at 25x25)
+            if (design === 'repair' && size === '70x54') {
+              assert.equal(v2.template, '70_54_LabeldesignRepair.dymo', label);
+              assert.deepEqual(v2.labels.map((entry) => entry.ops), v1.labels.map((entry) => entry.ops), `the 70x54 repair label fills the same fields as v1 (${label})`);
+              continue;
+            }
+            if (design === 'repair' && size === '25x25') {
+              assert.equal(v2.template, '25_25_repair.dymo', label);
+              for (const entry of v2.labels) assert.deepEqual(entry.ops.map((op) => `${op.kind}:${op.name}`), ['text:TextObject2', 'qr:QRCodeObject2', 'text:TextObject3'], label);
+              continue;
+            }
+
             if (HAS_CONDITION[setName] || specSlotCount(size, design, isSaleFor(fields, isSale)) === 0) {
               assert.deepEqual(observed(v2), observed(v1), `v2 differs from v1 (${label})`);
               continue;
@@ -286,7 +298,8 @@ test('repair, one item or several: the same labels in the same order as v1 (Labe
       assert.equal(v1.printed, true);
       const v2 = v2Ops(payload);
       assert.equal(v2.labels.length, v1.labels.length);
-      assert.deepEqual(observed(v2), observed(v1), `size ${size} ${JSON.stringify(Object.keys(variant))}`);
+      // the 70x54 label has its own template since 2026-11-20; the fields it fills are v1's
+      assert.deepEqual(observed(v2), observed({ ...v1, template: size === '70x54' ? '70_54_LabeldesignRepair.dymo' : v1.template }), `size ${size} ${JSON.stringify(Object.keys(variant))}`);
     }
   }
 });
@@ -309,11 +322,16 @@ test('repair custom fields: position kept, entries without text give a blank, a 
   }
 });
 
-test('repair at 25x25 prints the 25x25 QR label like any design (v1 checks the size first)', async () => {
+test('repair at 25x25 prints its own small repair label: customer, QR code, job number (v1 printed the product QR label there)', () => {
   const payload = payloadOf({ size: '25x25', design: 'repair', fields: { barcode: 'R-1042', price: 15 } });
-  const v1 = await goldenOps(payload);
-  assert.equal(v1.template, '25_25_qrcode.dymo');
-  assert.deepEqual(observed(v2Ops(payload)), observed(v1));
+  Object.assign(payload.barcodefinal, { customer: { name: 'Jo Smith', cell_no: '07123456789' }, orderItem: { product_name: 'iPhone 13' } });
+  const v2 = v2Ops(payload);
+  assert.equal(v2.template, '25_25_repair.dymo');
+  assert.deepEqual(v2.ops, [
+    { kind: 'text', name: 'TextObject2', value: 'Jo Smith' },
+    { kind: 'qr', name: 'QRCodeObject2', value: 'R-1042' },
+    { kind: 'text', name: 'TextObject3', value: 'R-1042' },
+  ]);
 });
 
 test('repair with missing customer, business and date prints blanks like v1 (v1\'s one lone space in the business line is cleaned away, (d))', async () => {
@@ -537,8 +555,8 @@ test('(e) an unlisted design WITHOUT a sale at 70x54: v1 opened the 32x57 templa
   }
 });
 
-test('(e) at 25x25 an unlisted design is exactly v1: designs 1 and 3 print the barcode label, everything else the QR label', async () => {
-  for (const design of [...UNLISTED, 1, '1', 3, 2, 4, 7, 'repair']) {
+test('(e) at 25x25 an unlisted design is exactly v1: designs 1 and 3 print the barcode label, everything else the QR label (a repair label has its own template since 2026-11-20)', async () => {
+  for (const design of [...UNLISTED, 1, '1', 3, 2, 4, 7]) {
     const payload = payloadOf({ size: '25x25', design, fields: FULL });
     const v1 = await goldenOps(payload);
     const expected = String(design) === '1' || String(design) === '3' ? '25_25_barcode.dymo' : '25_25_qrcode.dymo';
