@@ -218,10 +218,118 @@ LAYOUTS = {
             'QRCodeObject2': box(42.1 + (19.1 - 18) / 2, 7.0, 18, 18), 'TextObject5': t(42.1, 25.4, 19.1, 4.0, 9, 'C', 'M'), 'TextObject2': t(42.1, 30.4, 19.1, 11.0, 24, 'C', 'M'),
         },
     },
+
+    # ------------------------------------------------------------------------------------------------ more designs: 5 name+barcode, 6 name+QR, 8 name+price+barcode, 9 name+price+QR
+    'Labeldesign5_nameBarcode.dymo': {
+        'base': 'Labeldesign1_1.dymo', 'auto_drop': True,
+        'objects': {'ItemNameVal': t(M32, 1.0, W32, 12.0, 18, 'C', 'M'), 'BARCODE': box(4.0, 14.2, 47.1, 8.2), 'TextObject1': t(9.5, 22.9, 36.1, 4.0, 9, 'C', 'M')},
+    },
+    'Labeldesign6_nameQr.dymo': {
+        'base': 'Labeldesign2.dymo', 'auto_drop': True,
+        'objects': {'ItemNameVal': t(M32, 0.6, W32, 8.2, 15, 'C', 'M'), 'QRCodeObject0': box(3.0, 10.2, 17.0, 17.0), 'Text_barcode': t(23.0, 14.5, 30.0, 8.0, 14, 'L', 'M')},
+        'lines': {'LineTitle': ('H', M32, 9.2, W32)},
+    },
+    'Labeldesign8_namePriceBarcode.dymo': {
+        'base': 'Labeldesign1_1.dymo', 'auto_drop': True,
+        'objects': {'ItemNameVal': t(M32, 0.6, W32, 7.4, 15, 'C', 'M'), 'TEXT_3': t(M32, 9.0, W32, 8.8, 24, 'C', 'M'), 'BARCODE': box(4.0, 18.6, 47.1, 5.6), 'TextObject1': t(9.5, 24.4, 36.1, 3.6, 7, 'C', 'M')},
+        'lines': {'LineTitle': ('H', M32, 8.4, W32)},
+    },
+    'Labeldesign9_namePriceQr.dymo': {
+        'base': 'Labeldesign2.dymo', 'auto_drop': True,
+        'objects': {'ItemNameVal': t(M32, 0.6, W32, 7.4, 15, 'C', 'M'), 'QRCodeObject0': box(3.0, 9.6, 17.5, 17.5), 'TEXT_3': t(22.0, 10.0, 31.6, 10.5, 26, 'R', 'M'), 'Text_barcode': t(22.0, 21.0, 31.6, 5.5, 10, 'R', 'M')},
+        'lines': {'LineTitle': ('H', M32, 8.4, W32)},
+    },
+    '70_54_Labeldesign5_nameBarcode.dymo': {
+        'base': '70_54_Labeldesign_sale.dymo', 'auto_drop': True,
+        'objects': {'ItemNameVal': t(M70, 2.5, W70, 18.0, 26, 'C', 'M'), 'BARCODE': box(8.0, 24.0, 46.7, 16.0), 'TextObject1': t(8.0, 40.6, 46.7, 6.0, 12, 'C', 'M')},
+    },
+    '70_54_Labeldesign6_nameQr.dymo': {
+        'base': '70_54_Labeldesign2.dymo', 'auto_drop': True,
+        'objects': {'ItemNameVal': TITLE70, 'QRCodeObject0': box(4.0, 15.4, 32.0, 32.0), 'Text_barcode': t(38.0, 24.0, 22.7, 12.0, 16, 'C', 'M')},
+        'lines': {'LineTitle': ('H', M70, 13.2, W70)},
+    },
+    '70_54_Labeldesign8_namePriceBarcode.dymo': {
+        'base': '70_54_Labeldesign_sale.dymo', 'auto_drop': True,
+        'objects': {'ItemNameVal': TITLE70, 'TEXT_3': t(M70, 14.6, W70, 14.0, 36, 'C', 'M'), 'BARCODE': box(8.0, 30.4, 46.7, 12.0), 'TextObject1': t(8.0, 43.0, 46.7, 6.0, 12, 'C', 'M')},
+        'lines': {'LineTitle': ('H', M70, 13.2, W70)},
+    },
+    '70_54_Labeldesign9_namePriceQr.dymo': {
+        'base': '70_54_Labeldesign2.dymo', 'auto_drop': True,
+        'objects': {'ItemNameVal': TITLE70, 'QRCodeObject0': box(3.0, 15.0, 26.0, 26.0), 'TEXT_3': t(32.0, 16.0, 28.7, 16.0, 32, 'R', 'M'), 'Text_barcode': t(32.0, 33.0, 28.7, 8.0, 12, 'R', 'M')},
+        'lines': {'LineTitle': ('H', M70, 13.2, W70)},
+    },
+
+    # ------------------------------------------------------------------------------------------------ gadget / repair shop designs: 10 price tag, 11 IMEI/serial, 12 accessory tag, 13 sale tag, repair bag tag
+    'Labeldesign10_priceTag.dymo': {
+        'base': 'Labeldesign1_1.dymo', 'auto_drop': True,
+        'objects': {'ItemNameVal': t(M32, 0.6, W32, 9.0, 17, 'C', 'M'), 'TEXT_3': t(M32, 10.6, W32, 11.5, 34, 'C', 'M'),
+                    'TEXT_4': t(M32, 22.8, 17.0, 3.8, 9, 'L', 'M'), 'TEXT': t(19.0, 22.8, 17.0, 3.8, 9, 'C', 'M'), 'TextObject11': t(36.5, 22.8, 17.1, 3.8, 8, 'R', 'M')},
+        'lines': {'LineTitle': ('H', M32, 9.9, W32)},
+    },
+    'Labeldesign11_serial.dymo': {
+        'base': 'Labeldesign1_1.dymo', 'auto_drop': True,
+        'objects': {'ItemNameVal': t(M32, 0.6, W32, 6.6, 13, 'L', 'M'), 'TEXT_4': t(M32, 7.4, 26.0, 3.6, 9, 'L', 'M'), 'TEXT': t(28.0, 7.4, 25.6, 3.6, 9, 'R', 'M'),
+                    'BARCODE': box(2.5, 11.6, 50.1, 9.6), 'TextObject1': t(2.5, 21.6, 50.1, 5.4, 14, 'C', 'M')},
+    },
+    'Labeldesign12_accessory.dymo': {
+        'base': 'Labeldesign1_1.dymo', 'auto_drop': True,
+        'objects': {'ItemNameVal': t(M32, 0.6, W32, 7.4, 15, 'C', 'M'), 'TEXT_4': t(M32, 9.2, 27.0, 4.2, 10, 'L', 'M'), 'TEXT': t(M32, 13.6, 27.0, 4.2, 10, 'L', 'M'),
+                    'TEXT_3': t(29.0, 9.2, 24.6, 8.6, 22, 'R', 'M'), 'BARCODE': box(4.0, 19.2, 47.1, 5.2), 'TextObject1': t(9.5, 24.6, 36.1, 3.4, 7, 'C', 'M')},
+        'lines': {'LineTitle': ('H', M32, 8.4, W32)},
+    },
+    'Labeldesign13_saleTag.dymo': {
+        'base': 'Labeldesign_sale.dymo', 'auto_drop': True,
+        'objects': {'ItemNameVal': t(M32, 0.6, W32, 7.4, 15, 'C', 'M'), 'Text_was': t(M32, 9.2, 24.0, 5.0, 14, 'L', 'M'), 'TEXT__1': t(28.0, 9.2, 25.6, 5.0, 13, 'R', 'M'),
+                    'TEXT_3': t(M32, 14.6, W32, 7.4, 22, 'C', 'M'), 'BARCODE': box(4.0, 22.2, 47.1, 3.4), 'TextObject1': t(9.5, 25.8, 36.1, 2.6, 6, 'C', 'M')},
+        'lines': {'LineTitle': ('H', M32, 8.4, W32)},
+        'strike': {'LineObject0': ('H', M32, 9.2 + 2.5, 24.0)},
+    },
+    'LabeldesignRepairBag.dymo': {
+        'base': 'LabeldesignRepair.dymo', 'auto_drop': True,
+        'objects': {'ItemNameVal': t(M32, 0.5, W32, 4.4, 10, 'L', 'M'), 'TextObject5': t(M32, 5.4, 36.0, 6.6, 18, 'L', 'M'), 'TextObject6': t(M32, 12.4, 36.0, 5.2, 15, 'L', 'M'),
+                    'QRCodeObject0': box(39.5, 5.4, 14.0, 14.0), 'TEXT4': t(37.5, 19.8, 17.6, 3.2, 8, 'C', 'M'),
+                    'TEXT_5': t(M32, 19.6, 34.0, 3.4, 8, 'L', 'M'), 'TextObject1': t(M32, 23.4, 34.0, 3.0, 8, 'L', 'M')},
+        'lines': {'LineTitle': ('H', M32, 5.0, W32)},
+    },
+    '70_54_Labeldesign10_priceTag.dymo': {
+        'base': '70_54_Labeldesign2.dymo', 'auto_drop': True,
+        'objects': {'ItemNameVal': TITLE70, 'TEXT_3': t(M70, 15.0, W70, 19.0, 48, 'C', 'M'),
+                    'TEXT_4': t(M70, 38.0, 28.0, 6.0, 14, 'L', 'M'), 'TEXT': t(32.0, 38.0, 28.7, 6.0, 14, 'R', 'M'), 'TextObject11': t(M70, 45.0, W70, 5.5, 12, 'C', 'M')},
+        'lines': {'LineTitle': ('H', M70, 13.2, W70)},
+    },
+    '70_54_Labeldesign11_serial.dymo': {
+        'base': '70_54_Labeldesign_sale.dymo', 'auto_drop': True,
+        'objects': {'ItemNameVal': t(M70, 1.5, W70, 9.0, 18, 'L', 'M'), 'TEXT_4': t(M70, 11.0, 28.0, 6.0, 13, 'L', 'M'), 'TEXT': t(32.0, 11.0, 28.7, 6.0, 13, 'R', 'M'),
+                    'BARCODE': box(4.0, 19.0, 54.7, 18.0), 'TextObject1': t(M70, 38.0, W70, 9.0, 20, 'C', 'M')},
+    },
+    '70_54_Labeldesign12_accessory.dymo': {
+        'base': '70_54_Labeldesign_sale.dymo', 'auto_drop': True,
+        'objects': {'ItemNameVal': TITLE70, 'TEXT_4': t(M70, 15.2, 34.0, 6.0, 14, 'L', 'M'), 'TEXT': t(M70, 21.6, 34.0, 6.0, 14, 'L', 'M'),
+                    'TEXT_3': t(38.0, 15.2, 22.7, 12.4, 28, 'R', 'M'), 'BARCODE': box(8.0, 30.0, 46.7, 12.5), 'TextObject1': t(8.0, 43.2, 46.7, 5.5, 11, 'C', 'M')},
+        'lines': {'LineTitle': ('H', M70, 13.2, W70)},
+    },
+    '70_54_Labeldesign13_saleTag.dymo': {
+        'base': '70_54_Labeldesign_sale.dymo', 'auto_drop': True,
+        'objects': {'ItemNameVal': TITLE70, 'Text_was': t(M70, 15.2, 28.0, 8.0, 18, 'L', 'M'), 'TEXT__1': t(32.0, 15.2, 28.7, 8.0, 16, 'R', 'M'),
+                    'TEXT_3': t(M70, 24.4, W70, 14.0, 44, 'C', 'M'), 'BARCODE': box(8.0, 40.0, 46.7, 7.0), 'TextObject1': t(8.0, 47.2, 46.7, 3.8, 9, 'C', 'M')},
+        'lines': {'LineTitle': ('H', M70, 13.2, W70)},
+        'strike': {'LineObject0': ('H', M70, 15.2 + 4.0, 28.0)},
+    },
+    '70_54_LabeldesignRepairBag.dymo': {
+        'page': '70_54_Labeldesign2.dymo', 'base': '70_54_LabeldesignRepair_2.dymo', 'auto_drop': True,
+        'objects': {'ItemNameVal': t(M70, 1.5, W70, 8.0, 16, 'L', 'M'), 'TextObject5': t(M70, 11.5, 38.0, 11.0, 28, 'L', 'M'), 'TextObject6': t(M70, 23.5, 38.0, 8.0, 20, 'L', 'M'),
+                    'QRCodeObject0': box(43.0, 11.5, 17.7, 17.7), 'TEXT4': t(41.0, 29.6, 21.7, 4.0, 10, 'C', 'M'),
+                    'TEXT_5': t(M70, 36.0, 38.0, 5.0, 12, 'L', 'M'), 'TextObject1': t(M70, 42.0, 38.0, 5.0, 11, 'L', 'M')},
+        'lines': {'LineTitle': ('H', M70, 10.2, W70)},
+    },
 }
 
 # which template is the design of which label (for the preview titles) and what it prints (sample values, by object name)
 TITLES = {
+    'Labeldesign10_priceTag.dymo': '32x57 design 10 (price tag)', 'Labeldesign11_serial.dymo': '32x57 design 11 (IMEI / serial)', 'Labeldesign12_accessory.dymo': '32x57 design 12 (accessory tag)', 'Labeldesign13_saleTag.dymo': '32x57 design 13 (sale tag)', 'LabeldesignRepairBag.dymo': '32x57 repair bag tag',
+    '70_54_Labeldesign10_priceTag.dymo': '70x54 design 10 (price tag)', '70_54_Labeldesign11_serial.dymo': '70x54 design 11 (IMEI / serial)', '70_54_Labeldesign12_accessory.dymo': '70x54 design 12 (accessory tag)', '70_54_Labeldesign13_saleTag.dymo': '70x54 design 13 (sale tag)', '70_54_LabeldesignRepairBag.dymo': '70x54 repair bag tag',
+    'Labeldesign5_nameBarcode.dymo': '32x57 design 5 (name + barcode)', 'Labeldesign6_nameQr.dymo': '32x57 design 6 (name + QR)', 'Labeldesign8_namePriceBarcode.dymo': '32x57 design 8 (name + price + barcode)', 'Labeldesign9_namePriceQr.dymo': '32x57 design 9 (name + price + QR)',
+    '70_54_Labeldesign5_nameBarcode.dymo': '70x54 design 5 (name + barcode)', '70_54_Labeldesign6_nameQr.dymo': '70x54 design 6 (name + QR)', '70_54_Labeldesign8_namePriceBarcode.dymo': '70x54 design 8 (name + price + barcode)', '70_54_Labeldesign9_namePriceQr.dymo': '70x54 design 9 (name + price + QR)',
     '25_25_barcode.dymo': '25x25 barcode', '25_25_qrcode.dymo': '25x25 QR',
     'Labeldesign1_1.dymo': '32x57 design 1', 'Labeldesign_sale.dymo': '32x57 design 1 on sale', 'Labeldesign2.dymo': '32x57 design 2 (QR)',
     'Labeldesign3.dymo': '32x57 design 2 on sale', 'mukltipleBarcode.dymo': '32x57 design 3 (2 barcodes)', 'multipleQRCODE.dymo': '32x57 design 4 (3 QR)',
@@ -235,6 +343,12 @@ SAMPLE = {
     'TextObject9': '£749.99',
 }
 SAMPLE_BY_TEMPLATE = {
+    'Labeldesign13_saleTag.dymo': {'TEXT__1': '£100.00 OFF', 'TEXT_3': '£549.99'}, '70_54_Labeldesign13_saleTag.dymo': {'TEXT__1': '£100.00 OFF', 'TEXT_3': '£549.99'},
+    'Labeldesign11_serial.dymo': {'TEXT_4': 'GRADE A', 'TEXT': '256GB', 'TextObject1': '357771570289459', 'BARCODE': '357771570289459'},
+    '70_54_Labeldesign11_serial.dymo': {'TEXT_4': 'GRADE A', 'TEXT': '256GB', 'TextObject1': '357771570289459', 'BARCODE': '357771570289459'},
+    'Labeldesign12_accessory.dymo': {'ItemNameVal': 'USB-C Fast Charger 20W', 'TEXT_4': 'NEW', 'TEXT': 'WHITE', 'TEXT_3': '£14.99'}, '70_54_Labeldesign12_accessory.dymo': {'ItemNameVal': 'USB-C Fast Charger 20W', 'TEXT_4': 'NEW', 'TEXT': 'WHITE', 'TEXT_3': '£14.99'},
+    'LabeldesignRepairBag.dymo': {'ItemNameVal': 'iPhone 13 Screen repair', 'TextObject5': 'Muhammad Qaisar', 'TextObject6': '07911 123456', 'TEXT_5': 'Gadgets Shop Leeds', 'TextObject1': '20/11/2026', 'TEXT4': 'R-1042'},
+    '70_54_LabeldesignRepairBag.dymo': {'ItemNameVal': 'iPhone 13 Screen repair', 'TextObject5': 'Muhammad Qaisar', 'TextObject6': '07911 123456', 'TEXT_5': 'Gadgets Shop Leeds', 'TextObject1': '20/11/2026', 'TEXT4': 'R-1042'},
     'Labeldesign_sale.dymo': {'TEXT__1': '£100.00 OFF'}, '70_54_Labeldesign_sale.dymo': {'TEXT__1': '£100.00 OFF'},
     'Labeldesign3.dymo': {'TextObject1': '£100.00 OFF', 'TEXT__1': 'DEEP PURPLE'}, '70_54_Labeldesign3.dymo': {'TextObject1': '£100.00 OFF'},
     'mukltipleBarcode.dymo': {'TextObject1': '£649.99', 'TextObject12': '£649.99'}, '70_54_mukltipleBarcode.dymo': {'TextObject1': '£649.99', 'TextObject12': '£649.99'},
@@ -324,6 +438,8 @@ def build(target):
         if name in strike:
             kind, x, y, length = strike[name]
             return line_block(block, name, kind, x, y, length, rx, ry)
+        if name not in objects and spec.get('auto_drop'):
+            return ''  # this design does not use the object: it is removed from the template (it would print its placeholder text)
         if name not in objects:
             raise SystemExit(f'{target}: object {name} has no layout (it would keep its old place)')
         seen.add(name)
@@ -450,13 +566,15 @@ def values_for(target, m):
     return v
 
 def main(check_only):
-    cards, problems = [], 0
+    cards, problems, geometry = [], 0, {}
     for target in LAYOUTS:
         before = model(read(os.path.join(ORIG, target if os.path.exists(os.path.join(ORIG, target)) and 'base' not in LAYOUTS[target] else LAYOUTS[target].get('base', target)))) if True else None
         new_xml = build(target)
         after = model(new_xml)
         flags = audit(after, target)
         problems += len(flags)
+        geometry[target] = {'w': round(after['W'], 2), 'h': round(after['H'], 2), 'orientation': after['orient'], 'labelType': after['label'],
+                            'objects': [{k: (round(v, 2) if isinstance(v, float) else v) for k, v in o.items() if k in ('type', 'name', 'x', 'y', 'w', 'h', 'fs', 'ha', 'va', 'line')} for o in after['objs']]}
         if not check_only:
             write(os.path.join(OUT, target), new_xml)
         vals = values_for(target, after)
@@ -468,7 +586,10 @@ def main(check_only):
             + ''.join(f'<p class="flag">&#9888; {html.escape(f)}</p>' for f in flags) + '</section>')
         print(f'{TITLES[target]:32} {target:32} {len(after["objs"]):2} objects  {"OK" if not flags else "; ".join(flags)}')
     if not check_only:
+        import json
         os.makedirs(os.path.join(ROOT, 'docs', 'label-design'), exist_ok=True)
+        with open(os.path.join(ROOT, 'docs', 'label-design', 'geometry.json'), 'w') as handle:
+            json.dump(geometry, handle, indent=1)
         write(os.path.join(ROOT, 'docs', 'label-design', 'preview.html'),
               '<!doctype html><meta charset="utf-8"><title>DYMO label designs</title>'
               '<style>body{font-family:system-ui,Arial;margin:18px;background:#eef0f4;color:#1d2230}h1{font-size:20px}p.n{max-width:900px;color:#445;font-size:13px}'

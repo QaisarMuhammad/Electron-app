@@ -249,7 +249,7 @@ async function main() {
 
   check('a function inside a label (cannot be cloned): the NEW web gets an UNKNOWN Result, not an exception', R.fnPayload && R.fnPayload.ok === false && R.fnPayload.code === 'UNKNOWN', R.fnPayload);
   note(`the OLD web's legacy call with a function inside: ${R.legacyFn}`);
-  check('getDesktopInfo is the app\'s own answer (apiVersion 2) and isDesktopApp is true', R.info && R.info.apiVersion === 2 && R.info.features.length === 3 && R.isDesktop === true, [R.info, R.isDesktop]);
+  check('getDesktopInfo is the app\'s own answer (apiVersion 2) and isDesktopApp is true', R.info && R.info.apiVersion === 2 && R.info.features.length === 4 && R.isDesktop === true, [R.info, R.isDesktop]);
 
   check('a failing printer: the NEW web gets SPOOLER_ERROR with the desktop\'s message, twice', R.failReceipt && R.failReceipt.code === 'SPOOLER_ERROR' && R.failReceiptAgain && R.failReceiptAgain.code === 'SPOOLER_ERROR' && /printer is on, has paper/.test(R.failReceipt.message), [R.failReceipt, R.failReceiptAgain]);
   const errorEvents = (R.events || []).filter((ev) => ev.code === 'SPOOLER_ERROR');

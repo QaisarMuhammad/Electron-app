@@ -61,7 +61,7 @@ test('the acknowledged functions invoke their fixed channels and return the answ
     'print-receipt': { ok: true },
     'print-barcode': { ok: false, code: 'DYMO_NO_PRINTER', message: 'No DYMO printer was found.' },
     'open-drawer': { ok: true, details: { prompted: true } },
-    'app-info': { name: 'GadgetsPOS', version: '2.0.0', platform: 'win32', apiVersion: 2, features: ['ack-print', 'drawer', 'printer-list'] },
+    'app-info': { name: 'GadgetsPOS', version: '2.0.0', platform: 'win32', apiVersion: 2, features: ['ack-print', 'drawer', 'printer-list', 'label-designs-1'] },
     'list-printers': { system: [], dymo: [] },
   };
   const { exposed, ipc } = app({ invokeHandler: (channel) => answers[channel] });

@@ -112,7 +112,8 @@ const SALE_PAIRS = [
 ];
 const CURRENCIES = ['GBP', 'gbp', ' usd ', 'USD', 'AED', 'EUR', '$', '', 'pounds', 'EURO', null, 123, 'JPY ', 'sar', 'us', ' gbp'];
 const ODD_SIZES = ['57x32', '', 'abc', undefined, '32X57', ' 25x25', '25x25 ', null, 5, '70x54x', '32x57'];
-const NAN_DESIGNS = ['', undefined, 'x', 5, '5', 0, -1, null, '9', 'abc', true, '-', '\u0663', '\uff11'];
+// not 5, 6, 8-13: those are real designs since 2026-11-20 (see tests/dymo)
+const NAN_DESIGNS = ['', undefined, 'x', 15, '15', 0, -1, null, '99', 'abc', true, '-', '\u0663', '\uff11'];
 
 /** A text field: mostly a typical value, sometimes hostile, a number, missing, null or empty. */
 function pickText(rng, typical, { hostile = 0.1, odd = 0.12 } = {}) {

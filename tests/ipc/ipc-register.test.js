@@ -115,7 +115,7 @@ test('app-info reports the api version and features without any other field of t
   const { handlers } = setup();
   assert.deepEqual(await handlers.get('app-info')(event), { name: 'Gadgets POS', version: '2.0.0', platform: 'win32', apiVersion: API_VERSION, features: [...FEATURES] });
   assert.equal(API_VERSION, 2);
-  assert.deepEqual([...FEATURES], ['ack-print', 'drawer', 'printer-list']);
+  assert.deepEqual([...FEATURES], ['ack-print', 'drawer', 'printer-list', 'label-designs-1']);
 });
 
 test('a service that throws becomes an UNKNOWN Result and a log line; a fire-and-forget failure becomes a native box', async () => {

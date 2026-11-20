@@ -37,6 +37,102 @@
       "type": "TextObject"
     }
   ],
+  "70_54_Labeldesign10_priceTag.dymo": [
+    {
+      "name": "ItemNameVal",
+      "type": "TextObject"
+    },
+    {
+      "name": "TEXT",
+      "type": "TextObject"
+    },
+    {
+      "name": "TEXT_3",
+      "type": "TextObject"
+    },
+    {
+      "name": "TEXT_4",
+      "type": "TextObject"
+    },
+    {
+      "name": "TextObject11",
+      "type": "TextObject"
+    }
+  ],
+  "70_54_Labeldesign11_serial.dymo": [
+    {
+      "name": "ItemNameVal",
+      "type": "TextObject"
+    },
+    {
+      "name": "TEXT",
+      "type": "TextObject"
+    },
+    {
+      "name": "BARCODE",
+      "type": "BarcodeObject"
+    },
+    {
+      "name": "TEXT_4",
+      "type": "TextObject"
+    },
+    {
+      "name": "TextObject1",
+      "type": "TextObject"
+    }
+  ],
+  "70_54_Labeldesign12_accessory.dymo": [
+    {
+      "name": "ItemNameVal",
+      "type": "TextObject"
+    },
+    {
+      "name": "TEXT",
+      "type": "TextObject"
+    },
+    {
+      "name": "BARCODE",
+      "type": "BarcodeObject"
+    },
+    {
+      "name": "TEXT_3",
+      "type": "TextObject"
+    },
+    {
+      "name": "TEXT_4",
+      "type": "TextObject"
+    },
+    {
+      "name": "TextObject1",
+      "type": "TextObject"
+    }
+  ],
+  "70_54_Labeldesign13_saleTag.dymo": [
+    {
+      "name": "ItemNameVal",
+      "type": "TextObject"
+    },
+    {
+      "name": "BARCODE",
+      "type": "BarcodeObject"
+    },
+    {
+      "name": "TEXT_3",
+      "type": "TextObject"
+    },
+    {
+      "name": "TEXT__1",
+      "type": "TextObject"
+    },
+    {
+      "name": "TextObject1",
+      "type": "TextObject"
+    },
+    {
+      "name": "Text_was",
+      "type": "TextObject"
+    }
+  ],
   "70_54_Labeldesign1_2_22 - Copy.dymo": [
     {
       "name": "ItemNameVal",
@@ -185,6 +281,70 @@
       "type": "TextObject"
     }
   ],
+  "70_54_Labeldesign5_nameBarcode.dymo": [
+    {
+      "name": "ItemNameVal",
+      "type": "TextObject"
+    },
+    {
+      "name": "BARCODE",
+      "type": "BarcodeObject"
+    },
+    {
+      "name": "TextObject1",
+      "type": "TextObject"
+    }
+  ],
+  "70_54_Labeldesign6_nameQr.dymo": [
+    {
+      "name": "ItemNameVal",
+      "type": "TextObject"
+    },
+    {
+      "name": "QRCodeObject0",
+      "type": "QRCodeObject"
+    },
+    {
+      "name": "Text_barcode",
+      "type": "TextObject"
+    }
+  ],
+  "70_54_Labeldesign8_namePriceBarcode.dymo": [
+    {
+      "name": "ItemNameVal",
+      "type": "TextObject"
+    },
+    {
+      "name": "BARCODE",
+      "type": "BarcodeObject"
+    },
+    {
+      "name": "TEXT_3",
+      "type": "TextObject"
+    },
+    {
+      "name": "TextObject1",
+      "type": "TextObject"
+    }
+  ],
+  "70_54_Labeldesign9_namePriceQr.dymo": [
+    {
+      "name": "ItemNameVal",
+      "type": "TextObject"
+    },
+    {
+      "name": "TEXT_3",
+      "type": "TextObject"
+    },
+    {
+      "name": "QRCodeObject0",
+      "type": "QRCodeObject"
+    },
+    {
+      "name": "Text_barcode",
+      "type": "TextObject"
+    }
+  ],
   "70_54_LabeldesignRepair.dymo": [
     {
       "name": "ItemNameVal",
@@ -237,6 +397,36 @@
     {
       "name": "ShapeObject0",
       "type": "ShapeObject"
+    }
+  ],
+  "70_54_LabeldesignRepairBag.dymo": [
+    {
+      "name": "ItemNameVal",
+      "type": "TextObject"
+    },
+    {
+      "name": "TEXT_5",
+      "type": "TextObject"
+    },
+    {
+      "name": "QRCodeObject0",
+      "type": "QRCodeObject"
+    },
+    {
+      "name": "TEXT4",
+      "type": "TextObject"
+    },
+    {
+      "name": "TextObject1",
+      "type": "TextObject"
+    },
+    {
+      "name": "TextObject5",
+      "type": "TextObject"
+    },
+    {
+      "name": "TextObject6",
+      "type": "TextObject"
     }
   ],
   "70_54_LabeldesignRepair_2.dymo": [
@@ -437,6 +627,102 @@
       "type": "TextObject"
     }
   ],
+  "Labeldesign10_priceTag.dymo": [
+    {
+      "name": "ItemNameVal",
+      "type": "TextObject"
+    },
+    {
+      "name": "TEXT",
+      "type": "TextObject"
+    },
+    {
+      "name": "TEXT_3",
+      "type": "TextObject"
+    },
+    {
+      "name": "TEXT_4",
+      "type": "TextObject"
+    },
+    {
+      "name": "TextObject11",
+      "type": "TextObject"
+    }
+  ],
+  "Labeldesign11_serial.dymo": [
+    {
+      "name": "ItemNameVal",
+      "type": "TextObject"
+    },
+    {
+      "name": "TEXT",
+      "type": "TextObject"
+    },
+    {
+      "name": "BARCODE",
+      "type": "BarcodeObject"
+    },
+    {
+      "name": "TEXT_4",
+      "type": "TextObject"
+    },
+    {
+      "name": "TextObject1",
+      "type": "TextObject"
+    }
+  ],
+  "Labeldesign12_accessory.dymo": [
+    {
+      "name": "ItemNameVal",
+      "type": "TextObject"
+    },
+    {
+      "name": "TEXT",
+      "type": "TextObject"
+    },
+    {
+      "name": "BARCODE",
+      "type": "BarcodeObject"
+    },
+    {
+      "name": "TEXT_3",
+      "type": "TextObject"
+    },
+    {
+      "name": "TEXT_4",
+      "type": "TextObject"
+    },
+    {
+      "name": "TextObject1",
+      "type": "TextObject"
+    }
+  ],
+  "Labeldesign13_saleTag.dymo": [
+    {
+      "name": "ItemNameVal",
+      "type": "TextObject"
+    },
+    {
+      "name": "BARCODE",
+      "type": "BarcodeObject"
+    },
+    {
+      "name": "TEXT_3",
+      "type": "TextObject"
+    },
+    {
+      "name": "TEXT__1",
+      "type": "TextObject"
+    },
+    {
+      "name": "TextObject1",
+      "type": "TextObject"
+    },
+    {
+      "name": "Text_was",
+      "type": "TextObject"
+    }
+  ],
   "Labeldesign1_1.dymo": [
     {
       "name": "ItemNameVal",
@@ -625,6 +911,70 @@
       "type": "TextObject"
     }
   ],
+  "Labeldesign5_nameBarcode.dymo": [
+    {
+      "name": "ItemNameVal",
+      "type": "TextObject"
+    },
+    {
+      "name": "BARCODE",
+      "type": "BarcodeObject"
+    },
+    {
+      "name": "TextObject1",
+      "type": "TextObject"
+    }
+  ],
+  "Labeldesign6_nameQr.dymo": [
+    {
+      "name": "ItemNameVal",
+      "type": "TextObject"
+    },
+    {
+      "name": "QRCodeObject0",
+      "type": "QRCodeObject"
+    },
+    {
+      "name": "Text_barcode",
+      "type": "TextObject"
+    }
+  ],
+  "Labeldesign8_namePriceBarcode.dymo": [
+    {
+      "name": "ItemNameVal",
+      "type": "TextObject"
+    },
+    {
+      "name": "BARCODE",
+      "type": "BarcodeObject"
+    },
+    {
+      "name": "TEXT_3",
+      "type": "TextObject"
+    },
+    {
+      "name": "TextObject1",
+      "type": "TextObject"
+    }
+  ],
+  "Labeldesign9_namePriceQr.dymo": [
+    {
+      "name": "ItemNameVal",
+      "type": "TextObject"
+    },
+    {
+      "name": "TEXT_3",
+      "type": "TextObject"
+    },
+    {
+      "name": "QRCodeObject0",
+      "type": "QRCodeObject"
+    },
+    {
+      "name": "Text_barcode",
+      "type": "TextObject"
+    }
+  ],
   "LabeldesignRepair.dymo": [
     {
       "name": "ItemNameVal",
@@ -677,6 +1027,36 @@
     {
       "name": "ShapeObject0",
       "type": "ShapeObject"
+    }
+  ],
+  "LabeldesignRepairBag.dymo": [
+    {
+      "name": "ItemNameVal",
+      "type": "TextObject"
+    },
+    {
+      "name": "TEXT_5",
+      "type": "TextObject"
+    },
+    {
+      "name": "QRCodeObject0",
+      "type": "QRCodeObject"
+    },
+    {
+      "name": "TEXT4",
+      "type": "TextObject"
+    },
+    {
+      "name": "TextObject1",
+      "type": "TextObject"
+    },
+    {
+      "name": "TextObject5",
+      "type": "TextObject"
+    },
+    {
+      "name": "TextObject6",
+      "type": "TextObject"
     }
   ],
   "Labeldesign_1_2.dymo": [

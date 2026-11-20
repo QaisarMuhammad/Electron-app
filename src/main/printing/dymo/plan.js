@@ -54,6 +54,14 @@ const TEMPLATES = Object.freeze({
     design2Sale: 'Labeldesign3.dymo',
     design3: 'mukltipleBarcode.dymo',
     design4: 'multipleQRCODE.dymo',
+    design5: 'Labeldesign5_nameBarcode.dymo',
+    design6: 'Labeldesign6_nameQr.dymo',
+    design8: 'Labeldesign8_namePriceBarcode.dymo',
+    design9: 'Labeldesign9_namePriceQr.dymo',
+    design10: 'Labeldesign10_priceTag.dymo',
+    design11: 'Labeldesign11_serial.dymo',
+    design12: 'Labeldesign12_accessory.dymo',
+    design13: 'Labeldesign13_saleTag.dymo',
   }),
   '70x54': Object.freeze({
     design1: '70_54_Labeldesign1_2_22.dymo',
@@ -62,7 +70,17 @@ const TEMPLATES = Object.freeze({
     design2Sale: '70_54_Labeldesign3.dymo',
     design3: '70_54_mukltipleBarcode.dymo',
     design4: '70_54_multipleQRCODE.dymo',
+    design5: '70_54_Labeldesign5_nameBarcode.dymo',
+    design6: '70_54_Labeldesign6_nameQr.dymo',
+    design8: '70_54_Labeldesign8_namePriceBarcode.dymo',
+    design9: '70_54_Labeldesign9_namePriceQr.dymo',
+    design10: '70_54_Labeldesign10_priceTag.dymo',
+    design11: '70_54_Labeldesign11_serial.dymo',
+    design12: '70_54_Labeldesign12_accessory.dymo',
+    design13: '70_54_Labeldesign13_saleTag.dymo',
   }),
+  // the repair bag tag (design "repair-bag"): customer, phone, job number and QR large enough to read on a bagged device; 25x25 has only the small repair label
+  repairBag: Object.freeze({ '25x25': '25_25_repair.dymo', '32x57': 'LabeldesignRepairBag.dymo', '70x54': '70_54_LabeldesignRepairBag.dymo' }),
 });
 
 /** The text objects the spec list fills, in order. */
@@ -231,6 +249,49 @@ function design4Fill(ops, p) {
   ];
 }
 
+/** The price a label prints: the sale price while the product is on sale, else the normal price (designs 8 and 9 have no was/OFF captions). */
+const shownPrice = (p) => (p.sale ? p.salePrice : p.price);
+
+/** Design 5: name and barcode. */
+function design5Fill(ops, p) {
+  return [ops.text('ItemNameVal', p.title), ops.text('BARCODE', p.barcode), ops.text('TextObject1', p.masked)];
+}
+
+/** Design 6: name and QR code (written into the label XML, op kind 'qr-embed'). */
+function design6Fill(ops, p) {
+  return [ops.embed('QRCodeObject0', p.barcode), ops.text('ItemNameVal', p.title), ops.text('Text_barcode', p.masked)];
+}
+
+/** Design 8: name, price and barcode. */
+function design8Fill(ops, p) {
+  return [ops.text('ItemNameVal', p.title), ops.text('TEXT_3', shownPrice(p)), ops.text('BARCODE', p.barcode), ops.text('TextObject1', p.masked)];
+}
+
+/** Design 9: name, price and QR code. */
+function design9Fill(ops, p) {
+  return [ops.embed('QRCodeObject0', p.barcode), ops.text('ItemNameVal', p.title), ops.text('TEXT_3', shownPrice(p)), ops.text('Text_barcode', p.masked)];
+}
+
+/** Design 10, the price tag: name, a very large price, condition / second detail / warranty in one row. */
+function design10Fill(ops, p) {
+  return [ops.text('ItemNameVal', p.title), ops.text('TEXT_3', shownPrice(p)), ops.text('TEXT_4', p.specs[0] || ''), ops.text('TEXT', p.specs[1] || ''), ops.text('TextObject11', p.warranty)];
+}
+
+/** Design 11, the IMEI / serial label: model, two details, the serial or IMEI as a large barcode and in full digits (not masked). */
+function design11Fill(ops, p) {
+  return [ops.text('ItemNameVal', p.title), ops.text('TEXT_4', p.specs[0] || ''), ops.text('TEXT', p.specs[1] || ''), ops.text('BARCODE', p.barcode), ops.text('TextObject1', p.barcode)];
+}
+
+/** Design 12, the accessory tag: name, two detail lines (colour, compatibility ...), price and barcode. */
+function design12Fill(ops, p) {
+  return [ops.text('ItemNameVal', p.title), ops.text('TEXT_4', p.specs[0] || ''), ops.text('TEXT', p.specs[1] || ''), ops.text('TEXT_3', shownPrice(p)), ops.text('BARCODE', p.barcode), ops.text('TextObject1', p.masked)];
+}
+
+/** Design 13, the sale tag: the old price struck through, the saving and the sale price. Only for a product that is on sale (see buildLabelPlan). */
+function design13Fill(ops, p) {
+  return [ops.text('ItemNameVal', p.title), ops.text('Text_was', p.regularPrice), ops.text('TEXT__1', p.offText), ops.text('TEXT_3', p.salePrice), ops.text('BARCODE', p.barcode), ops.text('TextObject1', p.masked)];
+}
+
 /** The first three custom field values of an order item, by position; an entry whose value has no length gives ''. */
 function customFieldValues(item) {
   const entries = Array.isArray(item?.custom_field_value) ? item.custom_field_value : [];
@@ -241,7 +302,7 @@ function customFieldValues(item) {
 }
 
 /** One label per order item (v1 looped the items). v1 read, but never printed, current_price, product_sn_imei_description and post_code: nor does v2. */
-function repairLabels(ops, bf, size) {
+function repairLabels(ops, bf, size, bag = false) {
   const items = Array.isArray(bf.orderItems) ? bf.orderItems : [bf.orderItem];
   if (items.length === 0) throw new LabelPayloadError('The repair label has no items to print.');
   if (items.length > MAX_LABELS_PER_MESSAGE) throw new LabelPayloadError(`A repair label message can print at most ${MAX_LABELS_PER_MESSAGE} labels.`);
@@ -257,6 +318,20 @@ function repairLabels(ops, bf, size) {
         ops.text('TextObject2', customer?.name || item?.product_name || ''),
         ops.qr('QRCodeObject2', barcode),
         ops.text('TextObject3', barcode.length > 12 ? maskBarcodeShort(barcode) : barcode),
+      ],
+    }));
+  }
+  if (bag) {
+    return items.map((item) => ({
+      templateFile: TEMPLATES.repairBag[size],
+      ops: [
+        ops.text('ItemNameVal', item?.product_name),
+        ops.text('TextObject5', customer?.name || ''),
+        ops.text('TextObject6', customer?.cell_no || ''),
+        ops.text('TEXT_5', `${toText(business?.business_name)} ${toText(business?.branch_name)}`),
+        ops.text('TextObject1', orderDate),
+        ops.text('TEXT4', barcode),
+        ops.qr('QRCodeObject0', barcode),
       ],
     }));
   }
@@ -308,7 +383,7 @@ function buildLabelPlan(payload, options = {}) {
 
   const ops = createOps();
   const size = payload.size === '25x25' || payload.size === '70x54' ? payload.size : '32x57';
-  const design = bf.design === 'repair' ? 'repair' : parseInt(payload.design, 10);
+  const design = bf.design === 'repair' || bf.design === 'repair-bag' ? bf.design : parseInt(payload.design, 10);
   const designName = Number.isNaN(design) ? null : design;
   const summary = (plans, sale) => ({ plans, summary: { size, design: designName, lab: payload.type === 'lab', sale, labels: plans.length } });
 
@@ -319,16 +394,16 @@ function buildLabelPlan(payload, options = {}) {
   }
 
   // A repair label reads only its own fields and needs no currency; every size has its own repair template.
-  if (design === 'repair') return summary(repairLabels(ops, bf, size), false);
+  if (design === 'repair' || design === 'repair-bag') return summary(repairLabels(ops, bf, size, design === 'repair-bag'), false);
 
   const symbol = symbolOf(payload.currency ?? bf.currency);
 
-  // 25x25: designs 1 and 3 print the barcode label, every other value the QR label (a repair design was handled above).
+  // 25x25: the barcode designs (1, 3, 5, 8, 10, 11, 12, 13) print the barcode label, every other value the QR label (a repair design was handled above).
   if (size === '25x25') {
     const barcode = readField(bf.barcode);
     const price = priceText(bf, symbol);
     const plan =
-      design === 1 || design === 3
+      [1, 3, 5, 8, 10, 11, 12, 13].includes(design)
         ? { templateFile: TEMPLATES['25x25'].barcode, ops: [ops.text('BarcodeObject0', barcode), ops.text('TextObject1', price)] }
         : {
             templateFile: TEMPLATES['25x25'].qr,
@@ -342,6 +417,23 @@ function buildLabelPlan(payload, options = {}) {
   let plan;
   if (design === 4) {
     plan = { templateFile: templates.design4, ops: design4Fill(ops, product) };
+  } else if (design === 5) {
+    plan = { templateFile: templates.design5, ops: design5Fill(ops, product) };
+  } else if (design === 6) {
+    plan = { templateFile: templates.design6, ops: design6Fill(ops, product) };
+  } else if (design === 8) {
+    plan = { templateFile: templates.design8, ops: design8Fill(ops, product) };
+  } else if (design === 9) {
+    plan = { templateFile: templates.design9, ops: design9Fill(ops, product) };
+  } else if (design === 10 || (design === 13 && !product.sale)) {
+    // a sale tag for a product that is not on sale is the price tag (there is no old price to strike through)
+    plan = { templateFile: templates.design10, ops: design10Fill(ops, product) };
+  } else if (design === 11) {
+    plan = { templateFile: templates.design11, ops: design11Fill(ops, product) };
+  } else if (design === 12) {
+    plan = { templateFile: templates.design12, ops: design12Fill(ops, product) };
+  } else if (design === 13) {
+    plan = { templateFile: templates.design13, ops: design13Fill(ops, product) };
   } else if (design === 3) {
     plan = { templateFile: templates.design3, ops: design3Fill(ops, product) };
   } else if (design === 2) {

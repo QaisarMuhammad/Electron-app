@@ -222,7 +222,7 @@ test('FUZZ: with an older framework (no native _setQRCodeObjectText) designs 2 a
 
 test('templates: every label file lists its objects to a plain regular expression, with unique names (the framework takes the first match)', () => {
   const files = fs.readdirSync(LABELS_DIR).filter((file) => file.endsWith('.dymo'));
-  assert.equal(files.length, 25);
+  assert.equal(files.length, 44);
   for (const file of files) {
     const inventory = templateInventory(file);
     assert.ok(inventory.complete, `${file}: ${inventory.objects.length} objects found, ${inventory.opened} object elements opened (an object does not start with <Name>)`);
@@ -293,7 +293,7 @@ async function expectNoUnexplained(payload, label) {
 
 test('branch: v1 final else (an unlisted design) with a sale threw inside v1 (Text_was missing, printParamsXml branch): v2 prints the design-1 sale label of the requested size, no print parameters', async () => {
   for (const size of ['32x57', '70x54']) {
-    for (const design of ['', undefined, 'x', 5, 7, '7', 0, -1]) {
+    for (const design of ['', undefined, 'x', 15, 7, '7', 0, -1]) {
       const payload = envelope({ ...FULL, isSale: true }, { size, design });
       const r = await expectNoUnexplained(payload, `${size} design ${JSON.stringify(design)} on sale`);
       const raw = await observeV1(payload); // v1 on the REAL payload
@@ -334,8 +334,8 @@ test('branch: lab labels at every size and design read the OUTER barcode and tit
   }
 });
 
-test('branch: the 25x25 QR label (every design but 1 and 3, a repair design and an unlisted one included) forces QRCodeObject2 and prints the short number; v1 pre-edited its XML with a regexp that matches no DYMO Connect template', async () => {
-  for (const design of [2, '2', 4, 7, 'repair', '', undefined, 5, 0, -1, 'x']) {
+test('branch: the 25x25 QR label (every QR design and an unlisted one; the barcode designs 1, 3, 5, 8, 10-13 print the barcode label and a repair label has its own template) forces QRCodeObject2 and prints the short number; v1 pre-edited its XML with a regexp that matches no DYMO Connect template', async () => {
+  for (const design of [2, '2', 4, 7, '', undefined, 15, 0, -1, 'x']) {
     const payload = envelope(design === 'repair' ? { ...FULL, design: 'repair' } : FULL, { size: '25x25', design: design === 'repair' ? 'repair' : design });
     const r = await expectNoUnexplained(payload, `25x25 design ${JSON.stringify(design)}`);
     assert.equal(r.kind, 'qr25');
@@ -368,7 +368,7 @@ test('branch: a repair message prints one label per order item in array order, a
       const items = Array.isArray(barcodefinal.orderItems) ? barcodefinal.orderItems : [barcodefinal.orderItem];
       assert.equal(r.v2.labels.length, items.length, `case ${index}: one label per item`);
       assert.equal(r.v2.templates.length, 1);
-      assert.equal(r.v2.templates[0], 'LabeldesignRepair.dymo');
+      assert.equal(r.v2.templates[0], size === '70x54' ? '70_54_LabeldesignRepair.dymo' : 'LabeldesignRepair.dymo');
       assert.deepEqual(r.v2.labels.map((label) => label.ops.find((op) => op.name === 'ItemNameVal').value), items.map((entry) => (entry && entry.product_name) || ''));
     }
   }
@@ -552,8 +552,10 @@ test('templates (DG-1, intended difference to v1.6.1): 70_54_Labeldesign2.dymo i
   assert.notEqual(read('Labeldesign2.dymo'), read('Labeldesign3.dymo'), 'so is the 32x57 pair');
 
   // the strike-through rule over the old price is sale artwork: only the sale templates hold it (the framework cannot address a line, so the printed-object list below cannot show it)
-  for (const file of ['Labeldesign2.dymo', '70_54_Labeldesign2.dymo']) assert.doesNotMatch(read(file), /<LineObject>/, `${file}: no strike-through line on a normal label`);
-  for (const file of ['Labeldesign3.dymo', '70_54_Labeldesign3.dymo']) assert.match(read(file), /<LineObject>/, `${file}: the sale label keeps its strike-through line`);
+  // (the thin divider under the title, LineTitle, is part of every label since 2026-11-20 and is not a strike-through: the strike-through is the object LineObject0)
+  const strike = /<LineObject>(?:(?!<\/LineObject>)[\s\S])*?<Name>LineObject0<\/Name>/;
+  for (const file of ['Labeldesign2.dymo', '70_54_Labeldesign2.dymo']) assert.doesNotMatch(read(file), strike, `${file}: no strike-through line on a normal label`);
+  for (const file of ['Labeldesign3.dymo', '70_54_Labeldesign3.dymo']) assert.match(read(file), strike, `${file}: the sale label keeps its strike-through line`);
 
   // both harness sides open the same (fixed) file from the labels folder, so v1 and v2 still agree here
   for (const size of ['32x57', '70x54']) {
@@ -575,12 +577,15 @@ test('templates (DG-1, intended difference to v1.6.1): 70_54_Labeldesign2.dymo i
   }
 });
 
-test('templates (v1 parity): the 70x54 design 3 and design 4 files are byte copies of the 32x57 ones and declare the 32x57 label stock (S0722540), not the 70x54 stock', () => {
+test('templates (intended difference to v1.6.1, 2026-11-20): the 70x54 design 3 and design 4 files are real 70x54 labels (landscape, label stock StorageS0722440) and no longer byte copies of the 32x57 ones', () => {
   const read = (file) => fs.readFileSync(path.join(LABELS_DIR, file), 'utf8');
-  assert.equal(read('70_54_mukltipleBarcode.dymo'), read('mukltipleBarcode.dymo'));
-  assert.equal(read('70_54_multipleQRCODE.dymo'), read('multipleQRCODE.dymo'));
-  assert.match(read('70_54_mukltipleBarcode.dymo'), /<LabelName>S0722540 multipurpose/);
-  assert.match(read('70_54_Labeldesign3.dymo'), /<LabelName>StorageS0722440/, 'the real 70x54 stock, for comparison');
+  assert.notEqual(read('70_54_mukltipleBarcode.dymo'), read('mukltipleBarcode.dymo'));
+  assert.notEqual(read('70_54_multipleQRCODE.dymo'), read('multipleQRCODE.dymo'));
+  for (const file of ['70_54_mukltipleBarcode.dymo', '70_54_multipleQRCODE.dymo']) {
+    assert.match(read(file), /<LabelName>StorageS0722440/, file);
+    assert.match(read(file), /<Orientation>Landscape/, file);
+  }
+  assert.match(read('mukltipleBarcode.dymo'), /<LabelName>S0722540 multipurpose/, 'the 32x57 file keeps the 32x57 stock');
 });
 
 test('the twin is faithful: a payload with nothing to change is its own twin, and the placeholders round-trip every hostile string', () => {

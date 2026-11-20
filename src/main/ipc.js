@@ -27,7 +27,9 @@ const { ERROR_CODES, PrintError, toResult } = require('./errors');
 
 /** What `getAppInfo()` of the web reports (SPEC 6.1). The api version never goes down: functions are added, never removed. */
 const API_VERSION = 2;
-const FEATURES = Object.freeze(['ack-print', 'drawer', 'printer-list']);
+// 'label-designs-1': this app prints the label designs of catalog version 1 (design 5, 6, 8-13 and the repair bag tag, docs/label-design/catalog.json); the dashboard offers
+// only the designs the connected app supports (an older app lacks this feature and gets the four original designs)
+const FEATURES = Object.freeze(['ack-print', 'drawer', 'printer-list', 'label-designs-1']);
 
 /** The channel the app preload asks synchronously, and the name the integration notes used for it. */
 const ORIGIN_CHANNEL = 'app:origin-allowed';

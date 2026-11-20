@@ -762,7 +762,7 @@ async function runDevelopment(servers, runs) {
     const before = await run.state();
     t.check('no DYMO helper window exists before the first label or printer list (lazy, SPEC 9.4 / 18b L2)', before.dymo.windowsCreated === 0, before.dymo);
     const appInfo = await posCall(page, 'getAppInfo');
-    t.check('getAppInfo answers apiVersion 2 with the three features, the platform, and the name and version of the app', appInfo.apiVersion === 2 && JSON.stringify(appInfo.features) === JSON.stringify(['ack-print', 'drawer', 'printer-list']) && appInfo.platform === process.platform && appInfo.version === PACKAGE.version && appInfo.name === PACKAGE.productName, appInfo);
+    t.check('getAppInfo answers apiVersion 2 with the four features, the platform, and the name and version of the app', appInfo.apiVersion === 2 && JSON.stringify(appInfo.features) === JSON.stringify(['ack-print', 'drawer', 'printer-list', 'label-designs-1']) && appInfo.platform === process.platform && appInfo.version === PACKAGE.version && appInfo.name === PACKAGE.productName, appInfo);
     t.check('the window title follows the page title (18b D4)', (await run.cmd('mainInfo')).title === 'Fake POS', (await run.cmd('mainInfo')).title);
     const printers = await posCall(page, 'getPrinters');
     t.check('getPrinters lists the 3 system printers (one default) and the 2 DYMO printers', printers.system.length === 3 && printers.system.filter((printer) => printer.isDefault).length === 1 && printers.dymo.length === 2, printers);

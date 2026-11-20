@@ -15,7 +15,7 @@ const files = fs.readdirSync(LABELS_DIR).filter((file) => file.endsWith('.dymo')
 /* ---------------------------------------------------------------------------------------------------------- */
 
 test('templates.json lists exactly the .dymo files in the labels folder', () => {
-  assert.equal(files.length, 26);
+  assert.equal(files.length, 44);
   assert.deepEqual(Object.keys(fixture), files);
 });
 
@@ -66,12 +66,12 @@ const FIELDS = {
 /** Every kind of message the web can send, and the odd ones v1 also accepted. */
 function* payloads() {
   for (const size of ['32x57', '70x54', '25x25', undefined, '57x32']) {
-    for (const design of [1, '1', 2, '2', 3, 4, 7, 5, '', undefined, 'x', 'repair']) {
+    for (const design of [1, '1', 2, '2', 3, 4, 7, 5, 6, 8, 9, 10, 11, 12, 13, '', undefined, 'x', 'repair', 'repair-bag']) {
       for (const isSale of [false, true]) {
         const barcodefinal = { printer: 'dymo', ...FIELDS, isSale };
-        if (design === 'repair') {
+        if (design === 'repair' || design === 'repair-bag') {
           Object.assign(barcodefinal, {
-            design: 'repair',
+            design,
             customer: { name: 'Jo', cell_no: '0700' },
             business: { business_name: 'Shop', branch_name: 'Main' },
             orderDate: '2026-11-19',
@@ -140,13 +140,13 @@ test('the QR objects the plans write to carry the Data and TextDataHolder struct
   }
 });
 
-test('the templates the plans can name are the 18 in use; the other 8 files in the folder are spare copies no message reaches', () => {
+test('the templates the plans can name are the 36 in use; the other 8 files in the folder are spare copies no message reaches', () => {
   const used = new Set(allPlans.map(({ plan }) => plan.templateFile));
   const declared = new Set(
-    [TEMPLATES.lab, ...Object.values(TEMPLATES.repair), ...Object.values(TEMPLATES['25x25']), ...Object.values(TEMPLATES['32x57']), ...Object.values(TEMPLATES['70x54'])]
+    [TEMPLATES.lab, ...Object.values(TEMPLATES.repair), ...Object.values(TEMPLATES.repairBag), ...Object.values(TEMPLATES['25x25']), ...Object.values(TEMPLATES['32x57']), ...Object.values(TEMPLATES['70x54'])]
   );
   assert.deepEqual([...used].sort(), [...declared].sort(), 'the matrix reaches every declared template and nothing else');
-  assert.equal(used.size, 18);
+  assert.equal(used.size, 36);
   assert.deepEqual(
     files.filter((file) => !used.has(file)),
     [

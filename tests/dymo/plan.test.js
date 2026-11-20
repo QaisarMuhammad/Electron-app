@@ -473,3 +473,91 @@ test('an empty specs list prints no spec lines at all (an accessory), and an old
   assert.equal(old.ops.find((op) => op.name === 'TEXT_4').value, 'NEW');
   assert.equal(old.ops.find((op) => op.name === 'TEXT').value, '64GB');
 });
+
+/* ---------------------------------------------------------------------------------------------------------- */
+/* Designs 5, 6, 8 and 9: name + barcode, name + QR, name + price + barcode, name + price + QR                  */
+/* ---------------------------------------------------------------------------------------------------------- */
+
+test('designs 5, 6, 8, 9 have their own template at 32x57 and 70x54 and fill only the fields they show', () => {
+  const rows = [
+    [5, 'Labeldesign5_nameBarcode.dymo', ['text:ItemNameVal', 'text:BARCODE', 'text:TextObject1']],
+    [6, 'Labeldesign6_nameQr.dymo', ['qr-embed:QRCodeObject0', 'text:ItemNameVal', 'text:Text_barcode']],
+    [8, 'Labeldesign8_namePriceBarcode.dymo', ['text:ItemNameVal', 'text:TEXT_3', 'text:BARCODE', 'text:TextObject1']],
+    [9, 'Labeldesign9_namePriceQr.dymo', ['qr-embed:QRCodeObject0', 'text:ItemNameVal', 'text:TEXT_3', 'text:Text_barcode']],
+  ];
+  for (const [design, file, ops] of rows) {
+    for (const [size, prefix] of [['32x57', ''], ['70x54', '70_54_']]) {
+      const labelPlan = plan({ size, design, barcodefinal: product() }).plans[0];
+      assert.equal(labelPlan.templateFile, `${prefix}${file}`, `${size} design ${design}`);
+      assert.deepEqual(labelPlan.ops.map((op) => `${op.kind}:${op.name}`), ops, `${size} design ${design}`);
+    }
+  }
+  assert.equal(plan({ size: '32x57', design: '8', barcodefinal: product() }).plans[0].ops.find((op) => op.name === 'TEXT_3').value, `${POUND}499.99`, 'a numeric string works like a number');
+});
+
+test('designs 8 and 9 print the sale price while on sale (no was / OFF captions), the normal price otherwise', () => {
+  const sale = plan({ size: '32x57', design: 8, barcodefinal: product({ isSale: true, regular_price: 500, salePrice: 400 }) });
+  assert.equal(sale.plans[0].ops.find((op) => op.name === 'TEXT_3').value, `${POUND}400`);
+  assert.equal(sale.summary.sale, true);
+  const notSale = plan({ size: '70x54', design: 9, barcodefinal: product({ isSale: false, regular_price: 500, salePrice: 400 }) });
+  assert.equal(notSale.plans[0].ops.find((op) => op.name === 'TEXT_3').value, `${POUND}499.99`);
+});
+
+test('at 25x25 the barcode designs (1, 3, 5, 8) print the barcode label and the QR designs (2, 4, 6, 9) the QR label', () => {
+  for (const design of [1, 3, 5, 8]) assert.equal(plan({ size: '25x25', design, barcodefinal: product() }).plans[0].templateFile, '25_25_barcode.dymo', String(design));
+  for (const design of [2, 4, 6, 9]) assert.equal(plan({ size: '25x25', design, barcodefinal: product() }).plans[0].templateFile, '25_25_qrcode.dymo', String(design));
+});
+
+/* ---------------------------------------------------------------------------------------------------------- */
+/* Designs 10-13 (price tag, IMEI / serial, accessory tag, sale tag) and the repair bag tag                       */
+/* ---------------------------------------------------------------------------------------------------------- */
+
+test('designs 10, 11, 12 and 13 fill exactly the objects their template has, at both big sizes', () => {
+  const rows = [
+    [10, 'Labeldesign10_priceTag.dymo', ['ItemNameVal', 'TEXT_3', 'TEXT_4', 'TEXT', 'TextObject11']],
+    [11, 'Labeldesign11_serial.dymo', ['ItemNameVal', 'TEXT_4', 'TEXT', 'BARCODE', 'TextObject1']],
+    [12, 'Labeldesign12_accessory.dymo', ['ItemNameVal', 'TEXT_4', 'TEXT', 'TEXT_3', 'BARCODE', 'TextObject1']],
+    [13, 'Labeldesign13_saleTag.dymo', ['ItemNameVal', 'Text_was', 'TEXT__1', 'TEXT_3', 'BARCODE', 'TextObject1']],
+  ];
+  for (const [design, file, names] of rows) {
+    for (const [size, prefix] of [['32x57', ''], ['70x54', '70_54_']]) {
+      const sale = design === 13;
+      const labelPlan = plan({ size, design, barcodefinal: product({ specs: ['Grade A', '256GB'], isSale: sale, regular_price: 500, salePrice: 400 }) }).plans[0];
+      assert.equal(labelPlan.templateFile, `${prefix}${file}`, `${size} design ${design}`);
+      assert.deepEqual(labelPlan.ops.map((op) => op.name), names, `${size} design ${design}`);
+    }
+  }
+});
+
+test('the IMEI / serial label prints the number in full under the barcode (not masked); the accessory tag masks it like the standard label', () => {
+  const serial = plan({ size: '32x57', design: 11, barcodefinal: product({ barcode: '357771570289459' }) }).plans[0];
+  assert.equal(serial.ops.find((op) => op.name === 'TextObject1').value, '357771570289459');
+  const accessory = plan({ size: '32x57', design: 12, barcodefinal: product({ barcode: '357771570289459' }) }).plans[0];
+  assert.equal(accessory.ops.find((op) => op.name === 'TextObject1').value, '*********289459');
+});
+
+test('the sale tag shows the old price, the saving and the sale price; a product that is not on sale prints the price tag instead', () => {
+  const onSale = plan({ size: '32x57', design: 13, barcodefinal: product({ isSale: true, regular_price: 500, salePrice: 400 }) });
+  const value = (labelPlan, name) => labelPlan.ops.find((op) => op.name === name).value;
+  assert.equal(onSale.plans[0].templateFile, 'Labeldesign13_saleTag.dymo');
+  assert.equal(value(onSale.plans[0], 'Text_was'), `${POUND}500`);
+  assert.equal(value(onSale.plans[0], 'TEXT__1'), `${POUND}100.00 OFF`);
+  assert.equal(value(onSale.plans[0], 'TEXT_3'), `${POUND}400`);
+  const notOnSale = plan({ size: '70x54', design: 13, barcodefinal: product({ isSale: false }) });
+  assert.equal(notOnSale.plans[0].templateFile, '70_54_Labeldesign10_priceTag.dymo');
+});
+
+test('the repair bag tag: its own template per size, the customer, phone, job number and QR; 25x25 uses the small repair label', () => {
+  const bag = (size) => plan({ size, barcodefinal: { printer: 'dymo', design: 'repair-bag', barcode: 'R-1042', orderDate: '20/11/2026', customer: { name: 'Jo Smith', cell_no: '07123' }, business: { business_name: 'T&R', branch_name: 'Leeds' }, orderItem: { product_name: 'iPhone 13' } } }).plans[0];
+  assert.equal(bag('32x57').templateFile, 'LabeldesignRepairBag.dymo');
+  assert.equal(bag('70x54').templateFile, '70_54_LabeldesignRepairBag.dymo');
+  assert.equal(bag('25x25').templateFile, '25_25_repair.dymo');
+  assert.deepEqual(bag('32x57').ops.map((op) => `${op.kind}:${op.name}:${op.value}`), [
+    'text:ItemNameVal:iPhone 13', 'text:TextObject5:Jo Smith', 'text:TextObject6:07123', 'text:TEXT_5:T&R Leeds', 'text:TextObject1:20/11/2026', 'text:TEXT4:R-1042', 'qr:QRCodeObject0:R-1042',
+  ]);
+});
+
+test('at 25x25 every barcode design prints the barcode label (1, 3, 5, 8, 10, 11, 12, 13) and the QR designs the QR label', () => {
+  for (const design of [1, 3, 5, 8, 10, 11, 12, 13]) assert.equal(plan({ size: '25x25', design, barcodefinal: product() }).plans[0].templateFile, '25_25_barcode.dymo', String(design));
+  for (const design of [2, 4, 6, 9]) assert.equal(plan({ size: '25x25', design, barcodefinal: product() }).plans[0].templateFile, '25_25_qrcode.dymo', String(design));
+});

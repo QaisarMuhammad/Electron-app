@@ -27,7 +27,7 @@ test('4A. getDesktopInfo is the app\'s answer once; every util call answers a Re
   const info = await t.desktop.getDesktopInfo();
   assert.deepEqual(Object.keys(info).sort(), ['apiVersion', 'features', 'name', 'platform', 'version']);
   assert.equal(info.apiVersion, 2);
-  assert.deepEqual(info.features, ['ack-print', 'drawer', 'printer-list']);
+  assert.deepEqual(info.features, ['ack-print', 'drawer', 'printer-list', 'label-designs-1']);
   assert.equal(await t.desktop.getDesktopInfo(), info, 'asked once and cached');
   assert.equal(t.page.sandbox.ipc.invoked.filter((c) => c.channel === 'app-info').length, 1);
 

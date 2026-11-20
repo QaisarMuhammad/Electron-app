@@ -508,7 +508,8 @@ test('(d) the QR text of designs 2 and 7: a "$&" or "&" or "<" in the barcode co
 /* (e) unlisted designs                                                                                        */
 /* ---------------------------------------------------------------------------------------------------------- */
 
-const UNLISTED = ['', undefined, 'x', 5, '5', 0, -1, 'abc'];
+// 5, 6, 8, 9, 10, 11, 12 and 13 are real designs since 2026-11-20 (name + barcode, name + QR, name + price + barcode, name + price + QR, price tag, IMEI / serial, accessory tag, sale tag); 7 is never chosen by a user
+const UNLISTED = ['', undefined, 'x', 0, -1, 'abc', 14, '20'];
 
 test('(e) an unlisted design WITHOUT a sale at 32x57 is v1\'s final-else label exactly', async () => {
   for (const design of UNLISTED) {

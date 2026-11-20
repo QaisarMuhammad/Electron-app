@@ -479,6 +479,15 @@ function evaluate(payload, twin, v1, v2) {
   const tags = new Set([...twin.tags, ...expected.tags]);
   const unexplained = [...expected.problems];
 
+  // (h) a repair label has its own template per label size since 2026-11-20 (v1 printed the 32x57 template at 70x54 and the product QR label at 25x25):
+  // those two combinations are covered by tests/dymo (plan.test.js, golden.test.js), not by v1 parity
+  const sent = payload.barcodefinal;
+  if (sent && sent.design === 'repair' && payload.type !== 'lab' && (payload.size === '70x54' || payload.size === '25x25')) {
+    const noItems = Array.isArray(sent.orderItems) && sent.orderItems.length === 0;
+    const refused = v2.result.ok !== true && noItems && v2.result.code === 'INVALID_PAYLOAD';
+    return { tags: new Set([...tags, '(h) repair label per size', ...(refused ? ['(g) repair without items'] : [])]), unexplained: [], kind: expected.kind, symbol: expected.symbol, twin, v1, v2, expected };
+  }
+
   // v1 itself must have printed everything it opened (the twin is built so that it can)
   const v1Failed = v1.labels.some((label) => !label.printed) || v1.handlerError;
   const v2Result = v2.result;

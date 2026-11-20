@@ -367,7 +367,7 @@ test('open-drawer on a drawer that is switched off, or has no password, says so'
 test('app-info is { name, version, platform, apiVersion: 2, features }', async () => {
   const world = await boot();
   assert.deepEqual(await world.ipc.invoke('app-info', world.events.pos()), {
-    name: 'Gadgets POS', version: '2.0.0-test', platform: 'win32', apiVersion: 2, features: ['ack-print', 'drawer', 'printer-list'],
+    name: 'Gadgets POS', version: '2.0.0-test', platform: 'win32', apiVersion: 2, features: ['ack-print', 'drawer', 'printer-list', 'label-designs-1'],
   });
   world.cleanup();
 });
