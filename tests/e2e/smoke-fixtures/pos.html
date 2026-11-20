@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fake POS</title>
+  <link rel="stylesheet" href="/assets/pos.css">
+</head>
+<body>
+  <header class="bar">
+    <div class="brand">Fake POS <span>automation page for the desktop smoke run</span></div>
+    <div class="env" id="env" aria-live="polite">checking the desktop bridge</div>
+  </header>
+
+  <main class="grid">
+    <section class="card">
+      <h2>Sale</h2>
+      <table class="cart">
+        <thead><tr><th>Item</th><th class="num">Qty</th><th class="num">Price</th></tr></thead>
+        <tbody>
+          <tr><td>Apple iPhone 13 "Pro" 256GB</td><td class="num">1</td><td class="num">549.99</td></tr>
+          <tr><td>Screen protector</td><td class="num">2</td><td class="num">9.98</td></tr>
+        </tbody>
+        <tfoot><tr><td colspan="2">Total</td><td class="num">569.95</td></tr></tfoot>
+      </table>
+      <label class="field">Customer note
+        <input id="note" type="text" value="Collect on Friday" autocomplete="off">
+      </label>
+    </section>
+
+    <section class="card">
+      <h2>Desktop calls</h2>
+      <p class="hint">Every function of <code>window.electron</code>, with a realistic payload.</p>
+      <div class="buttons" id="buttons"></div>
+    </section>
+
+    <section class="card wide">
+      <h2>Results</h2>
+      <ul id="results" class="results" aria-live="polite"></ul>
+    </section>
+  </main>
+
+  <script src="/assets/pos.js"></script>
+</body>
+</html>

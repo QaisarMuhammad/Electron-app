@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Benchmark POS</title>
+<style>
+  :root { --brand: #C12126; --navy: #16355E; --paper: #F6F7FB; --line: #E3E5EC; --ink: #1C1F2A; --muted: #5B6070; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--paper); color: var(--ink); font: 14px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  header { display: flex; align-items: center; gap: 16px; height: 56px; padding: 0 20px; background: #fff; border-bottom: 1px solid var(--line); }
+  header h1 { margin: 0; font-size: 18px; color: var(--navy); }
+  header input { flex: 1; max-width: 480px; height: 36px; padding: 0 12px; border: 1px solid var(--line); border-radius: 8px; }
+  header nav a { margin-left: 16px; color: var(--muted); text-decoration: none; }
+  main { display: grid; grid-template-columns: 1fr 340px; height: calc(100% - 56px); }
+  #grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; padding: 16px; overflow: auto; align-content: start; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 12px; box-shadow: 0 1px 2px rgba(20, 24, 40, .06); }
+  .thumb { height: 96px; border-radius: 8px; background: linear-gradient(135deg, #e8ecf6, #cfd6ea); margin-bottom: 8px; }
+  .card h3 { margin: 0 0 4px; font-size: 14px; }
+  .meta { margin: 0 0 8px; color: var(--muted); font-size: 12px; }
+  .line { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .price { font-weight: 700; color: var(--navy); }
+  .stock { padding: 2px 8px; border-radius: 10px; font-size: 12px; background: #e6f4ea; color: #1b873f; }
+  .add { width: 100%; height: 36px; border: 0; border-radius: 8px; background: var(--brand); color: #fff; font-weight: 600; }
+  aside { background: #fff; border-left: 1px solid var(--line); padding: 16px; overflow: auto; }
+  aside h2 { margin: 0 0 12px; font-size: 16px; color: var(--navy); }
+  .cart-line { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .total { display: flex; justify-content: space-between; margin-top: 16px; font-size: 18px; font-weight: 700; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Benchmark POS</h1>
+  <input type="search" placeholder="Search products or scan a barcode" aria-label="Search">
+  <nav><a href="#">Orders</a><a href="#">Customers</a><a href="#">Reports</a></nav>
+</header>
+<main>
+  <section id="grid" aria-label="Products">
+<!--CARDS-->
+  </section>
+  <aside aria-label="Cart">
+    <h2>Current sale</h2>
+    <div class="cart-line"><span>Apple iPhone 13 Pro 256GB</span><span>£549.99</span></div>
+    <div class="cart-line"><span>Screen protector</span><span>£4.99</span></div>
+    <div class="cart-line"><span>USB-C cable 1m</span><span>£9.99</span></div>
+    <div class="total"><span>Total</span><span>£564.97</span></div>
+  </aside>
+</main>
+<script src="/bench-client.js"></script>
+</body>
+</html>

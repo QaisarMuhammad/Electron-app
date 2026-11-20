@@ -1,0 +1,11 @@
+{
+  "printerName": "EPSON TM-T20II Receipt",
+  "printerPort": "\\\\localhost\\EPSONTM",
+  "password": "99",
+  "labelPrinterName": "Zebra ZD420",
+  "labelPrinterPort": "COM3",
+  "a4PrinterName": "Office A4",
+  "a4PrinterPort": "LPT2",
+  "a4Password": "unused",
+  "printerBrand": "epson"
+}

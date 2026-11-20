@@ -1,0 +1,321 @@
+/*
+ * offline.html - full-screen "can't connect" page. Two columns on a wide window (what happened | what is happening and what
+ * you can do), one column below 780 px. Only transform and opacity move.
+ */
+:root {
+  --fs-display: 24px;
+}
+
+body {
+  min-height: 100vh;
+}
+
+.offline {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+.offline__top {
+  padding: 24px 32px 0;
+}
+
+.offline__top img {
+  width: 120px;
+  height: auto;
+}
+
+.offline__main {
+  display: grid;
+  place-items: center;
+  padding: 12px 32px 40px;
+}
+
+.panel {
+  width: min(920px, 100%);
+  padding: 40px 40px 24px;
+  display: grid;
+  gap: 28px;
+  animation: offline-in 320ms var(--ease) both;
+}
+
+html.pending .panel {
+  animation: offline-fallback 1ms linear 900ms both;
+}
+
+@keyframes offline-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@keyframes offline-fallback {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.panel__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 44px;
+  align-items: start;
+}
+
+.panel__story h1 {
+  font-size: var(--fs-display);
+  line-height: 32px;
+}
+
+.lede {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: var(--fs-lg);
+  line-height: 24px;
+}
+
+.art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  margin-bottom: 20px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--accent);
+}
+
+.art__icon {
+  width: 34px;
+  height: 34px;
+  stroke-width: 1.6;
+}
+
+.art__badge {
+  position: absolute;
+  right: -3px;
+  bottom: -3px;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--warning-bg);
+  color: var(--warning);
+  box-shadow:
+    0 0 0 3px var(--surface),
+    inset 0 0 0 1px var(--warning-border);
+}
+
+.art[data-tone="success"] .art__badge {
+  background: var(--success-bg);
+  color: var(--success);
+  box-shadow:
+    0 0 0 3px var(--surface),
+    inset 0 0 0 1px var(--success-border);
+}
+
+.steps {
+  display: grid;
+  gap: 12px;
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.steps li {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  counter-increment: step;
+  line-height: 20px;
+}
+
+.steps li::before {
+  content: counter(step);
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--surface-3);
+  color: var(--heading);
+  font-size: var(--fs-sm);
+  font-weight: 650;
+}
+
+.steps li span {
+  padding-top: 4px;
+}
+
+/* ---- live connection card ---- */
+.panel__actions {
+  display: grid;
+  gap: 16px;
+}
+
+.connect {
+  display: grid;
+  gap: 16px;
+  padding: 18px 20px 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  background: var(--surface-2);
+}
+
+.connect__row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.connect__icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+  color: var(--accent);
+}
+
+.connect__text {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.connect__title {
+  color: var(--text);
+  font-size: var(--fs-input);
+  font-weight: 650;
+  line-height: 22px;
+}
+
+.connect__sub {
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  line-height: 18px;
+}
+
+.connect__bar {
+  height: 6px;
+}
+
+.connect[data-state="online"] {
+  border-color: var(--success-border);
+  background: var(--success-bg);
+}
+
+.connect[data-state="online"] .connect__icon {
+  color: var(--success);
+  box-shadow: inset 0 0 0 1px var(--success-border);
+}
+
+.connect[data-state="online"] .connect__title {
+  color: var(--success-ink);
+}
+
+.connect[data-state="online"] .progress {
+  background: color-mix(in srgb, var(--success) 18%, transparent);
+}
+
+.connect[data-state="online"] .progress__bar {
+  background: var(--success);
+}
+
+/* Idle: nothing retries by itself, the person has to act. A warning tint, no progress bar (nothing is in progress). */
+.connect[data-state="idle"] {
+  border-color: var(--warning-border);
+  background: var(--warning-bg);
+}
+
+.connect[data-state="idle"] .connect__icon {
+  color: var(--warning);
+  box-shadow: inset 0 0 0 1px var(--warning-border);
+}
+
+.connect[data-state="idle"] .connect__title {
+  color: var(--warning-ink);
+}
+
+.connect[data-state="idle"] .connect__bar {
+  display: none;
+}
+
+.actions {
+  display: grid;
+  gap: var(--s-2);
+}
+
+.actions__pair {
+  display: grid;
+  gap: var(--s-2);
+}
+
+.actions__pair .btn {
+  width: 100%;
+}
+
+.note {
+  min-height: 0;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+
+.tech {
+  background: var(--surface);
+}
+
+/*
+ * One column (a zoomed small window, a small display). The live status and the buttons come BEFORE the checklist: stacked in
+ * reading order they sat below the headline, the paragraph and the steps, so a cashier saw instructions and nothing to press.
+ * The story block dissolves into the grid so its parts can be ordered around the actions; the decorative picture goes, which
+ * frees the height the status card and Retry now need to stay on the first screen.
+ */
+@media (max-width: 780px) {
+  .panel {
+    padding: 28px 24px 20px;
+  }
+
+  .panel__grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .panel__story {
+    display: contents;
+  }
+
+  .art {
+    display: none;
+  }
+
+  .panel__actions {
+    order: 1;
+    margin-top: 20px;
+  }
+
+  .steps {
+    order: 2;
+    margin-top: 28px;
+  }
+
+  .offline__main {
+    padding: 8px 16px 32px;
+  }
+
+  .offline__top {
+    padding: 20px 24px 0;
+  }
+}

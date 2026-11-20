@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en" class="pending">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>GadgetsPOS - Can't connect</title>
+  <link rel="stylesheet" href="shared/tokens.css">
+  <link rel="stylesheet" href="shared/components.css">
+  <link rel="stylesheet" href="shared/offline.css">
+  <link rel="modulepreload" href="shared/ui.js">
+  <link rel="modulepreload" href="shared/icons.js">
+  <link rel="modulepreload" href="shared/format.mjs">
+  <script type="module" src="shared/offline.js"></script>
+</head>
+<body>
+  <div class="offline">
+    <header class="offline__top">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="shared/logo-white.png">
+        <img src="shared/logo.png" width="120" height="64" alt="GadgetsPOS" decoding="async">
+      </picture>
+    </header>
+
+    <main class="offline__main">
+      <section class="panel card" aria-labelledby="headline">
+        <div class="panel__grid">
+          <div class="panel__story">
+            <div class="art" aria-hidden="true">
+              <i data-icon="wifi-off" class="art__icon" id="art-icon"></i>
+              <span class="art__badge" id="art-badge"></span>
+            </div>
+            <h1 id="headline">Can't open GadgetsPOS</h1>
+            <p class="lede" id="lede">Something went wrong while loading the page.</p>
+            <ol class="steps" id="steps"></ol>
+          </div>
+
+          <div class="panel__actions">
+            <div class="connect" id="connect" data-state="waiting">
+              <div class="connect__row">
+                <span class="connect__icon" id="connect-icon" aria-hidden="true"></span>
+                <div class="connect__text">
+                  <p class="connect__title tabular" id="connect-title">Checking the connection...</p>
+                  <p class="connect__sub" id="connect-sub"></p>
+                </div>
+              </div>
+              <div class="progress connect__bar" aria-hidden="true">
+                <div class="progress__bar" id="connect-bar"></div>
+              </div>
+            </div>
+
+            <div class="actions">
+              <button type="button" class="btn btn--primary btn--block" id="retry"><i data-icon="refresh"></i><span>Retry now</span></button>
+              <div class="actions__pair">
+                <button type="button" class="btn" id="open-printers"><i data-icon="printer"></i><span>Printer settings</span></button>
+                <button type="button" class="btn" id="open-server"><i data-icon="globe"></i><span>Change server address</span></button>
+              </div>
+            </div>
+            <div id="note" class="note" aria-live="polite"></div>
+          </div>
+        </div>
+
+        <details class="disclosure tech" id="tech">
+          <summary><span>Technical details</span><i data-icon="chevron-down" class="chev"></i></summary>
+          <div class="disclosure__body stack">
+            <dl class="kv" id="tech-list"></dl>
+            <div class="row">
+              <button type="button" class="btn" id="copy-details"><i data-icon="copy"></i><span>Copy details</span></button>
+              <span id="copy-note" class="small muted" aria-live="polite"></span>
+            </div>
+          </div>
+        </details>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

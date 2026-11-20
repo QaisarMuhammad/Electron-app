@@ -1,0 +1,621 @@
+/*
+ * settings.html - layout and page-specific parts. Components come from components.css.
+ *
+ * Shell: navy side rail (brand, section tabs, connection state) + scrolling content column. Below 760 px wide (a 960 px
+ * window at 150 percent zoom is 640 px) the rail becomes a top bar so nothing is ever cut off or scrolls sideways.
+ */
+html,
+body {
+  height: 100%;
+}
+
+body {
+  overflow: hidden;
+}
+
+.app {
+  display: grid;
+  grid-template-columns: 248px minmax(0, 1fr);
+  height: 100vh;
+}
+
+/* ---------- side rail ---------- */
+.rail {
+  --focus: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-height: 0;
+  padding: 24px 14px 18px;
+  overflow-y: auto;
+  background: var(--rail-bg);
+  color: var(--rail-text);
+}
+
+.rail__brand {
+  display: grid;
+  gap: 10px;
+  padding: 0 8px 20px;
+  border-bottom: 1px solid rgb(255 255 255 / 0.12);
+}
+
+.rail__brand img {
+  width: 140px;
+  height: auto;
+}
+
+.rail__product {
+  color: var(--rail-muted);
+  font-size: var(--fs-sm);
+  letter-spacing: 0.02em;
+}
+
+.rail__nav {
+  flex: 1 1 auto;
+}
+
+.nav {
+  display: grid;
+  gap: 4px;
+}
+
+.nav__item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: var(--control-h);
+  padding: 0 14px;
+  border: 0;
+  border-radius: var(--r-control);
+  background: transparent;
+  color: var(--rail-muted);
+  font: 600 var(--fs-body) / 1.2 var(--font);
+  text-align: left;
+}
+
+.nav__item::before {
+  content: "";
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: -14px;
+  width: 4px;
+  border-radius: 0 4px 4px 0;
+  background: var(--rail-marker);
+  transform: scaleY(0);
+  transition: transform var(--dur) var(--ease);
+}
+
+.nav__item:hover {
+  background: var(--rail-hover);
+  color: var(--rail-text);
+}
+
+.nav__item[aria-selected="true"] {
+  background: var(--rail-selected);
+  color: var(--rail-text);
+}
+
+.nav__item[aria-selected="true"]::before {
+  transform: scaleY(1);
+}
+
+.nav__label {
+  min-width: 0;
+}
+
+.nav__dot {
+  width: 8px;
+  height: 8px;
+  margin-left: auto;
+  flex: none;
+  border-radius: 50%;
+  background: var(--rail-marker);
+}
+
+.rail__foot {
+  display: grid;
+  gap: 4px;
+  padding: 14px 8px 0;
+  border-top: 1px solid rgb(255 255 255 / 0.12);
+}
+
+.rail__status {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-weight: 600;
+}
+
+.rail__meta {
+  color: var(--rail-muted);
+  font-size: var(--fs-sm);
+}
+
+/* ---------- content ---------- */
+.content {
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--bg);
+}
+
+.page {
+  display: grid;
+  gap: var(--s-5);
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 32px 40px 64px;
+}
+
+.page-head {
+  display: grid;
+  gap: 4px;
+  margin-bottom: var(--s-5);
+}
+
+.page-head p {
+  color: var(--muted);
+  max-width: 62ch;
+}
+
+.panel[hidden] {
+  display: none;
+}
+
+/* The lockout banner stays in view while the page scrolls, because every password field depends on it. */
+#lock-banner {
+  position: sticky;
+  top: 12px;
+  z-index: 10;
+  box-shadow: var(--shadow);
+}
+
+body[data-state="loading"] .card,
+body[data-state="loading"] .disclosure {
+  opacity: 0;
+}
+
+/* When the state could not be read nothing on the tabs is real, so only the error banner is shown. */
+body[data-state="error"] .panel {
+  display: none;
+}
+
+body:not([data-state="loading"]) .card,
+body:not([data-state="loading"]) .disclosure {
+  animation: settings-in 200ms var(--ease) both;
+}
+
+@keyframes settings-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+/* ---------- forms ---------- */
+.fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: grid;
+  gap: var(--s-2);
+}
+
+.fieldset > legend {
+  padding: 0;
+  margin-bottom: var(--s-2);
+}
+
+.field__label--sub {
+  font-weight: 500;
+}
+
+.pulse-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--s-4);
+}
+
+.note-line {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-2);
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  line-height: 18px;
+}
+
+.note-line .icon {
+  margin-top: 1px;
+}
+
+.card__foot-field {
+  flex: 1 1 240px;
+  max-width: 340px;
+}
+
+.card__foot-note {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.card__foot > .btn:last-child {
+  margin-left: auto;
+}
+
+.test-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--s-3);
+}
+
+.test-row .field {
+  flex: 1 1 240px;
+  max-width: 340px;
+}
+
+.result-slot {
+  min-height: 0;
+}
+
+.result-slot:not(:empty) {
+  margin-top: var(--s-3);
+}
+
+.switch-row__lead {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex: none;
+  border-radius: var(--r-control);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.switch-row__text {
+  flex: 1 1 auto;
+}
+
+.switch-row--compact {
+  min-height: var(--control-h);
+  padding: 0;
+}
+
+.card--danger {
+  border-color: var(--danger-border);
+}
+
+.reset-list {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding-left: 20px;
+}
+
+/* ---------- printers ---------- */
+.role {
+  display: grid;
+  gap: 20px;
+}
+
+.role__intro {
+  display: grid;
+  gap: 2px;
+}
+
+.role__intro h3 {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+.role__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-3);
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--border);
+}
+
+.role__foot-note {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.role__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  margin-left: auto;
+}
+
+.card__body + .card__body {
+  border-top: 1px solid var(--border);
+}
+
+/* ---------- connection ---------- */
+.domains {
+  display: grid;
+  gap: var(--s-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.domains:empty {
+  display: none;
+}
+
+.domain-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-height: var(--control-h);
+  padding: 0 4px 0 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-control);
+  background: var(--surface);
+}
+
+.domain-row code {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: var(--fs-body);
+}
+
+.domain-field {
+  margin-top: var(--s-2);
+}
+
+.domain-add {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+}
+
+.domain-add .input {
+  flex: 1 1 260px;
+}
+
+/* ---------- about ---------- */
+.update {
+  display: grid;
+  gap: 14px;
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  background: var(--surface-2);
+}
+
+.update__row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.update__icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+  color: var(--accent);
+}
+
+.update__text {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.update__title {
+  color: var(--text);
+  font-size: var(--fs-input);
+  font-weight: 650;
+  line-height: 22px;
+}
+
+.update__sub {
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  line-height: 18px;
+}
+
+.update[data-status="none"],
+.update[data-status="ready"] {
+  border-color: var(--success-border);
+  background: var(--success-bg);
+}
+
+.update[data-status="none"] .update__icon,
+.update[data-status="ready"] .update__icon {
+  color: var(--success);
+  box-shadow: inset 0 0 0 1px var(--success-border);
+}
+
+.update[data-status="none"] .update__title,
+.update[data-status="ready"] .update__title {
+  color: var(--success-ink);
+}
+
+.update[data-status="error"] {
+  border-color: var(--danger-border);
+  background: var(--danger-bg);
+}
+
+.update[data-status="error"] .update__icon {
+  color: var(--danger);
+  box-shadow: inset 0 0 0 1px var(--danger-border);
+}
+
+.update[data-status="error"] .update__title {
+  color: var(--danger-ink);
+}
+
+.update__bar {
+  height: 6px;
+}
+
+.startup-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--border);
+  border-radius: var(--r-control);
+  font-size: var(--fs-sm);
+}
+
+.startup-table th,
+.startup-table td {
+  padding: 8px 12px;
+  border-top: 1px solid var(--border);
+  text-align: left;
+  font-variant-numeric: tabular-nums;
+}
+
+.startup-table thead th {
+  border-top: 0;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.startup-table td:not(:first-child),
+.startup-table th:not(:first-child) {
+  text-align: right;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  border-radius: var(--r-control);
+}
+
+/* ---------- narrow windows: rail becomes a top bar ---------- */
+@media (max-width: 899px) {
+  .app {
+    grid-template-columns: 216px minmax(0, 1fr);
+  }
+
+  .page {
+    padding: 28px 28px 56px;
+  }
+}
+
+@media (max-width: 759px) {
+  body {
+    overflow: auto;
+  }
+
+  .app {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .rail {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 16px;
+    padding: 10px 16px;
+    overflow: visible;
+  }
+
+  .rail__brand {
+    padding: 0;
+    border: 0;
+  }
+
+  .rail__brand img {
+    width: 84px;
+  }
+
+  .rail__product,
+  .rail__foot {
+    display: none;
+  }
+
+  .rail__nav {
+    flex: 1 1 360px;
+  }
+
+  .nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .nav__item {
+    width: auto;
+    padding: 0 12px;
+  }
+
+  .nav__item::before {
+    top: auto;
+    right: 12px;
+    bottom: -2px;
+    left: 12px;
+    width: auto;
+    height: 3px;
+    border-radius: 3px 3px 0 0;
+    transform: scaleX(0);
+  }
+
+  .nav__item[aria-selected="true"]::before {
+    transform: scaleX(1);
+  }
+
+  .nav__dot {
+    margin-left: 0;
+  }
+
+  .content {
+    overflow: visible;
+  }
+
+  .page {
+    padding: 20px 16px 48px;
+  }
+
+  .card__head,
+  .card__body,
+  .card__foot {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+}
+
+@media (forced-colors: active) {
+  .nav__item[aria-selected="true"] {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+
+  .nav__item::before {
+    background: Highlight;
+  }
+
+  .nav__dot {
+    background: Highlight;
+    forced-color-adjust: none;
+  }
+
+  .update,
+  .connect,
+  .domain-row {
+    border: 1px solid CanvasText;
+  }
+}

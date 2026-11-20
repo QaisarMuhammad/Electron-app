@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>GadgetsPOS Settings</title>
+  <link rel="stylesheet" href="shared/tokens.css">
+  <link rel="stylesheet" href="shared/components.css">
+  <link rel="stylesheet" href="shared/settings.css">
+  <link rel="modulepreload" href="shared/ui.js">
+  <link rel="modulepreload" href="shared/icons.js">
+  <link rel="modulepreload" href="shared/format.mjs">
+  <link rel="modulepreload" href="shared/settings-common.js">
+  <link rel="modulepreload" href="shared/picker.js">
+  <link rel="modulepreload" href="shared/settings-printers.js">
+  <link rel="modulepreload" href="shared/settings-drawer.js">
+  <link rel="modulepreload" href="shared/settings-connection.js">
+  <link rel="modulepreload" href="shared/settings-general.js">
+  <link rel="modulepreload" href="shared/settings-about.js">
+  <script type="module" src="shared/settings.js"></script>
+</head>
+<body data-state="loading">
+  <div class="app">
+
+    <!-- Side rail: brand, section tabs, connection state -->
+    <aside class="rail">
+      <div class="rail__brand">
+        <picture>
+          <source media="(forced-colors: active) and (prefers-color-scheme: light)" srcset="shared/logo.png">
+          <img src="shared/logo-white.png" width="140" height="74" alt="GadgetsPOS">
+        </picture>
+        <p class="rail__product">Desktop settings</p>
+      </div>
+
+      <nav class="rail__nav" aria-label="Settings sections">
+        <div class="nav" role="tablist" aria-orientation="vertical" id="tablist">
+          <button type="button" class="nav__item" role="tab" id="tab-printers" data-tab="printers" aria-controls="panel-printers" aria-selected="true">
+            <i data-icon="printer"></i><span class="nav__label">Printers</span><span class="nav__dot" hidden><span class="sr-only">Unsaved changes</span></span>
+          </button>
+          <button type="button" class="nav__item" role="tab" id="tab-drawer" data-tab="drawer" aria-controls="panel-drawer" aria-selected="false" tabindex="-1">
+            <i data-icon="drawer"></i><span class="nav__label">Cash drawer</span><span class="nav__dot" hidden><span class="sr-only">Unsaved changes</span></span>
+          </button>
+          <button type="button" class="nav__item" role="tab" id="tab-connection" data-tab="connection" aria-controls="panel-connection" aria-selected="false" tabindex="-1">
+            <i data-icon="globe"></i><span class="nav__label">Connection</span><span class="nav__dot" hidden><span class="sr-only">Unsaved changes</span></span>
+          </button>
+          <button type="button" class="nav__item" role="tab" id="tab-general" data-tab="general" aria-controls="panel-general" aria-selected="false" tabindex="-1">
+            <i data-icon="sliders"></i><span class="nav__label">General</span><span class="nav__dot" hidden><span class="sr-only">Unsaved changes</span></span>
+          </button>
+          <button type="button" class="nav__item" role="tab" id="tab-about" data-tab="about" aria-controls="panel-about" aria-selected="false" tabindex="-1">
+            <i data-icon="info"></i><span class="nav__label">About &amp; updates</span><span class="nav__dot" hidden><span class="sr-only">Unsaved changes</span></span>
+          </button>
+        </div>
+      </nav>
+
+      <div class="rail__foot">
+        <p class="rail__status"><span class="dot" id="rail-dot"></span><span id="rail-online">Checking...</span></p>
+        <p class="rail__meta" id="rail-version"></p>
+      </div>
+    </aside>
+
+    <!-- Scrolling content -->
+    <main class="content" id="content">
+      <div class="page">
+
+        <div class="banner banner--warning" id="lock-banner" role="status" hidden>
+          <span class="banner__icon"><i data-icon="lock"></i></span>
+          <div class="banner__body">
+            <p class="banner__title">Too many wrong passwords</p>
+            <p class="banner__text">Password checks are paused. Try again in <strong class="tabular" id="lock-time">0:30</strong>.</p>
+          </div>
+        </div>
+
+        <div class="banner banner--danger" id="load-error" role="alert" hidden>
+          <span class="banner__icon"><i data-icon="alert-circle"></i></span>
+          <div class="banner__body">
+            <p class="banner__title">Settings could not be loaded</p>
+            <p class="banner__text" id="load-error-text">Close this window and open Settings again.</p>
+            <div class="banner__actions"><button type="button" class="btn" id="load-retry"><i data-icon="refresh"></i><span>Try again</span></button></div>
+          </div>
+        </div>
+
+        <!-- Printers (built by settings-printers.js) -->
+        <section class="panel" id="panel-printers" role="tabpanel" aria-labelledby="tab-printers">
+          <header class="page-head">
+            <h1>Printers</h1>
+            <p>Choose where receipts and labels are printed. These choices apply to this computer only.</p>
+          </header>
+          <div class="stack stack--loose" id="printers-root"></div>
+        </section>
+
+        <!-- Cash drawer -->
+        <section class="panel" id="panel-drawer" role="tabpanel" aria-labelledby="tab-drawer" hidden>
+          <header class="page-head">
+            <h1>Cash drawer</h1>
+            <p>Open the drawer from the POS or with Ctrl+D. A password keeps it safe.</p>
+          </header>
+          <div class="stack stack--loose">
+
+            <article class="card" aria-labelledby="drawer-pw-title">
+              <div class="card__head">
+                <span class="tile"><i data-icon="key"></i></span>
+                <div class="card__heading">
+                  <h2 class="card__title" id="drawer-pw-title">Drawer password</h2>
+                  <p class="card__desc">Needed to open the drawer and to change the drawer settings.</p>
+                </div>
+                <span class="badge" id="pw-badge"></span>
+              </div>
+              <div class="card__body stack">
+                <div class="banner banner--warning" id="pw-weak" hidden>
+                  <span class="banner__icon"><i data-icon="alert"></i></span>
+                  <div class="banner__body">
+                    <p class="banner__text">Your password does not meet the new length rule (4 to 64 characters). Change it when convenient.</p>
+                  </div>
+                </div>
+                <div class="row row--between">
+                  <p class="muted grow" id="pw-text"></p>
+                  <button type="button" class="btn" id="pw-open"><i data-icon="key"></i><span id="pw-open-label">Set password</span></button>
+                </div>
+              </div>
+            </article>
+
+            <form class="card" id="drawer-form" novalidate aria-labelledby="drawer-set-title">
+              <div class="card__head">
+                <span class="tile"><i data-icon="drawer"></i></span>
+                <div class="card__heading">
+                  <h2 class="card__title" id="drawer-set-title">Drawer settings</h2>
+                  <p class="card__desc">Used when the drawer is opened from the POS, with Ctrl+D or from this screen.</p>
+                </div>
+              </div>
+              <div class="card__body stack">
+                <div class="switch-list">
+                  <label class="switch-row">
+                    <span class="switch-row__text">
+                      <span class="switch-row__title">Use the cash drawer</span>
+                      <span class="switch-row__hint">Turn this off if no drawer is connected to the receipt printer.</span>
+                    </span>
+                    <input type="checkbox" role="switch" class="switch" id="drawer-enabled">
+                  </label>
+                  <label class="switch-row">
+                    <span class="switch-row__text">
+                      <span class="switch-row__title">Ask for the password before Settings opens</span>
+                      <span class="switch-row__hint">Stops other people from changing printers or the server address.</span>
+                    </span>
+                    <input type="checkbox" role="switch" class="switch" id="drawer-protect">
+                  </label>
+                </div>
+
+                <fieldset class="fieldset">
+                  <legend class="field__label">Drawer pin</legend>
+                  <div class="choice-grid">
+                    <label class="choice">
+                      <input type="radio" class="radio" name="drawer-pin" value="2" id="drawer-pin-2">
+                      <span class="choice__body"><span class="choice__title">Pin 2</span><span class="choice__desc">Right for most drawers.</span></span>
+                    </label>
+                    <label class="choice">
+                      <input type="radio" class="radio" name="drawer-pin" value="5" id="drawer-pin-5">
+                      <span class="choice__body"><span class="choice__title">Pin 5</span><span class="choice__desc">Only if your drawer is wired to pin 5.</span></span>
+                    </label>
+                  </div>
+                </fieldset>
+
+                <fieldset class="fieldset">
+                  <legend class="field__label">Pulse length</legend>
+                  <div class="pulse-grid">
+                    <div class="field">
+                      <label class="field__label field__label--sub" for="drawer-on">On time</label>
+                      <div class="affix"><input class="input" id="drawer-on" type="number" inputmode="numeric" min="2" max="510" step="1" aria-describedby="drawer-on-err"><span class="affix__unit">ms</span></div>
+                      <div class="field__error" id="drawer-on-err" hidden></div>
+                    </div>
+                    <div class="field">
+                      <label class="field__label field__label--sub" for="drawer-off">Off time</label>
+                      <div class="affix"><input class="input" id="drawer-off" type="number" inputmode="numeric" min="2" max="510" step="1" aria-describedby="drawer-off-err"><span class="affix__unit">ms</span></div>
+                      <div class="field__error" id="drawer-off-err" hidden></div>
+                    </div>
+                  </div>
+                  <p class="field__hint">Between 2 and 510 milliseconds. The usual values are 50 and 510.</p>
+                </fieldset>
+
+                <p class="note-line"><i data-icon="info" class="icon--sm"></i><span>Drawer commands that are part of a receipt are not affected by these settings.</span></p>
+              </div>
+              <div class="card__foot">
+                <div class="field card__foot-field" id="drawer-pw-field" hidden>
+                  <label class="field__label field__label--sub" for="drawer-pw">Drawer password (needed to save)</label>
+                  <input class="input" id="drawer-pw" type="password" autocomplete="off" spellcheck="false" aria-describedby="drawer-pw-err">
+                  <div class="field__error" id="drawer-pw-err" hidden></div>
+                </div>
+                <div class="card__foot-note" id="drawer-status" aria-live="polite"></div>
+                <button type="submit" class="btn btn--primary" id="drawer-save"><span>Save</span></button>
+              </div>
+            </form>
+
+            <form class="card" id="drawer-test-form" novalidate aria-labelledby="drawer-test-title">
+              <div class="card__head">
+                <span class="tile"><i data-icon="bolt"></i></span>
+                <div class="card__heading">
+                  <h2 class="card__title" id="drawer-test-title">Open drawer (test)</h2>
+                  <p class="card__desc">Sends the open command now. Use it to check the cable and the pulse settings.</p>
+                </div>
+              </div>
+              <div class="card__body">
+                <div class="test-row">
+                  <div class="field" id="drawer-test-field">
+                    <label class="field__label field__label--sub" for="drawer-test-pw">Drawer password</label>
+                    <input class="input" id="drawer-test-pw" type="password" autocomplete="off" spellcheck="false">
+                  </div>
+                  <button type="submit" class="btn" id="drawer-test"><i data-icon="drawer"></i><span>Open drawer</span></button>
+                </div>
+                <div class="result-slot" id="drawer-test-status" aria-live="polite"></div>
+              </div>
+            </form>
+
+            <details class="disclosure" id="forgot">
+              <summary><i data-icon="question"></i><span>Forgot the password?</span><i data-icon="chevron-down" class="chev"></i></summary>
+              <div class="disclosure__body stack">
+                <p>Close GadgetsPOS, delete <code>config.json</code> in the folder below (this also clears the printer settings), start the app and set a new password.</p>
+                <code class="codebox" id="forgot-path">The GadgetsPOS data folder (see About &amp; updates for its location)</code>
+                <p class="small muted">There is no other way to reset it. That keeps your drawer safe.</p>
+              </div>
+            </details>
+          </div>
+        </section>
+
+        <!-- Connection -->
+        <section class="panel" id="panel-connection" role="tabpanel" aria-labelledby="tab-connection" hidden>
+          <header class="page-head">
+            <h1>Connection</h1>
+            <p>Where GadgetsPOS loads your shop from, and which web addresses it trusts.</p>
+          </header>
+          <div class="stack stack--loose">
+
+            <article class="card" aria-labelledby="conn-status-title">
+              <div class="card__head">
+                <span class="tile"><i data-icon="globe"></i></span>
+                <div class="card__heading">
+                  <h2 class="card__title" id="conn-status-title">Status</h2>
+                  <p class="card__desc" id="conn-status-text">Checking the connection...</p>
+                </div>
+                <span class="chip" id="conn-chip"><span class="dot" id="conn-dot"></span><span id="conn-chip-text">Checking</span></span>
+              </div>
+              <div class="card__body">
+                <button type="button" class="btn" id="reload-pos"><i data-icon="refresh"></i><span>Reload POS</span></button>
+                <div class="result-slot" id="reload-status" aria-live="polite"></div>
+              </div>
+            </article>
+
+            <form class="card" id="conn-form" novalidate aria-labelledby="conn-form-title">
+              <div class="card__head">
+                <span class="tile"><i data-icon="server"></i></span>
+                <div class="card__heading">
+                  <h2 class="card__title" id="conn-form-title">Server address</h2>
+                  <p class="card__desc">The web address of your POS. It must start with https://</p>
+                </div>
+              </div>
+              <div class="card__body stack stack--loose">
+                <div class="field">
+                  <label class="field__label" for="conn-url">Server address</label>
+                  <input class="input input--mono" id="conn-url" type="url" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="conn-url-hint conn-url-err">
+                  <p class="field__hint" id="conn-url-hint">Example: https://vendor.societyfiles.com/vendor/point-of-sale</p>
+                  <div class="field__error" id="conn-url-err" hidden></div>
+                </div>
+
+                <div class="stack stack--tight">
+                  <h3 id="domains-title">Allowed domains</h3>
+                  <p class="muted">GadgetsPOS always allows your server address, gadgetspos.com and the sites under societyfiles.com. Add another domain only if your POS runs on it.</p>
+                  <ul class="domains" id="domains" aria-labelledby="domains-title"></ul>
+                  <p class="muted small" id="domains-empty">No extra domains. Most shops do not need any.</p>
+                  <div class="field domain-field">
+                    <label class="field__label field__label--sub" for="domain-input">Add a domain</label>
+                    <div class="domain-add">
+                      <input class="input input--mono" id="domain-input" type="text" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://shop.example.com or *.example.com" aria-describedby="domain-err">
+                      <button type="button" class="btn" id="domain-add"><i data-icon="plus"></i><span>Add</span></button>
+                    </div>
+                    <div class="field__error" id="domain-err" hidden></div>
+                  </div>
+                </div>
+              </div>
+              <div class="card__foot">
+                <div class="field card__foot-field" id="conn-pw-field" hidden>
+                  <label class="field__label field__label--sub" for="conn-pw">Drawer password (needed to save)</label>
+                  <input class="input" id="conn-pw" type="password" autocomplete="off" spellcheck="false" aria-describedby="conn-pw-err">
+                  <div class="field__error" id="conn-pw-err" hidden></div>
+                </div>
+                <div class="card__foot-note" id="conn-status" aria-live="polite"></div>
+                <button type="submit" class="btn btn--primary" id="conn-save"><span>Save</span></button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <!-- General -->
+        <section class="panel" id="panel-general" role="tabpanel" aria-labelledby="tab-general" hidden>
+          <header class="page-head">
+            <h1>General</h1>
+            <p>How GadgetsPOS starts and behaves on this computer. Changes are saved as you make them.</p>
+          </header>
+          <div class="stack stack--loose">
+
+            <article class="card" aria-labelledby="general-title">
+              <div class="card__head">
+                <span class="tile"><i data-icon="sliders"></i></span>
+                <div class="card__heading">
+                  <h2 class="card__title" id="general-title">Start-up and screen</h2>
+                  <p class="card__desc">Make the till ready the moment staff arrive.</p>
+                </div>
+              </div>
+              <div class="card__body stack">
+                <div class="switch-list">
+                  <label class="switch-row" id="row-login">
+                    <span class="switch-row__lead"><i data-icon="power"></i></span>
+                    <span class="switch-row__text">
+                      <span class="switch-row__title">Start GadgetsPOS when this computer starts</span>
+                      <span class="switch-row__hint">The POS opens by itself after the computer is switched on.</span>
+                    </span>
+                    <input type="checkbox" role="switch" class="switch" id="sw-login">
+                  </label>
+                  <label class="switch-row">
+                    <span class="switch-row__lead"><i data-icon="fullscreen"></i></span>
+                    <span class="switch-row__text">
+                      <span class="switch-row__title">Start in full screen</span>
+                      <span class="switch-row__hint">Hides the title bar. Press F11 any time to switch.</span>
+                    </span>
+                    <input type="checkbox" role="switch" class="switch" id="sw-fullscreen">
+                  </label>
+                  <label class="switch-row">
+                    <span class="switch-row__lead"><i data-icon="sun"></i></span>
+                    <span class="switch-row__text">
+                      <span class="switch-row__title">Keep this computer awake while GadgetsPOS is open</span>
+                      <span class="switch-row__hint">The screen may still turn off. This only stops the computer from going to sleep.</span>
+                    </span>
+                    <input type="checkbox" role="switch" class="switch" id="sw-awake">
+                  </label>
+                  <div class="result-slot" id="general-status" aria-live="polite"></div>
+                </div>
+              </div>
+            </article>
+
+            <article class="card" aria-labelledby="perf-title">
+              <div class="card__head">
+                <span class="tile"><i data-icon="cpu"></i></span>
+                <div class="card__heading">
+                  <h2 class="card__title" id="perf-title">Performance</h2>
+                  <p class="card__desc">Smooth scrolling and faster screens.</p>
+                </div>
+              </div>
+              <div class="card__body stack">
+                <div class="banner banner--warning" id="compat-notice" hidden>
+                  <span class="banner__icon"><i data-icon="shield-alert"></i></span>
+                  <div class="banner__body">
+                    <p class="banner__title">Compatibility mode is on</p>
+                    <p class="banner__text" id="compat-text"></p>
+                  </div>
+                </div>
+                <div class="switch-list">
+                  <label class="switch-row">
+                    <span class="switch-row__lead"><i data-icon="bolt"></i></span>
+                    <span class="switch-row__text">
+                      <span class="switch-row__title">Hardware acceleration <span class="badge badge--success">Recommended</span></span>
+                      <span class="switch-row__hint">Uses the graphics card to draw the screen. Turn this off only if the screen flickers or stays blank.</span>
+                    </span>
+                    <input type="checkbox" role="switch" class="switch" id="sw-accel">
+                  </label>
+                </div>
+                <div class="banner banner--info" id="restart-notice" role="status" hidden>
+                  <span class="banner__icon"><i data-icon="refresh"></i></span>
+                  <div class="banner__body">
+                    <p class="banner__title">Restart to apply this change</p>
+                    <p class="banner__text">GadgetsPOS closes and opens again. Your work in the POS is saved on the server.</p>
+                    <div class="banner__actions">
+                      <button type="button" class="btn btn--primary" id="restart-now"><i data-icon="refresh"></i><span>Restart now</span></button>
+                      <button type="button" class="btn" id="restart-later"><span>Later</span></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- About & updates -->
+        <section class="panel" id="panel-about" role="tabpanel" aria-labelledby="tab-about" hidden>
+          <header class="page-head">
+            <h1>About &amp; updates</h1>
+            <p>Version details, updates and help for your support team.</p>
+          </header>
+          <div class="stack stack--loose">
+
+            <article class="card" aria-labelledby="about-title">
+              <div class="card__head">
+                <span class="tile"><i data-icon="laptop"></i></span>
+                <div class="card__heading">
+                  <h2 class="card__title" id="about-title">GadgetsPOS Desktop</h2>
+                  <p class="card__desc" id="about-version">Version</p>
+                </div>
+              </div>
+              <div class="card__body">
+                <dl class="kv" id="about-list"></dl>
+              </div>
+            </article>
+
+            <article class="card" aria-labelledby="update-title">
+              <div class="card__head">
+                <span class="tile" id="update-tile"><i data-icon="download"></i></span>
+                <div class="card__heading">
+                  <h2 class="card__title" id="update-title">Updates</h2>
+                  <p class="card__desc">GadgetsPOS can update itself.</p>
+                </div>
+              </div>
+              <div class="card__body stack">
+                <div class="update" id="update" data-status="none" aria-live="polite">
+                  <div class="update__row">
+                    <span class="update__icon" id="update-icon" aria-hidden="true"></span>
+                    <div class="update__text">
+                      <p class="update__title" id="update-headline">Checking...</p>
+                      <p class="update__sub" id="update-sub"></p>
+                    </div>
+                  </div>
+                  <div class="progress update__bar" id="update-bar-track" hidden aria-hidden="true"><div class="progress__bar" id="update-bar"></div></div>
+                </div>
+                <div class="row" id="update-actions">
+                  <button type="button" class="btn btn--primary" id="update-install" hidden><i data-icon="refresh"></i><span>Restart and install</span></button>
+                  <button type="button" class="btn" id="update-check"><i data-icon="refresh"></i><span>Check for updates</span></button>
+                </div>
+              </div>
+            </article>
+
+            <details class="disclosure" id="startup">
+              <summary><i data-icon="timer"></i><span>Startup details</span><i data-icon="chevron-down" class="chev"></i></summary>
+              <div class="disclosure__body stack" id="startup-body"></div>
+            </details>
+
+            <article class="card" aria-labelledby="support-title">
+              <div class="card__head">
+                <span class="tile"><i data-icon="folder"></i></span>
+                <div class="card__heading">
+                  <h2 class="card__title" id="support-title">Help and support</h2>
+                  <p class="card__desc">Send these to your support team if something is wrong.</p>
+                </div>
+              </div>
+              <div class="card__body">
+                <div class="row">
+                  <button type="button" class="btn" id="open-logs"><i data-icon="folder"></i><span>Open logs folder</span></button>
+                  <button type="button" class="btn" id="copy-diag"><i data-icon="copy"></i><span>Copy diagnostics</span></button>
+                </div>
+              </div>
+            </article>
+
+            <article class="card card--danger" aria-labelledby="reset-title">
+              <div class="card__head">
+                <span class="tile tile--danger"><i data-icon="trash2"></i></span>
+                <div class="card__heading">
+                  <h2 class="card__title" id="reset-title">Reset all settings</h2>
+                  <p class="card__desc">Erases the printers, the drawer password and the connection settings on this computer. GadgetsPOS then starts again with its defaults. Your shop data in the POS is not touched.</p>
+                </div>
+              </div>
+              <div class="card__body">
+                <button type="button" class="btn btn--danger" id="reset-open"><i data-icon="trash2"></i><span>Reset all settings...</span></button>
+              </div>
+            </article>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+</body>
+</html>

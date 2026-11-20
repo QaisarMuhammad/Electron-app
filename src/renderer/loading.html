@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>GadgetsPOS</title>
+  <link rel="stylesheet" href="shared/tokens.css">
+  <link rel="stylesheet" href="shared/loading.css">
+  <script src="shared/loading.js" defer></script>
+</head>
+<body>
+  <main class="loading" aria-busy="true">
+    <picture class="loading__logo">
+      <source media="(prefers-color-scheme: dark)" srcset="shared/logo-white.png">
+      <img src="shared/logo.png" width="264" height="140" alt="GadgetsPOS" decoding="sync" fetchpriority="high">
+    </picture>
+    <p class="loading__line" role="status">
+      <span class="loading__spinner" aria-hidden="true"></span>
+      <span>Starting GadgetsPOS...</span>
+    </p>
+    <p class="loading__hint" id="hint" role="status" hidden>This is taking longer than usual. Please check your internet connection.</p>
+  </main>
+</body>
+</html>

@@ -1,0 +1,73 @@
+/*
+ * loading.html - the first thing a cashier sees. Deliberately tiny: it needs only tokens.css, no components.
+ * One calm motion: the ring turns (transform). The logo fades in once (opacity). Nothing else moves.
+ */
+body {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(
+      640px circle at 50% 44%,
+      color-mix(in srgb, var(--accent) 6%, transparent) 0%,
+      color-mix(in srgb, var(--accent) 3.2%, transparent) 38%,
+      color-mix(in srgb, var(--accent) 1%, transparent) 72%,
+      transparent 100%
+    ),
+    var(--bg);
+}
+
+.loading {
+  display: grid;
+  justify-items: center;
+  gap: 34px;
+  padding: 32px;
+  text-align: center;
+}
+
+.loading__logo {
+  animation: loading-in 420ms var(--ease) both;
+}
+
+.loading__logo img {
+  width: 264px;
+  height: auto;
+}
+
+.loading__line {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 22px;
+}
+
+.loading__spinner {
+  width: 22px;
+  height: 22px;
+  border: 2.5px solid color-mix(in srgb, var(--accent) 20%, transparent);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: loading-spin 0.9s linear infinite;
+}
+
+.loading__hint {
+  max-width: 340px;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  animation: loading-in 420ms var(--ease) both;
+}
+
+@keyframes loading-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@keyframes loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>DYMO label engine</title>
+<!--
+  Hidden helper page of GadgetsPOS. Its only job is to host the DYMO Connect framework for the main process
+  (src/main/printing/dymo): the main process runs one generated script here per label, and the framework
+  talks to the DYMO Connect service on this computer. Nothing is shown and nothing is loaded from the network.
+
+  No preload and no Content-Security-Policy on purpose: the page has no bridge to the app to protect, and the
+  framework has to reach the local DYMO service (https on localhost) whichever port and host name it picks.
+  Path check: this file is src/renderer/dymo-loader.html, so ../../assets is the assets folder of the app.
+-->
+<script src="../../assets/dymo.connect.framework.js"></script>
+</head>
+<body></body>
+</html>

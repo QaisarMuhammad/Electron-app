@@ -1,0 +1,258 @@
+/*
+ * GadgetsPOS Desktop - design tokens, base reset and typography (SPEC 14).
+ *
+ * Every local page imports this file first. Colours are defined once with light-dark(): the light value is the
+ * first argument, the dark value the second, and the theme follows `prefers-color-scheme` automatically.
+ *
+ * Colour rules
+ *   - Brand red (--brand) is for the primary action and for focus. Nothing else is red on purpose.
+ *   - The logo navy #16355E (--heading, --accent, the side rail) carries headings, selection and brand details.
+ *   - Semantic colours (success, warning, danger, info) are separate from the brand and always travel with an
+ *     icon and words, never colour alone.
+ *   - Text on a tinted surface uses the "-ink" variant of a semantic colour; every text pair is >= 4.5:1 and every
+ *     control outline or focus ring is >= 3:1 (checked by tests/e2e/ui-shots.js).
+ *
+ * Motion rule: only `transform` and `opacity` are ever animated or transitioned (no layout, no paint properties).
+ */
+
+:root {
+  color-scheme: light dark;
+
+  /* Brand */
+  --brand: #C12126;
+  --brand-hover: light-dark(#A91D21, #D52D33);
+  --brand-press: light-dark(#8F181C, #B3262B);
+  --on-brand: #FFFFFF;
+  --focus: light-dark(#C12126, #FF6B70);
+  --accent: light-dark(#16355E, #9AC9FF);
+  --on-accent: light-dark(#FFFFFF, #0D1720);
+  --accent-soft: color-mix(in srgb, var(--accent) 7%, transparent);
+  --accent-softer: color-mix(in srgb, var(--accent) 4%, transparent);
+  --heading: light-dark(#16355E, #F2F9FF);
+
+  /* Surfaces and lines */
+  --bg: light-dark(#F6F7FB, #0D1720);
+  --surface: light-dark(#FFFFFF, #152433);
+  --surface-2: light-dark(#F1F6F9, #1B2D40);
+  --surface-3: light-dark(#E6ECF2, #243A52);
+  --field-bg: light-dark(#FFFFFF, #0F1C28);
+  --border: light-dark(#E3E5EC, #263A50);
+  --border-strong: light-dark(#C8D0DC, #36506B);
+  --input-border: light-dark(#7A8799, #6E8AA8);
+  --backdrop: rgb(10 24 44 / 0.55);
+
+  /* Text */
+  --text: light-dark(#1C1F2A, #E8EEF5);
+  --muted: light-dark(#5B6070, #A5B3C4);
+  --placeholder: light-dark(#666C80, #8697AB);
+  --link: light-dark(#184C99, #8DBBFF);
+
+  /* Semantic (fill/icon colour, ink for text on the tint, tint, border) */
+  --success: light-dark(#1B873F, #5FD08C);
+  --success-ink: light-dark(#146C32, #5FD08C);
+  --success-bg: light-dark(#E7F5EC, #0F2E22);
+  --success-border: light-dark(#B9E1C6, #1F5C42);
+  --warning: light-dark(#B76E00, #F2B24A);
+  --warning-ink: light-dark(#7A4A00, #F2B24A);
+  --warning-bg: light-dark(#FFF4DE, #33270E);
+  --warning-border: light-dark(#F2D49B, #6B5018);
+  --danger: light-dark(#B42318, #FF8A80);
+  --danger-ink: light-dark(#9B1C12, #FF8A80);
+  --danger-bg: light-dark(#FDECEA, #3A1618);
+  --danger-border: light-dark(#F4B9B3, #7A2E2E);
+  --info: light-dark(#1F5FBF, #8DBBFF);
+  --info-ink: light-dark(#184C99, #8DBBFF);
+  --info-bg: light-dark(#E8F0FC, #13294A);
+  --info-border: light-dark(#B5CEF3, #2A5088);
+
+  /* Navy side rail (the same deep navy in both themes) */
+  --rail-bg: light-dark(#16355E, #0A141E);
+  --rail-text: #FFFFFF;
+  --rail-muted: rgb(255 255 255 / 0.74);
+  --rail-hover: rgb(255 255 255 / 0.08);
+  --rail-selected: rgb(255 255 255 / 0.14);
+  --rail-marker: #F2545B;
+
+  /* Toast: an inverted surface so it reads on either theme */
+  --toast-bg: light-dark(#1C1F2A, #2A425C);
+  --toast-fg: #FFFFFF;
+  --toast-action: #FFB3B6;
+
+  /* Shape, spacing, depth */
+  --r-sm: 8px;
+  --r-control: 10px;
+  --r-card: 12px;
+  --r-dialog: 16px;
+  --r-pill: 999px;
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --control-h: 44px;
+  --shadow: 0 1px 2px rgb(22 53 94 / 0.06), 0 6px 20px rgb(22 53 94 / 0.07);
+  --shadow-lg: 0 2px 6px rgb(22 53 94 / 0.1), 0 18px 48px rgb(22 53 94 / 0.22);
+
+  /* Type */
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, "Liberation Mono", monospace;
+  --fs-xs: 12px;
+  --fs-sm: 13px;
+  --fs-body: 14px;
+  --fs-input: 15px;
+  --fs-lg: 16px;
+  --fs-h1: 20px;
+
+  /* Motion */
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --dur: 160ms;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.35);
+    --shadow-lg: 0 2px 6px rgb(0 0 0 / 0.5), 0 22px 56px rgb(0 0 0 / 0.55);
+    --backdrop: rgb(3 9 16 / 0.66);
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font: 400 var(--fs-body) / 1.45 var(--font);
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+ul,
+ol,
+dl,
+dd,
+figure {
+  margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: var(--heading);
+  font-weight: 650;
+  letter-spacing: -0.005em;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--fs-h1);
+  line-height: 28px;
+}
+
+h2 {
+  font-size: var(--fs-lg);
+  line-height: 24px;
+}
+
+h3 {
+  font-size: var(--fs-body);
+  line-height: 20px;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: var(--link);
+}
+
+code,
+kbd,
+samp {
+  font-family: var(--mono);
+  font-size: 0.92em;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 24%, transparent);
+}
+
+/* Slim scrollbars that follow the theme */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--muted) 55%, transparent) transparent;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Reduced motion: no decorative movement anywhere. Spinners switch to a gentle fade (see components.css). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

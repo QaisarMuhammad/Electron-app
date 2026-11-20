@@ -1,16 +1,15 @@
 {
   "name": "electron-app",
   "productName": "Gadgets POS",
-  "version": "1.6.1",
+  "version": "2.0.0",
   "description": "POS application for Gadgets POS",
-  "main": "index.js",
+  "main": "src/main/index.js",
   "scripts": {
     "start": "electron .",
-    "build": "webpack --mode production",
-    "dist": "electron-builder",
-    "package": "electron-packager . GadgetsPOS --platform=all --icon=assets/icon --overwrite",
-    "postinstall": "electron-builder install-app-deps",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --test \"tests/**/*.test.js\"",
+    "release:check": "node --test tests/release/release.check.js",
+    "predist": "npm run release:check",
+    "dist": "electron-builder"
   },
   "build": {
     "appId": "com.example.gadgetspos",
@@ -20,42 +19,29 @@
       "output": "dist"
     },
     "files": [
-      "index.js",
-      "preload.js",
-      "printer-config.html",
-      "printer-a4-config.html",
-      "printer-label-config.html",
-      "reset-password.html",
-      "password-prompt.html",
-      "dymo-loader.html",
-      "dymo-preload.js",
-      "dymo.connect.framework.js",
-      "Labeldesign1_1.dymo",
-      "Labeldesign2.dymo",
-      "LabeldesignRepair.dymo",
-      "mukltipleBarcode.dymo",
-      "multipleQRCODE.dymo",
-      "Labeldesign_sale.dymo",
-      "Labeldesignqr2.dymo",
-      "Labeldesign3.dymo",
-      "Labeldesign1_2_22.dymo",
-      "25_25_barcode.dymo",
-      "25_25_qrcode.dymo",
-      "70_54_Labeldesign_sale.dymo",
-      "70_54_Labeldesign1_2_22.dymo",
-      "70_54_Labeldesign3.dymo",
-      "70_54_Labeldesign2.dymo",
-      "70_54_mukltipleBarcode.dymo",
-      "70_54_multipleQRCODE.dymo",
-      "70_54_LabeldesignRepair.dymo",
-      "70_54_LabeldesignRepair_2.dymo",
-      "labitemdesign.dymo",
-      "assets/**/*",
+      "src/**",
+      "labels/**",
+      "assets/**",
+      "scripts/**",
+      "!scripts/after-pack-fuses.js",
       "package.json"
+    ],
+    "asarUnpack": [
+      "scripts/**"
+    ],
+    "afterPack": "./scripts/after-pack-fuses.js",
+    "publish": [
+      {
+        "provider": "generic",
+        "url": "https://CHANGE-ME.example.com/gadgetspos-desktop/"
+      }
     ],
     "win": {
       "icon": "assets/icon.ico",
       "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false
     },
     "mac": {
       "icon": "assets/icon.icns",
@@ -66,35 +52,14 @@
     }
   },
   "devDependencies": {
-    "@babel/core": "^7.28.4",
-    "@babel/preset-env": "^7.28.3",
-    "@electron/rebuild": "^3.6.0",
-    "babel-loader": "^10.0.0",
+    "@electron/fuses": "^1.8.0",
     "electron": "^32.1.2",
-    "electron-builder": "^24.13.3",
-    "electron-packager": "^17.1.2",
-    "electron-rebuild": "^3.2.9",
-    "webpack": "^5.95.0",
-    "webpack-cli": "^5.1.4",
-    "webpack-node-externals": "^3.0.0"
+    "electron-builder": "^24.13.3"
   },
   "dependencies": {
-    "@types/dymo-label-framework": "^1.2.37",
-    "bwip-js": "^4.5.2",
-    "child_process": "^1.0.2",
-    "dotenv": "^16.4.5",
     "electron-log": "^5.2.0",
     "electron-store": "^10.0.0",
-    "escpos": "^3.0.0-alpha.6",
-    "escpos-usb": "^3.0.0-alpha.4",
-    "iconv-lite": "^0.6.3",
-    "pdfkit": "^0.15.2",
-    "puppeteer": "^23.11.1",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "serialport": "^12.0.0",
-    "usb": "^1.9.2",
-    "winston": "^3.14.2"
+    "electron-updater": "^6.8.11"
   },
   "author": "DoneSol Technologies",
   "license": "ISC",

@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Benchmark stress</title>
+<style>
+  :root { --brand: #C12126; --navy: #16355E; --line: #E3E5EC; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #F6F7FB; color: #1C1F2A; font: 14px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  #list { position: absolute; inset: 0; overflow-y: scroll; overflow-x: hidden; }
+  .row { display: flex; align-items: center; gap: 14px; height: 56px; padding: 0 20px; background: #fff; border-bottom: 1px solid var(--line); }
+  .row:nth-child(even) { background: #FAFBFE; }
+  .avatar { flex: none; width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--brand), var(--navy)); box-shadow: 0 2px 6px rgba(20, 24, 40, .35); }
+  .name { flex: 1; min-width: 0; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sku { flex: none; width: 110px; color: #5B6070; }
+  .badge { flex: none; padding: 2px 10px; border-radius: 10px; background: #e8f0ff; color: #1f5fbf; font-size: 12px; }
+  .bar { flex: none; width: 110px; height: 8px; border-radius: 4px; background: var(--line); overflow: hidden; }
+  .bar > i { display: block; height: 100%; background: linear-gradient(90deg, #1b873f, #4cc27a); }
+  .qty, .price { flex: none; width: 64px; text-align: right; }
+  .btn { flex: none; height: 32px; padding: 0 14px; border: 0; border-radius: 8px; background: var(--brand); color: #fff; font-weight: 600; box-shadow: 0 1px 3px rgba(0, 0, 0, .3); }
+  /* floating cards over the list (toasts, popovers): translucent, shadowed, moved by CSS transforms; ?blur=1 adds a backdrop blur */
+  .chip { position: absolute; width: 190px; height: 84px; padding: 10px 12px; border-radius: 14px; background: rgba(255, 255, 255, .78); box-shadow: 0 10px 28px rgba(20, 24, 40, .28), 0 2px 6px rgba(20, 24, 40, .2); border: 1px solid rgba(255, 255, 255, .6); will-change: transform; pointer-events: none; }
+  .chip.blur { backdrop-filter: blur(6px); }
+  .chip b { display: block; color: var(--navy); }
+</style>
+</head>
+<body>
+<div id="list" role="list"></div>
+<script src="/bench-client.js"></script>
+<script src="/stress.js"></script>
+</body>
+</html>

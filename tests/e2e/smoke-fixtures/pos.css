@@ -1,0 +1,80 @@
+/* The look of the fake POS page: plain and calm, so a screenshot of the desktop shell's banner on top of it reads well. */
+:root {
+  color-scheme: light;
+  --ink: #2b3445;
+  --muted: #6b7484;
+  --line: #dae1e7;
+  --paper: #f6f7fb;
+  --brand: #c12126;
+  --navy: #16355e;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 14px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 24px;
+  background: var(--navy);
+  color: #fff;
+}
+
+.brand { font-size: 18px; font-weight: 700; }
+.brand span { margin-left: 10px; font-size: 13px; font-weight: 400; opacity: 0.75; }
+.env { font-size: 13px; opacity: 0.85; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 16px;
+  padding: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 1px 2px rgba(22, 53, 94, 0.06);
+}
+
+.card.wide { grid-column: 1 / -1; }
+.card h2 { margin: 0 0 8px; font-size: 16px; color: var(--navy); }
+.hint { margin: 0 0 12px; color: var(--muted); }
+
+.cart { width: 100%; border-collapse: collapse; margin-bottom: 14px; }
+.cart th, .cart td { padding: 8px 6px; border-bottom: 1px solid var(--line); text-align: left; }
+.cart tfoot td { font-weight: 700; border-bottom: 0; }
+.num { text-align: right !important; }
+
+.field { display: grid; gap: 4px; color: var(--muted); font-size: 13px; }
+.field input { padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; font: inherit; color: var(--ink); }
+
+.buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+.buttons button {
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+}
+.buttons button:hover { border-color: var(--brand); }
+
+.results { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; max-height: 260px; overflow: auto; }
+.results li { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; padding: 6px 10px; border-radius: 8px; background: var(--paper); }
+.results li[data-ok="false"] { background: #fdecea; }
+.results code { color: var(--muted); word-break: break-all; }
+.results small { color: var(--muted); margin-left: auto; }
