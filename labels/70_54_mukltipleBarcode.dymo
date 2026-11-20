@@ -2,18 +2,18 @@
 <DesktopLabel Version="1">
   <DYMOLabel Version="4">
     <Description>DYMO Label</Description>
-    <Orientation>Portrait</Orientation>
-    <LabelName>S0722540 multipurpose</LabelName>
+    <Orientation>Landscape</Orientation>
+    <LabelName>StorageS0722440</LabelName>
     <InitialLength>0</InitialLength>
     <BorderStyle>SolidLine</BorderStyle>
     <DYMORect>
       <DYMOPoint>
-        <X>0.039999966</X>
-        <Y>0.060000002</Y>
+        <X>0.22</X>
+        <Y>0.056666665</Y>
       </DYMOPoint>
       <Size>
-        <Width>2.17</Width>
-        <Height>1.13</Height>
+        <Width>2.47</Width>
+        <Height>2.03</Height>
       </Size>
     </DYMORect>
     <BorderColor>
@@ -73,7 +73,7 @@
                 <Text>$10</Text>
                 <FontInfo>
                   <FontName>Segoe UI</FontName>
-                  <FontSize>9.3</FontSize>
+                  <FontSize>20</FontSize>
                   <IsBold>True</IsBold>
                   <IsItalic>False</IsItalic>
                   <IsUnderline>False</IsUnderline>
@@ -88,12 +88,12 @@
           </FormattedText>
           <ObjectLayout>
             <DYMOPoint>
-              <X>0.14200932</X>
-              <Y>0.37153143</Y>
+              <X>0.298740</X>
+              <Y>0.741706</Y>
             </DYMOPoint>
             <Size>
-              <Width>1.9659814</Width>
-              <Height>0.17708093</Height>
+              <Width>2.311024</Width>
+              <Height>0.259843</Height>
             </Size>
           </ObjectLayout>
         </TextObject>
@@ -150,12 +150,12 @@
           </FontInfo>
           <ObjectLayout>
             <DYMOPoint>
-              <X>0.35336807</X>
-              <Y>0.060000084</Y>
+              <X>0.495591</X>
+              <Y>0.151155</Y>
             </DYMOPoint>
             <Size>
-              <Width>1.536185</Width>
-              <Height>0.3115315</Height>
+              <Width>1.917323</Width>
+              <Height>0.574803</Height>
             </Size>
           </ObjectLayout>
         </BarcodeObject>
@@ -212,12 +212,12 @@
           </FontInfo>
           <ObjectLayout>
             <DYMOPoint>
-              <X>0.35057807</X>
-              <Y>0.6250001</Y>
+              <X>0.495591</X>
+              <Y>1.166903</Y>
             </DYMOPoint>
             <Size>
-              <Width>1.5452927</Width>
-              <Height>0.31500208</Height>
+              <Width>1.917323</Width>
+              <Height>0.574803</Height>
             </Size>
           </ObjectLayout>
         </BarcodeObject>
@@ -266,7 +266,7 @@
                 <Text>$10</Text>
                 <FontInfo>
                   <FontName>Segoe UI</FontName>
-                  <FontSize>8.8</FontSize>
+                  <FontSize>20</FontSize>
                   <IsBold>True</IsBold>
                   <IsItalic>False</IsItalic>
                   <IsUnderline>False</IsUnderline>
@@ -281,12 +281,12 @@
           </FormattedText>
           <ObjectLayout>
             <DYMOPoint>
-              <X>0.25760874</X>
-              <Y>0.95955133</Y>
+              <X>0.298740</X>
+              <Y>1.757454</Y>
             </DYMOPoint>
             <Size>
-              <Width>1.7542695</Width>
-              <Height>0.1640259</Height>
+              <Width>2.311024</Width>
+              <Height>0.259843</Height>
             </Size>
           </ObjectLayout>
         </TextObject>
@@ -326,12 +326,12 @@
           <LineType>Horizontal</LineType>
           <ObjectLayout>
             <DYMOPoint>
-              <X>0.05499984</X>
-              <Y>0.52392405</Y>
+              <X>0.259370</X>
+              <Y>1.074383</Y>
             </DYMOPoint>
             <Size>
-              <Width>2.14</Width>
-              <Height>0.1</Height>
+              <Width>2.389764</Width>
+              <Height>0.011811</Height>
             </Size>
           </ObjectLayout>
         </LineObject>

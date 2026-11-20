@@ -130,10 +130,10 @@ test('the update feed is the generic provider on the production dashboard (a tes
   assert.doesNotMatch(JSON.stringify(pkg.build.publish), /CHANGE-ME/);
 });
 
-test('the installers have fixed, space-free names (the download page and latest.yml refer to them), and the Mac build is a universal dmg plus the zip the Mac updater needs', () => {
+test('the installers have fixed, space-free names (the download page and latest.yml refer to them), and the Mac build is a dmg plus the zip the Mac updater needs, for Intel (x64) and Apple Silicon (arm64) separately (the universal merge fails on the signatures inside the Electron framework)', () => {
   assert.equal(pkg.build.nsis.artifactName, 'Gadgets-POS-Setup-${version}.${ext}');
   assert.equal(pkg.build.mac.artifactName, 'Gadgets-POS-${version}-mac-${arch}.${ext}');
-  assert.deepEqual(pkg.build.mac.target, [{ target: 'dmg', arch: ['universal'] }, { target: 'zip', arch: ['universal'] }]);
+  assert.deepEqual(pkg.build.mac.target, [{ target: 'dmg', arch: ['x64', 'arm64'] }, { target: 'zip', arch: ['x64', 'arm64'] }]);
 });
 
 test('the installer keeps the platform targets of v1 and the icons exist', () => {

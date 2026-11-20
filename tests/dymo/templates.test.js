@@ -187,8 +187,10 @@ test('the "was" and "OFF" captions and the strike-through line belong to the sal
     const normal = TEMPLATES[size].design2;
     const sale = TEMPLATES[size].design2Sale;
     assert.notEqual(readTemplate(normal), readTemplate(sale), `${size}: the pair is a real pair (v1.6.1 shipped the 70x54 sale template twice)`);
-    assert.doesNotMatch(readTemplate(normal), /<LineObject>/, `${normal}: no strike-through line on a normal label`);
-    assert.match(readTemplate(sale), /<LineObject>/, `${sale}: the sale label keeps its strike-through line`);
+    // the strike-through line is the object named LineObject0; the thin divider under the title (LineTitle) is part of the layout of every label and is not a strike-through
+    const strike = /<LineObject>(?:(?!<\/LineObject>)[\s\S])*?<Name>LineObject0<\/Name>/;
+    assert.doesNotMatch(readTemplate(normal), strike, `${normal}: no strike-through line on a normal label`);
+    assert.match(readTemplate(sale), strike, `${sale}: the sale label keeps its strike-through line`);
     const captions = (file) => fixture[file].map((object) => object.name).filter((name) => name === 'TextObject1' || name === 'TextObject9');
     assert.deepEqual(captions(normal), [], `${normal}: no caption objects`);
     assert.deepEqual(captions(sale), ['TextObject1', 'TextObject9'], `${sale}: the old price and the saving`);

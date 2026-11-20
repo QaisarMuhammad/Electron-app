@@ -81,12 +81,12 @@
           </FontInfo>
           <ObjectLayout>
             <DYMOPoint>
-              <X>0.45330292</X>
-              <Y>0.69791687</Y>
+              <X>0.276220</X>
+              <Y>0.650551</Y>
             </DYMOPoint>
             <Size>
-              <Width>1.5452927</Width>
-              <Height>0.31500208</Height>
+              <Width>1.696850</Width>
+              <Height>0.425197</Height>
             </Size>
           </ObjectLayout>
         </BarcodeObject>
@@ -135,7 +135,7 @@
                 <Text>Title</Text>
                 <FontInfo>
                   <FontName>Segoe UI</FontName>
-                  <FontSize>24.4</FontSize>
+                  <FontSize>24</FontSize>
                   <IsBold>True</IsBold>
                   <IsItalic>False</IsItalic>
                   <IsUnderline>False</IsUnderline>
@@ -150,12 +150,12 @@
           </FormattedText>
           <ObjectLayout>
             <DYMOPoint>
-              <X>0.08890079</X>
-              <Y>0.09083339</Y>
+              <X>0.099055</X>
+              <Y>0.099370</Y>
             </DYMOPoint>
             <Size>
-              <Width>2.104732</Width>
-              <Height>0.45604572</Height>
+              <Width>2.051181</Width>
+              <Height>0.496063</Height>
             </Size>
           </ObjectLayout>
         </TextObject>

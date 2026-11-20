@@ -9,7 +9,7 @@
 # The channel is written into package.json for the duration of the build (and put back afterwards, even when the build fails): the
 # installed app reads it (src/main/channel.js) and electron-builder writes the feed into resources/app-update.yml. Output: dist/<channel>/
 #   Windows  Gadgets-POS-Setup-<version>.exe (+ .blockmap), latest.yml
-#   Mac      Gadgets-POS-<version>-mac-universal.dmg and .zip (+ .blockmap), latest-mac.yml
+#   Mac      Gadgets-POS-<version>-mac-x64.dmg / -arm64.dmg and the matching .zip (+ .blockmap), latest-mac.yml (Intel and Apple Silicon are separate files)
 # Windows installers can be built on a Mac (electron-builder runs its own Wine); Mac installers need a Mac. Nothing here signs anything:
 # the owner release gate "signed Windows build" stays open until build.win.publisherName and a certificate exist (npm run release:check).
 set -euo pipefail

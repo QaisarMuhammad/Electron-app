@@ -72,12 +72,12 @@
           </TextDataHolder>
           <ObjectLayout>
             <DYMOPoint>
-              <X>0.16527045</X>
-              <Y>0.43575642</Y>
+              <X>0.291968</X>
+              <Y>0.426772</Y>
             </DYMOPoint>
             <Size>
-              <Width>0.68110895</Width>
-              <Height>0.35116777</Height>
+              <Width>0.397638</Width>
+              <Height>0.397638</Height>
             </Size>
           </ObjectLayout>
         </QRCodeObject>
@@ -126,7 +126,7 @@
                 <Text>$10</Text>
                 <FontInfo>
                   <FontName>Segoe UI</FontName>
-                  <FontSize>17.8</FontSize>
+                  <FontSize>18</FontSize>
                   <IsBold>True</IsBold>
                   <IsItalic>False</IsItalic>
                   <IsUnderline>False</IsUnderline>
@@ -141,12 +141,12 @@
           </FormattedText>
           <ObjectLayout>
             <DYMOPoint>
-              <X>0.097049676</X>
-              <Y>0.10000001</Y>
+              <X>0.079370</X>
+              <Y>0.131496</Y>
             </DYMOPoint>
             <Size>
-              <Width>0.8106674</Width>
-              <Height>0.33575642</Height>
+              <Width>0.822835</Width>
+              <Height>0.291339</Height>
             </Size>
           </ObjectLayout>
         </TextObject>
@@ -195,7 +195,7 @@
                 <Text />
                 <FontInfo>
                   <FontName>Arial</FontName>
-                  <FontSize>1</FontSize>
+                  <FontSize>6.5</FontSize>
                   <IsBold>True</IsBold>
                   <IsItalic>False</IsItalic>
                   <IsUnderline>False</IsUnderline>
@@ -210,12 +210,12 @@
           </FormattedText>
           <ObjectLayout>
             <DYMOPoint>
-              <X>0.25016344</X>
-              <Y>0.7869241</Y>
+              <X>0.138425</X>
+              <Y>0.832283</Y>
             </DYMOPoint>
             <Size>
-              <Width>0.48837808</Width>
-              <Height>0.125</Height>
+              <Width>0.704724</Width>
+              <Height>0.094488</Height>
             </Size>
           </ObjectLayout>
         </TextObject>

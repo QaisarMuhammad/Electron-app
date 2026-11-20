@@ -73,7 +73,7 @@
                 <Text>Product_title</Text>
                 <FontInfo>
                   <FontName>Arial</FontName>
-                  <FontSize>15.4</FontSize>
+                  <FontSize>15</FontSize>
                   <IsBold>True</IsBold>
                   <IsItalic>False</IsItalic>
                   <IsUnderline>False</IsUnderline>
@@ -88,12 +88,12 @@
           </FormattedText>
           <ObjectLayout>
             <DYMOPoint>
-              <X>0.12207441</X>
-              <Y>0.08000008</Y>
+              <X>0.099055</X>
+              <Y>0.075748</Y>
             </DYMOPoint>
             <Size>
-              <Width>2.0284567</Width>
-              <Height>0.25001615</Height>
+              <Width>2.051181</Width>
+              <Height>0.271654</Height>
             </Size>
           </ObjectLayout>
         </TextObject>
@@ -129,20 +129,20 @@
             <DYMOThickness Left="0" Top="0" Right="0" Bottom="0" />
           </Margin>
           <HorizontalAlignment>Left</HorizontalAlignment>
-          <VerticalAlignment>Top</VerticalAlignment>
+          <VerticalAlignment>Middle</VerticalAlignment>
           <FitMode>AlwaysFit</FitMode>
           <IsVertical>False</IsVertical>
           <FormattedText>
             <FitMode>AlwaysFit</FitMode>
             <HorizontalAlignment>Left</HorizontalAlignment>
-            <VerticalAlignment>Top</VerticalAlignment>
+            <VerticalAlignment>Middle</VerticalAlignment>
             <IsVertical>False</IsVertical>
             <LineTextSpan>
               <TextSpan>
                 <Text>Atter1</Text>
                 <FontInfo>
                   <FontName>Arial</FontName>
-                  <FontSize>8.3</FontSize>
+                  <FontSize>8.5</FontSize>
                   <IsBold>True</IsBold>
                   <IsItalic>False</IsItalic>
                   <IsUnderline>False</IsUnderline>
@@ -157,12 +157,12 @@
           </FormattedText>
           <ObjectLayout>
             <DYMOPoint>
-              <X>0.07193921</X>
-              <Y>0.54546225</Y>
+              <X>0.099055</X>
+              <Y>0.528504</Y>
             </DYMOPoint>
             <Size>
-              <Width>0.6765173</Width>
-              <Height>0.13422401</Height>
+              <Width>0.688976</Width>
+              <Height>0.137795</Height>
             </Size>
           </ObjectLayout>
         </TextObject>
@@ -198,20 +198,20 @@
             <DYMOThickness Left="0" Top="0" Right="0" Bottom="0" />
           </Margin>
           <HorizontalAlignment>Center</HorizontalAlignment>
-          <VerticalAlignment>Top</VerticalAlignment>
+          <VerticalAlignment>Middle</VerticalAlignment>
           <FitMode>AlwaysFit</FitMode>
           <IsVertical>False</IsVertical>
           <FormattedText>
             <FitMode>AlwaysFit</FitMode>
             <HorizontalAlignment>Center</HorizontalAlignment>
-            <VerticalAlignment>Top</VerticalAlignment>
+            <VerticalAlignment>Middle</VerticalAlignment>
             <IsVertical>False</IsVertical>
             <LineTextSpan>
               <TextSpan>
                 <Text>price</Text>
                 <FontInfo>
                   <FontName>Arial</FontName>
-                  <FontSize>19.4</FontSize>
+                  <FontSize>20</FontSize>
                   <IsBold>True</IsBold>
                   <IsItalic>False</IsItalic>
                   <IsUnderline>False</IsUnderline>
@@ -226,12 +226,12 @@
           </FormattedText>
           <ObjectLayout>
             <DYMOPoint>
-              <X>0.7940148</X>
-              <Y>0.53628474</Y>
+              <X>0.819528</X>
+              <Y>0.528504</Y>
             </DYMOPoint>
             <Size>
-              <Width>0.7965835</Width>
-              <Height>0.31235453</Height>
+              <Width>0.822835</Width>
+              <Height>0.283465</Height>
             </Size>
           </ObjectLayout>
         </TextObject>
@@ -267,20 +267,20 @@
             <DYMOThickness Left="0" Top="0" Right="0" Bottom="0" />
           </Margin>
           <HorizontalAlignment>Left</HorizontalAlignment>
-          <VerticalAlignment>Top</VerticalAlignment>
+          <VerticalAlignment>Middle</VerticalAlignment>
           <FitMode>AlwaysFit</FitMode>
           <IsVertical>False</IsVertical>
           <FormattedText>
             <FitMode>AlwaysFit</FitMode>
             <HorizontalAlignment>Left</HorizontalAlignment>
-            <VerticalAlignment>Top</VerticalAlignment>
+            <VerticalAlignment>Middle</VerticalAlignment>
             <IsVertical>False</IsVertical>
             <LineTextSpan>
               <TextSpan>
                 <Text>Attr4</Text>
                 <FontInfo>
                   <FontName>Arial</FontName>
-                  <FontSize>8.3</FontSize>
+                  <FontSize>8.5</FontSize>
                   <IsBold>True</IsBold>
                   <IsItalic>False</IsItalic>
                   <IsUnderline>False</IsUnderline>
@@ -295,12 +295,12 @@
           </FormattedText>
           <ObjectLayout>
             <DYMOPoint>
-              <X>0.07685727</X>
-              <Y>0.89875</Y>
+              <X>0.099055</X>
+              <Y>0.819843</Y>
             </DYMOPoint>
             <Size>
-              <Width>0.7667586</Width>
-              <Height>0.13417776</Height>
+              <Width>0.688976</Width>
+              <Height>0.137795</Height>
             </Size>
           </ObjectLayout>
         </TextObject>
@@ -336,20 +336,20 @@
             <DYMOThickness Left="0" Top="0" Right="0" Bottom="0" />
           </Margin>
           <HorizontalAlignment>Left</HorizontalAlignment>
-          <VerticalAlignment>Top</VerticalAlignment>
+          <VerticalAlignment>Middle</VerticalAlignment>
           <FitMode>AlwaysFit</FitMode>
           <IsVertical>False</IsVertical>
           <FormattedText>
             <FitMode>AlwaysFit</FitMode>
             <HorizontalAlignment>Left</HorizontalAlignment>
-            <VerticalAlignment>Top</VerticalAlignment>
+            <VerticalAlignment>Middle</VerticalAlignment>
             <IsVertical>False</IsVertical>
             <LineTextSpan>
               <TextSpan>
                 <Text>Attr2</Text>
                 <FontInfo>
                   <FontName>Arial</FontName>
-                  <FontSize>8.7</FontSize>
+                  <FontSize>8.5</FontSize>
                   <IsBold>True</IsBold>
                   <IsItalic>False</IsItalic>
                   <IsUnderline>False</IsUnderline>
@@ -364,12 +364,12 @@
           </FormattedText>
           <ObjectLayout>
             <DYMOPoint>
-              <X>0.07685727</X>
-              <Y>0.71639735</Y>
+              <X>0.099055</X>
+              <Y>0.674173</Y>
             </DYMOPoint>
             <Size>
-              <Width>0.67159986</Width>
-              <Height>0.144113</Height>
+              <Width>0.688976</Width>
+              <Height>0.137795</Height>
             </Size>
           </ObjectLayout>
         </TextObject>
@@ -405,20 +405,20 @@
             <DYMOThickness Left="0" Top="0" Right="0" Bottom="0" />
           </Margin>
           <HorizontalAlignment>Left</HorizontalAlignment>
-          <VerticalAlignment>Top</VerticalAlignment>
+          <VerticalAlignment>Middle</VerticalAlignment>
           <FitMode>AlwaysFit</FitMode>
           <IsVertical>False</IsVertical>
           <FormattedText>
             <FitMode>AlwaysFit</FitMode>
             <HorizontalAlignment>Left</HorizontalAlignment>
-            <VerticalAlignment>Top</VerticalAlignment>
+            <VerticalAlignment>Middle</VerticalAlignment>
             <IsVertical>False</IsVertical>
             <LineTextSpan>
               <TextSpan>
                 <Text>Attr3</Text>
                 <FontInfo>
                   <FontName>Arial</FontName>
-                  <FontSize>9.3</FontSize>
+                  <FontSize>8.5</FontSize>
                   <IsBold>True</IsBold>
                   <IsItalic>False</IsItalic>
                   <IsUnderline>False</IsUnderline>
@@ -433,12 +433,12 @@
           </FormattedText>
           <ObjectLayout>
             <DYMOPoint>
-              <X>0.07685727</X>
-              <Y>0.37510118</Y>
+              <X>0.099055</X>
+              <Y>0.382835</Y>
             </DYMOPoint>
             <Size>
-              <Width>0.5685983</Width>
-              <Height>0.15253314</Height>
+              <Width>0.688976</Width>
+              <Height>0.137795</Height>
             </Size>
           </ObjectLayout>
         </TextObject>
@@ -474,20 +474,20 @@
             <DYMOThickness Left="0" Top="0" Right="0" Bottom="0" />
           </Margin>
           <HorizontalAlignment>Center</HorizontalAlignment>
-          <VerticalAlignment>Top</VerticalAlignment>
+          <VerticalAlignment>Middle</VerticalAlignment>
           <FitMode>AlwaysFit</FitMode>
           <IsVertical>False</IsVertical>
           <FormattedText>
             <FitMode>AlwaysFit</FitMode>
             <HorizontalAlignment>Center</HorizontalAlignment>
-            <VerticalAlignment>Top</VerticalAlignment>
+            <VerticalAlignment>Middle</VerticalAlignment>
             <IsVertical>False</IsVertical>
             <LineTextSpan>
               <TextSpan>
                 <Text>attr5</Text>
                 <FontInfo>
                   <FontName>Arial</FontName>
-                  <FontSize>10.5</FontSize>
+                  <FontSize>9.5</FontSize>
                   <IsBold>True</IsBold>
                   <IsItalic>False</IsItalic>
                   <IsUnderline>False</IsUnderline>
@@ -502,12 +502,12 @@
           </FormattedText>
           <ObjectLayout>
             <DYMOPoint>
-              <X>0.8409565</X>
-              <Y>0.8812338</Y>
+              <X>0.819528</X>
+              <Y>0.819843</Y>
             </DYMOPoint>
             <Size>
-              <Width>0.7580465</Width>
-              <Height>0.17088835</Height>
+              <Width>0.822835</Width>
+              <Height>0.149606</Height>
             </Size>
           </ObjectLayout>
         </TextObject>
@@ -555,12 +555,12 @@
           </TextDataHolder>
           <ObjectLayout>
             <DYMOPoint>
-              <X>1.7030863</X>
-              <Y>0.5362847</Y>
+              <X>1.709291</X>
+              <Y>0.532441</Y>
             </DYMOPoint>
             <Size>
-              <Width>0.4296681</Width>
-              <Height>0.50374746</Height>
+              <Width>0.440945</Width>
+              <Height>0.440945</Height>
             </Size>
           </ObjectLayout>
         </QRCodeObject>
@@ -595,21 +595,21 @@
           <Margin>
             <DYMOThickness Left="0" Top="0" Right="0" Bottom="0" />
           </Margin>
-          <HorizontalAlignment>Right</HorizontalAlignment>
-          <VerticalAlignment>Top</VerticalAlignment>
+          <HorizontalAlignment>Center</HorizontalAlignment>
+          <VerticalAlignment>Middle</VerticalAlignment>
           <FitMode>AlwaysFit</FitMode>
           <IsVertical>False</IsVertical>
           <FormattedText>
             <FitMode>AlwaysFit</FitMode>
-            <HorizontalAlignment>Right</HorizontalAlignment>
-            <VerticalAlignment>Top</VerticalAlignment>
+            <HorizontalAlignment>Center</HorizontalAlignment>
+            <VerticalAlignment>Middle</VerticalAlignment>
             <IsVertical>False</IsVertical>
             <LineTextSpan>
               <TextSpan>
                 <Text>barcode_text</Text>
                 <FontInfo>
                   <FontName>Arial</FontName>
-                  <FontSize>6.9</FontSize>
+                  <FontSize>6.5</FontSize>
                   <IsBold>True</IsBold>
                   <IsItalic>False</IsItalic>
                   <IsUnderline>False</IsUnderline>
@@ -624,12 +624,12 @@
           </FormattedText>
           <ObjectLayout>
             <DYMOPoint>
-              <X>1.5425813</X>
-              <Y>1.0432862</Y>
+              <X>1.654173</X>
+              <Y>0.981260</Y>
             </DYMOPoint>
             <Size>
-              <Width>0.6169417</Width>
-              <Height>0.14335561</Height>
+              <Width>0.535433</Width>
+              <Height>0.110236</Height>
             </Size>
           </ObjectLayout>
         </TextObject>
@@ -664,21 +664,21 @@
           <Margin>
             <DYMOThickness Left="0" Top="0" Right="0" Bottom="0" />
           </Margin>
-          <HorizontalAlignment>Left</HorizontalAlignment>
-          <VerticalAlignment>Top</VerticalAlignment>
+          <HorizontalAlignment>Right</HorizontalAlignment>
+          <VerticalAlignment>Middle</VerticalAlignment>
           <FitMode>AlwaysFit</FitMode>
           <IsVertical>False</IsVertical>
           <FormattedText>
             <FitMode>AlwaysFit</FitMode>
-            <HorizontalAlignment>Left</HorizontalAlignment>
-            <VerticalAlignment>Top</VerticalAlignment>
+            <HorizontalAlignment>Right</HorizontalAlignment>
+            <VerticalAlignment>Middle</VerticalAlignment>
             <IsVertical>False</IsVertical>
             <LineTextSpan>
               <TextSpan>
                 <Text>OFF</Text>
                 <FontInfo>
                   <FontName>Arial</FontName>
-                  <FontSize>11.1</FontSize>
+                  <FontSize>8</FontSize>
                   <IsBold>True</IsBold>
                   <IsItalic>False</IsItalic>
                   <IsUnderline>False</IsUnderline>
@@ -693,12 +693,12 @@
           </FormattedText>
           <ObjectLayout>
             <DYMOPoint>
-              <X>1.5929542</X>
-              <Y>0.36592394</Y>
+              <X>1.339213</X>
+              <Y>0.382835</Y>
             </DYMOPoint>
             <Size>
-              <Width>0.38291335</Width>
-              <Height>0.17953838</Height>
+              <Width>0.811024</Width>
+              <Height>0.137795</Height>
             </Size>
           </ObjectLayout>
         </TextObject>
@@ -733,21 +733,21 @@
           <Margin>
             <DYMOThickness Left="0" Top="0" Right="0" Bottom="0" />
           </Margin>
-          <HorizontalAlignment>Center</HorizontalAlignment>
-          <VerticalAlignment>Top</VerticalAlignment>
+          <HorizontalAlignment>Left</HorizontalAlignment>
+          <VerticalAlignment>Middle</VerticalAlignment>
           <FitMode>AlwaysFit</FitMode>
           <IsVertical>False</IsVertical>
           <FormattedText>
             <FitMode>AlwaysFit</FitMode>
-            <HorizontalAlignment>Center</HorizontalAlignment>
-            <VerticalAlignment>Top</VerticalAlignment>
+            <HorizontalAlignment>Left</HorizontalAlignment>
+            <VerticalAlignment>Middle</VerticalAlignment>
             <IsVertical>False</IsVertical>
             <LineTextSpan>
               <TextSpan>
                 <Text>was</Text>
                 <FontInfo>
                   <FontName>Arial</FontName>
-                  <FontSize>9.9</FontSize>
+                  <FontSize>9</FontSize>
                   <IsBold>True</IsBold>
                   <IsItalic>False</IsItalic>
                   <IsUnderline>False</IsUnderline>
@@ -762,12 +762,12 @@
           </FormattedText>
           <ObjectLayout>
             <DYMOPoint>
-              <X>1.0220016</X>
-              <Y>0.37510118</Y>
+              <X>0.819528</X>
+              <Y>0.382835</Y>
             </DYMOPoint>
             <Size>
-              <Width>0.52057946</Width>
-              <Height>0.16118358</Height>
+              <Width>0.496063</Width>
+              <Height>0.137795</Height>
             </Size>
           </ObjectLayout>
         </TextObject>
@@ -807,12 +807,12 @@
           <LineType>Horizontal</LineType>
           <ObjectLayout>
             <DYMOPoint>
-              <X>1.0839516</X>
-              <Y>0.3659239</Y>
+              <X>0.819528</X>
+              <Y>0.445827</Y>
             </DYMOPoint>
             <Size>
-              <Width>0.4150358</Width>
-              <Height>0.18412691</Height>
+              <Width>0.496063</Width>
+              <Height>0.011811</Height>
             </Size>
           </ObjectLayout>
         </LineObject>
@@ -861,7 +861,7 @@
                 <Text>warranty</Text>
                 <FontInfo>
                   <FontName>Arial</FontName>
-                  <FontSize>7.9</FontSize>
+                  <FontSize>8.5</FontSize>
                   <IsBold>True</IsBold>
                   <IsItalic>False</IsItalic>
                   <IsUnderline>False</IsUnderline>
@@ -876,16 +876,60 @@
           </FormattedText>
           <ObjectLayout>
             <DYMOPoint>
-              <X>0.05981624</X>
-              <Y>1.0560544</Y>
+              <X>0.099055</X>
+              <Y>1.028504</Y>
             </DYMOPoint>
             <Size>
-              <Width>1.4090979</Width>
-              <Height>0.12859042</Height>
+              <Width>1.496063</Width>
+              <Height>0.141732</Height>
             </Size>
           </ObjectLayout>
         </TextObject>
-      </LabelObjects>
+      <LineObject>
+          <Name>LineTitle</Name>
+          <Brushes>
+            <BackgroundBrush>
+              <SolidColorBrush>
+                <Color A="0" R="0" G="0" B="0"></Color>
+              </SolidColorBrush>
+            </BackgroundBrush>
+            <BorderBrush>
+              <SolidColorBrush>
+                <Color A="1" R="0" G="0" B="0"></Color>
+              </SolidColorBrush>
+            </BorderBrush>
+            <StrokeBrush>
+              <SolidColorBrush>
+                <Color A="1" R="0" G="0" B="0"></Color>
+              </SolidColorBrush>
+            </StrokeBrush>
+            <FillBrush>
+              <SolidColorBrush>
+                <Color A="0" R="0" G="0" B="0"></Color>
+              </SolidColorBrush>
+            </FillBrush>
+          </Brushes>
+          <Rotation>Rotation0</Rotation>
+          <OutlineThickness>1</OutlineThickness>
+          <IsOutlined>False</IsOutlined>
+          <BorderStyle>SolidLine</BorderStyle>
+          <Margin>
+            <DYMOThickness Left="0" Top="0" Right="0" Bottom="0" />
+          </Margin>
+          <StrokeWidth>1</StrokeWidth>
+          <DashPattern>SolidLine</DashPattern>
+          <LineType>Horizontal</LineType>
+          <ObjectLayout>
+            <DYMOPoint>
+              <X>0.099055</X>
+              <Y>0.359213</Y>
+            </DYMOPoint>
+            <Size>
+              <Width>2.051181</Width>
+              <Height>0.011811</Height>
+            </Size>
+          </ObjectLayout>
+        </LineObject></LabelObjects>
     </DynamicLayoutManager>
   </DYMOLabel>
   <LabelApplication>Blank</LabelApplication>
