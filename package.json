@@ -33,7 +33,7 @@
     "publish": [
       {
         "provider": "generic",
-        "url": "https://CHANGE-ME.example.com/gadgetspos-desktop/"
+        "url": "https://gadgetspos.com/app-releases/desktop/"
       }
     ],
     "win": {
@@ -41,11 +41,28 @@
       "target": "nsis"
     },
     "nsis": {
-      "oneClick": false
+      "oneClick": false,
+      "artifactName": "Gadgets-POS-Setup-${version}.${ext}"
     },
     "mac": {
       "icon": "assets/icon.icns",
-      "identity": null
+      "identity": null,
+      "hardenedRuntime": false,
+      "artifactName": "Gadgets-POS-${version}-mac-${arch}.${ext}",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "universal"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "universal"
+          ]
+        }
+      ]
     },
     "linux": {
       "icon": "assets/icon.png"

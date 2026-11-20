@@ -36,6 +36,7 @@ const { readFlagsSync, writeFlags, resolveGpuDisabled } = require('./flags');
 const { applyCommandLineSwitches, createLoginItem, createPowerKeeper, createNotifier, createQuietWindowClass } = require('./platform');
 const { readEarlyConfigSync, createDeferredConfig } = require('./earlyConfig');
 const { DEFAULTS, createConfig } = require('./config');
+const { defaultsForChannel, readChannel } = require('./channel');
 const { createSecurity, isSafeExternalUrl, SECURE_WEB_PREFERENCES } = require('./security');
 const { registerIpc, registerOriginHandler } = require('./ipc');
 const { createShutdown } = require('./shutdown');
@@ -352,7 +353,10 @@ async function bootstrap(overrides = {}) {
       log.attach(electronLog);
     }
 
-    config = createConfig({ Store, log });
+    // a fresh install opens the address of the channel it was built for (production or testing); a saved or carried-over address always wins
+    const channel = readChannel(APP_ROOT);
+    if (channel) log.info(`release channel: ${channel}`);
+    config = createConfig({ Store, log, defaults: defaultsForChannel(DEFAULTS, channel) });
     const migration = config.migrateLegacy();
     early.attach(config);
     perf.mark('config-ready');

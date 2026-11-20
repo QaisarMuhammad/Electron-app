@@ -125,8 +125,15 @@ test('build.files is src, labels, assets, scripts (without the afterPack hook) a
   }
 });
 
-test('the update feed is the generic provider with a placeholder the owner replaces; the updater stays disabled until then', () => {
-  assert.deepEqual(pkg.build.publish, [{ provider: 'generic', url: 'https://CHANGE-ME.example.com/gadgetspos-desktop/' }]);
+test('the update feed is the generic provider on the production dashboard (a testing build overrides the address at build time, scripts/build-release.sh)', () => {
+  assert.deepEqual(pkg.build.publish, [{ provider: 'generic', url: 'https://gadgetspos.com/app-releases/desktop/' }]);
+  assert.doesNotMatch(JSON.stringify(pkg.build.publish), /CHANGE-ME/);
+});
+
+test('the installers have fixed, space-free names (the download page and latest.yml refer to them), and the Mac build is a universal dmg plus the zip the Mac updater needs', () => {
+  assert.equal(pkg.build.nsis.artifactName, 'Gadgets-POS-Setup-${version}.${ext}');
+  assert.equal(pkg.build.mac.artifactName, 'Gadgets-POS-${version}-mac-${arch}.${ext}');
+  assert.deepEqual(pkg.build.mac.target, [{ target: 'dmg', arch: ['universal'] }, { target: 'zip', arch: ['universal'] }]);
 });
 
 test('the installer keeps the platform targets of v1 and the icons exist', () => {
