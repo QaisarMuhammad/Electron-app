@@ -301,6 +301,27 @@ keychain, and notarisation credentials.
 
 ## 6. The update feed
 
+### 6.0 Where the feed lives now (2026-11-20): inside the dashboard (DGshop_vendor), one folder per server
+
+The feed is served by the web dashboard itself, from `public/app-releases/` of the DGshop_vendor deployment, so each domain updates its own tills:
+
+| Channel | Dashboard / default address | Update feed |
+| --- | --- | --- |
+| production | https://gadgetspos.com | https://gadgetspos.com/app-releases/desktop/ |
+| testing | https://vendor.societyfiles.com | https://vendor.societyfiles.com/app-releases/desktop/ |
+
+- `scripts/build-release.sh <production|testing> [win|mac|all]` builds one channel into `dist/<channel>/`. The channel is written into the installed
+  app's package.json (`gposChannel`, read by `src/main/channel.js`) and decides the DEFAULT POS address of a fresh install; an address saved in
+  Settings > Connection, or carried over from 1.x, always wins. electron-builder writes the same channel's feed into `resources/app-update.yml`.
+- `build.publish[0].url` in package.json is the production feed (a testing build overrides it), so the release gate "update feed address is real" is closed.
+- In the DGshop_vendor repo, `node scripts/app-releases/publish.mjs --channel <channel> --desktop dist/<channel> --print-server <Print Server dist/<channel>>`
+  checks every installer against its SHA-512, copies the installers first and `latest*.yml` + `releases.json` last into `public/app-releases/`. That folder is
+  git-ignored (GitHub refuses files over 100 MB), so each server gets it by copying the folder of its own channel; restart `next start` after copying.
+- The dashboard page Download Apps (`/vendor/apps`) lists the installers from `releases.json`.
+- Windows tills update themselves unsigned (the updater checks the SHA-512 from the feed; the publisher signature is only checked once
+  `build.win.publisherName` is set, section 2.2). **Mac tills cannot update themselves until the app is signed and notarized** with an Apple Developer ID:
+  until then a Mac user downloads the new .dmg from the Download Apps page.
+
 ### 6.1 How the app updates itself
 
 - The feed address is `build.publish[0].url`. electron-builder writes it into `resources\app-update.yml` when it builds, and the
