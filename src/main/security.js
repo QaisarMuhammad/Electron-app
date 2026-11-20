@@ -150,6 +150,11 @@ const PINNED_POPUP_OPTIONS = Object.freeze({
   tabbingIdentifier: undefined,
   zoomToPageWidth: false,
   paintWhenInitiallyHidden: true,
+  // Options Electron added after 32 (checked against Electron 45): a popup of a page gets Electron's default for each, never a page's value.
+  accentColor: undefined,
+  appShim: undefined,
+  name: undefined,
+  windowStatePersistence: undefined,
 });
 
 /** Schemes `shell.openExternal` may be given (SPEC 12). Everything else is silently denied. */

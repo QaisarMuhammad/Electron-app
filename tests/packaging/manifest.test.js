@@ -87,9 +87,10 @@ test('the Windows AppUserModelId in the code IS build.appId (electron-builder re
   assert.equal(APP_ID, pkg.build.appId);
 });
 
-test('dependencies are exactly the three runtime packages, and dev dependencies the build tools (Electron, electron-builder and @electron/fuses for the afterPack hook)', () => {
+test('dependencies are exactly the three runtime packages, and dev dependencies the build tools (Electron, electron-builder and @electron/fuses for the afterPack hook) plus the packages only the tests import', () => {
   assert.deepEqual(Object.keys(pkg.dependencies).sort(), ['electron-log', 'electron-store', 'electron-updater']);
-  assert.deepEqual(Object.keys(pkg.devDependencies).sort(), ['@electron/fuses', 'electron', 'electron-builder']);
+  // puppeteer-core drives the real-Electron smoke, @babel/parser the call-site scans, sax the golden DOM, pdfkit the legacy PDF fixture: none of them ships in the app
+  assert.deepEqual(Object.keys(pkg.devDependencies).sort(), ['@babel/parser', '@electron/fuses', 'electron', 'electron-builder', 'pdfkit', 'puppeteer-core', 'sax']);
 });
 
 test('the scripts are start, test, release:check, predist and dist; the v1 webpack, package and postinstall scripts are gone', () => {

@@ -52,9 +52,13 @@
     }
   },
   "devDependencies": {
+    "@babel/parser": "^7.29.14",
     "@electron/fuses": "^1.8.0",
-    "electron": "^32.1.2",
-    "electron-builder": "^24.13.3"
+    "electron": "^45.4.1",
+    "electron-builder": "^24.13.3",
+    "pdfkit": "^0.15.2",
+    "puppeteer-core": "^23.11.1",
+    "sax": "^1.6.1"
   },
   "dependencies": {
     "electron-log": "^5.2.0",

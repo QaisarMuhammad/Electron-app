@@ -33,6 +33,8 @@ const fs = require('node:fs');
 const net = require('node:net');
 const os = require('node:os');
 const path = require('node:path');
+// the Electron the app runs on (this script runs in plain Node): the About text must name its major version, whichever it is
+const ELECTRON_MAJOR = require('electron/package.json').version.split('.')[0];
 
 const ROOT = path.resolve(__dirname, '..', '..');
 const OUT_DIR = path.join(__dirname, 'out');
@@ -1154,7 +1156,7 @@ async function runDevelopment(servers, runs) {
     t.check('and they never go backwards (monotonic, in the order the app reaches them)', values.every((value, index) => index === 0 || value >= values[index - 1]) && values[0] === 0, values);
     t.check('the diagnostics put the same text on the (fake) clipboard', (await run.state()).clipboard.at(-1) === text);
     t.check('they carry no secret: no password hash, no password, no receipt text', !/scrypt|drawer-1234|Printer test/.test(text));
-    t.check('they say development build, platform and versions', /development build/.test(text) && text.includes(process.platform) && /Electron 32\./.test(text), text.split('\n').slice(0, 4));
+    t.check('they say development build, platform and versions', /development build/.test(text) && text.includes(process.platform) && new RegExp(`Electron ${ELECTRON_MAJOR}\\.`).test(text), text.split('\n').slice(0, 4));
     t.note(`startup: ${MARK_ORDER.map((name) => `${name} ${marks[name]}`).join(', ')}`);
     t.note(`main-process boot (app-ready -> loading-visible): ${marks['loading-visible'] - marks['app-ready']} ms`);
 
