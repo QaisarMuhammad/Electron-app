@@ -39,7 +39,8 @@ echo "== release gates (information only: the open ones are the owner's)"
 npm run release:check 2>&1 | grep -E "^not ok|^ok|^# (pass|fail)" || true
 
 OUT="dist/$CHANNEL"
-rm -rf "$OUT"
+# a full build starts clean; a single-platform build keeps what the other platform already put in the folder (latest.yml and latest-mac.yml never clash)
+if [ "$TARGET" = "all" ]; then rm -rf "$OUT"; fi
 ARGS=(--publish never "-c.directories.output=$OUT")
 if [ "$TARGET" = "win" ] || [ "$TARGET" = "all" ]; then echo "== Windows ($CHANNEL, feed $FEED)"; npx electron-builder "${ARGS[@]}" --win --x64; fi
 if [ "$TARGET" = "mac" ] || [ "$TARGET" = "all" ]; then echo "== Mac ($CHANNEL, feed $FEED)"; npx electron-builder "${ARGS[@]}" --mac; fi
