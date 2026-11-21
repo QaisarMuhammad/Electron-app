@@ -301,6 +301,19 @@ keychain, and notarisation credentials.
 
 ## 6. The update feed
 
+### 6.0a Manual updates for now: publish with `--no-feed`
+
+Until the Windows installer is signed (section 5.1) and a `publisherName` is set (section 2.2), an update the app finds by itself is checked by SHA-512
+only. So for now the feed is NOT published: put the installers on the Download Apps page with
+
+    node scripts/app-releases/publish.mjs --channel <production|testing> --desktop <Desktop dist folder> --print-server <Print Server dist folder> --no-feed
+
+(DGshop_vendor repo). It checks every installer, copies the installers and `releases.json`, never copies `latest.yml` / `latest-mac.yml`, and removes any
+feed file an earlier release left in the folder. An installed app then logs "update check failed" (404) and carries on; people install each new version by
+hand (SHOP-SETUP.md section 11.0). The installers still contain the feed address, so when you later publish a SIGNED build WITH its feed
+(drop `--no-feed`), the apps already installed find it and update themselves; they need no reinstall. Check that the first signed build is
+installed by hand on one test PC before relying on the automatic path. Section 6.1 onwards describes the automatic mode.
+
 ### 6.0 Where the feed lives now (2026-11-20): inside the dashboard (DGshop_vendor), one folder per server
 
 The feed is served by the web dashboard itself, from `public/app-releases/` of the DGshop_vendor deployment, so each domain updates its own tills:

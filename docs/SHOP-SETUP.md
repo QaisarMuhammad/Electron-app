@@ -314,6 +314,25 @@ touched.
 
 ## 11. Updating GadgetsPOS
 
+### 11.0 Updating by hand (how it works for now)
+
+While the installers are not signed, the update feed is not published (`publish.mjs --no-feed`), so an installed GadgetsPOS finds no update and does
+not update itself. Each new version is installed by hand, on Windows and on a Mac:
+
+1. Find your version: Settings > About & updates shows "Version x.y.z". The Download Apps page of the dashboard shows the newest version on its download buttons.
+2. Finish the sale you are working on and close GadgetsPOS (File > Quit on Windows, Quit GadgetsPOS on a Mac).
+3. Download the new installer from the Download Apps page and run it over the old install. Windows: "Windows protected your PC" > More info > Run
+   anyway (it asks each time until the app is signed); choose "Only for me" as the first time. Mac: open the new .dmg, drag GadgetsPOS over the old one
+   in Applications and click Replace; the first open may need right-click > Open.
+4. Open GadgetsPOS and check the version number in Settings > About & updates.
+
+Settings, printers and the drawer password live in the user data folder, which the installer does not touch, so nothing is set up again (checked
+in the installer configuration; not yet tried on a real Windows PC: do it once on the test PC, see RELEASE.md section 9). Settings > About & updates
+may say the update check did not work: that is expected without a feed and does not affect printing. The customer-facing version of these steps is
+the "Updating Gadgets POS" section of the Install guide on the dashboard's Download Apps page.
+
+### 11.1 Automatic updating (when the apps are signed and the feed is published)
+
 GadgetsPOS can update itself.
 
 - It looks for a new version about half a minute after it starts, and then every 4 hours. You can check by hand with Help > Check for
