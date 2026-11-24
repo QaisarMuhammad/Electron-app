@@ -101,9 +101,9 @@ function setup({ packaged = true, origin, hooks: hookOverrides, now } = {}) {
 // what is installed
 // ---------------------------------------------------------------------------------------------
 
-test('attachGuards installs will-navigate, will-redirect and the window-open handler, and nothing else', () => {
+test('attachGuards installs will-navigate, will-redirect, did-create-window (a web page window fills the screen) and the window-open handler, and nothing else', () => {
   const { webContents } = setup();
-  assert.deepEqual([...webContents.listeners.keys()].sort(), ['will-navigate', 'will-redirect']);
+  assert.deepEqual([...webContents.listeners.keys()].sort(), ['did-create-window', 'will-navigate', 'will-redirect']);
   assert.equal(typeof webContents.openHandler, 'function');
 });
 

@@ -429,6 +429,16 @@ function isAboutBlank(input) {
 }
 
 /**
+ * @param {unknown} input the address a window was opened for
+ * @returns {boolean} true for an http or https address (a page of the software): such a window fills the screen. `about:blank` and
+ *   `blob:` documents (receipts, PDFs, print previews) are not web addresses and keep the size their page asked for.
+ */
+function isWebAddress(input) {
+  const url = parseCanonicalUrl(input);
+  return url !== null && (url.protocol === 'https:' || url.protocol === 'http:');
+}
+
+/**
  * @param {unknown} features the `features` string of `window.open`
  * @returns {{ width?: number, height?: number }} the sizes the page asked for
  */
@@ -798,6 +808,19 @@ function createSecurity({ getConfig, isPackaged = true, devOrigins = DEV_ORIGINS
 
     webContents.on('will-navigate', guardNavigation('will-navigate'));
     webContents.on('will-redirect', guardNavigation('will-redirect'));
+
+    // A window opened for a real web address (the dashboard from the POS screen, a report, an image) fills the screen like the main
+    // window does, instead of Electron's small 800 x 600 default. A blank or blob document (a receipt, a PDF, a print preview) keeps the
+    // size its page asked for. The app's own windows (Settings, the password prompt) are not made by `window.open` and are not touched.
+    // `maximize()` keeps the window an ordinary one: the cashier can still restore it, move it and close it.
+    webContents.on('did-create-window', (childWindow, details) => {
+      try {
+        if (!isWebAddress(details && details.url)) return;
+        if (childWindow && typeof childWindow.maximize === 'function') childWindow.maximize();
+      } catch {
+        // The window simply stays the size it was opened with.
+      }
+    });
 
     webContents.setWindowOpenHandler((details) => {
       try {

@@ -72,10 +72,10 @@ function crawl(entry) {
 
 const graph = crawl(toPosix(pkg.main));
 
-test('main points at an existing file, and the version is 2.0.0 with the identity of v1 kept (upgrades and the user-data folder depend on it)', () => {
+test('main points at an existing file, and the version is 2.0.1 with the identity of v1 kept (upgrades and the user-data folder depend on it)', () => {
   assert.equal(pkg.main, 'src/main/index.js');
   assert.equal(exists(pkg.main), true);
-  assert.equal(pkg.version, '2.0.0');
+  assert.equal(pkg.version, '2.0.1');
   assert.equal(pkg.name, 'electron-app');
   assert.equal(pkg.productName, 'Gadgets POS');
   assert.equal(pkg.build.appId, 'com.example.gadgetspos');
